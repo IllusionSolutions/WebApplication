@@ -12,7 +12,7 @@
 
   "scripts": {
     "start": "node ./bin/www",
-    "postinstall": "bower install"
+    "postinstall": "sudo npm install -g bower; sudo bower install --allow-root"
   },
 
   "dependencies": {
