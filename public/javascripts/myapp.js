@@ -1,3 +1,5 @@
+var firebase;
+
 jQuery.fn.extend({
     getMaxZ: function() {
         return Math.max.apply(null, jQuery(this).map(function() {
@@ -10,8 +12,19 @@ $(function() {
 	//Initialize Things for the app to be functional
 	
 	//Creating the firebase reference.
-    var firebaseref = new Firebase("https://powercloud-bf968.firebaseio.com/");
-	
+    //var firebaseref = new Firebase("https://powercloud-bf968.firebaseio.com/");
+    /*var firebaseref = require("firebase/app");
+    require("firebase/auth");
+    require("firebase/database");*/
+    //require("firebase/database");
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyD7ec7C79ogJZSJTiRvJLZJEEvywfYGg1Y",
+        authDomain: "powercloud-bf968.firebaseapp.com",
+        databaseURL: "https://powercloud-bf968.firebaseio.com",
+        storageBucket: "powercloud-bf968.appspot.com",
+    };
+    firebase.initializeApp(config);
 	//Global Variables for userData and the firebase reference to the list.
     var listRef = null;
 	var userData = null;
@@ -167,7 +180,7 @@ $(function() {
 	//Each user has a name. This function loads the profile for the user who logged in.
 	//You can extend the functionality to add more data when saving the profile.
     var loadProfile = function() {
-        userRef = firebaseref.child('users').child(userData.uid);
+        userRef = firebase.child('users').child(userData.uid);
         userRef.once('value', function(snap) {
             var user = snap.val();
             if (!user) {
@@ -187,7 +200,7 @@ $(function() {
 	
 
     //Listen to Auth Changes
-    firebaseref.onAuth(authDataCallback);
+    //firebase.onAuth(authDataCallback);
 	
 	//Event to handle click for Adding Items
     $("#addItemToList").on('click', function() {
@@ -250,7 +263,7 @@ $(function() {
 	
 	//Logout action handler
     $("#logout").on('click', function() {
-        firebaseref.unauth();
+        firebase.unauth();
         userData = null;
         $(".welcome").html('');
         goToTab('#login');
@@ -287,9 +300,10 @@ $(function() {
 	}
 	
 	//Function to log in a user using email and password.
+
 	var loginUser = function(email,password,callback)
 	{
-		firebaseref.authWithPassword({
+		firebase.authWithPassword({
             email: email,
             password: password
         }, callback);
@@ -299,7 +313,7 @@ $(function() {
     $("#login-btn").on('click', function() {
         var email = $("#login-email").val();
         var password = $("#login-password").val();
-        loginUser(email,password,loginCallback);
+        firebase.auth().signInWithEmailAndPassword(email,password);
     });
 	
 	//Handling Signup process
@@ -307,9 +321,12 @@ $(function() {
 
         var email = $("#email").val();
         var password = $("#password").val();
-        firebaseref.createUser({
-            email: email,
-            password: password
+        console.log("Here now");
+        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // ...
         },
 
         function(error, userData) {
@@ -319,7 +336,7 @@ $(function() {
             } else {
                 console.log("Successfully created user account with uid:", userData.uid);
                 $("#signup-btn").parents("#register").find('.status').html("Successfully created user account with uid:" + userData.uid).show();
-                firebaseref.authWithPassword({
+                firebase.authWithPassword({
                     email: email,
                     password: password,
                 },signupLoginCallback);

@@ -1,5 +1,5 @@
 var express = require('express');
-var database = require('../bin/database.js');
+//var database = require('../bin/database.js');
 
 get = function(req, res, next) {
 	//req.session.destroy();

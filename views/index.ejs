@@ -12,15 +12,12 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"><!-- Custom styles for this template -->
         <link href="starter-template.css" rel="stylesheet" type="text/css">
         <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
-	<script>
-	  // Initialize Firebase
-	  var config = {
-	    apiKey: "AIzaSyD7ec7C79ogJZSJTiRvJLZJEEvywfYGg1Y",
-	    authDomain: "powercloud-bf968.firebaseapp.com",
-	    databaseURL: "https://powercloud-bf968.firebaseio.com",
-	    storageBucket: "powercloud-bf968.appspot.com",
-	  };
-	  firebase.initializeApp(config);
+        <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+
+        <script>
+
 	</script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <link href="/stylesheets/sh-default.css" rel="stylesheet" default-stylesheet="true" type="text/css">
@@ -75,7 +72,7 @@
                 <input type="text" class="form-control" placeholder="Your Name" required="" autofocus="" id="name"><input type="email" class="form-control" placeholder="Email address" required=""
                 autofocus="" id="email"><input type="password" class="form-control" placeholder="Password" required="" id="password">
                 <button class="btn btn-primary" type="button" id="signup-btn">
-                    Sign Me Up!
+                    Sign Up
                 </button>
             </form>
             <hr>
