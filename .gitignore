@@ -37,6 +37,4 @@ examples/
 .idea/
 test/out-fixtures/*
 test/watch-*.txt
-app/images/
 app/styles/
-favicon.ico

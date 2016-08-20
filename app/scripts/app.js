@@ -9,6 +9,16 @@
  *
  * Main module of the application.
  */
+
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyD7ec7C79ogJZSJTiRvJLZJEEvywfYGg1Y",
+    authDomain: "powercloud-bf968.firebaseapp.com",
+    databaseURL: "https://powercloud-bf968.firebaseio.com",
+    storageBucket: "powercloud-bf968.appspot.com",
+};
+firebase.initializeApp(config);
+
 angular
     .module('yapp', [
         'ui.router',
@@ -45,7 +55,13 @@ angular
             .state('reports', {
                 url: '/reports',
                 parent: 'dashboard',
-                templateUrl: 'views/dashboard/reports.html'
-            });
+                templateUrl: 'views/dashboard/reports.html',
+                controller: 'ReportsCtrl'
+            })
+            .state('profile', {
+                url: '/profile',
+                parent: 'dashboard',
+                templateUrl: 'views/dashboard/profile.html'
+            });;
 
     });

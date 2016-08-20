@@ -1,9 +1,25 @@
 <!-- Serves an overview of the user's devices, controlled by dashboard.js -->
 <div>
     <a ui-sref="reports" class="pull-right btn btn-primary btn-outline btn-rounded">Reports</a>
-    <h2>User Overview</h2>
+    <h2>Device Overview</h2>
     <div class="jumbotron">
         <div class="container">
+
+            <div class="row">
+                <div class="col-sm-6 col-md-4" data-ng-repeat="(key, device) in allDevices">
+                    <div class="thumbnail" >
+                        <img src="" alt="">
+                        <div class="caption">
+                            <h3>{{device.meta.appliance}}</h3>
+                            <h5>{{device.meta.name}}</h5>
+                            <p>
+                                <a ui-sref="reports" ng-click="viewDevice(key, device)" class="btn btn-primary" role="button">View</a>
+                                <a href="#" class="btn btn-default" role="button"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Configure</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
