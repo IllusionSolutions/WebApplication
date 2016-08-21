@@ -1,11 +1,34 @@
 <!-- Serves reports, controlled by dashboard.js -->
 <div>
-    <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Back to Overview</a>
-    <h2>Device Reports</h2>
+    <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Overview</a>
+    <h2>{{selectedDevice.meta.name}}</h2>
+    <h4>Connected to the {{selectedDevice.meta.appliance}}</h4>
 
-    <div class="jumbotron">
-        <div class="container">
+    <div class="row">
+        <div class="col-sm-15 col-md-12">
+            <highchart style="margin-right: 1%" class="panel panel-default col-sm-8 col-md-8" id="currentChart" config="chartConfig"></highchart>
 
+            <div class="col-sm-2 col-md-2 panel panel-default">
+                <h4>High</h4>
+                <div class="panel-body">
+                    2.3 amperes
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-md-2 panel panel-default">
+                <h4>Low</h4>
+                <div class="panel-body">
+                    2.3 amperes
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-md-2 panel panel-default">
+                <h4>Mean</h4>
+                <div class="panel-body">
+                    2.3 amperes
+                </div>
+            </div>
         </div>
     </div>
+
 </div>

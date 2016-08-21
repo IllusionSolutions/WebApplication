@@ -22,7 +22,8 @@ firebase.initializeApp(config);
 angular
     .module('yapp', [
         'ui.router',
-        'ngAnimate'
+        'ngAnimate',
+        'highcharts-ng'
     ])
     .config(function($stateProvider, $urlRouterProvider) {
 
@@ -51,6 +52,11 @@ angular
                 url: '/overview',
                 parent: 'dashboard',
                 templateUrl: 'views/dashboard/overview.html'
+            })
+            .state('devices', {
+                url: '/devices',
+                parent: 'dashboard',
+                templateUrl: 'views/dashboard/devices.html'
             })
             .state('reports', {
                 url: '/reports',
