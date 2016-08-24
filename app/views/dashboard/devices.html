@@ -19,6 +19,7 @@
 
     <h2>Devices</h2>
     <div class="row">
+        <div class="center-block" ng-if="allDevices == null"><h1>Loading...</h1></div>
         <div class="col-sm-6 col-md-4" data-ng-repeat="(key, device) in allDevices">
             <div class="thumbnail" >
                 <img src="" alt="">

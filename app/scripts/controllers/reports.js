@@ -21,7 +21,10 @@ angular.module('yapp')
         $scope.chartConfig = {
             options: {
                 chart: {
-                    type: 'areaspline'
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift'
                 }
             },
             yAxis: {
@@ -31,7 +34,6 @@ angular.module('yapp')
             },
             xAxis: {
                 type: 'datetime',
-                //categories: $scope.tempCategories,
                 gridLineWidth: 1,
                 title: {
                     text: 'Time'

@@ -26,6 +26,7 @@ angular.module('yapp')
         {
             firebase.auth().signOut().then(function() {
                 // Sign-out successful.
+                alert("Successfully signed out.");
             }, function(error) {
                 // An error happened.
                 alert("Could not sign out.\n" + error.message);
