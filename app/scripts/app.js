@@ -20,10 +20,11 @@ var config = {
 firebase.initializeApp(config);
 
 angular
-    .module('yapp', [
+    .module('powerCloud', [
         'ui.router',
         'ngAnimate',
-        'highcharts-ng'
+        'highcharts-ng',
+        'angular-loading-bar'
     ])
     .config(function($stateProvider, $urlRouterProvider) {
 
@@ -68,6 +69,6 @@ angular
                 url: '/profile',
                 parent: 'dashboard',
                 templateUrl: 'views/dashboard/profile.html'
-            });;
+            });
 
     });

@@ -3,12 +3,12 @@
 
 /**
  * @ngdoc function
- * @name yapp.controller:MainCtrl
+ * @name powerCloud.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of yapp
+ * Controller of powerCloud
  */
-angular.module('yapp')
+angular.module('powerCloud')
     .controller('ReportsCtrl', function($scope, $state) {
         $scope.$state = $state;
 
