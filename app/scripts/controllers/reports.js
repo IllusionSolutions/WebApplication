@@ -13,7 +13,7 @@ angular.module('yapp')
         $scope.$state = $state;
 
         var device = $scope.selectedDevice;
-        var deviceKey = $scope.deviceKey;
+        var device_ID = $scope.deviceID;
 
         $scope.tempCurrentData = [];
         $scope.tempCategories = [];
@@ -48,34 +48,34 @@ angular.module('yapp')
                 data: $scope.tempCurrentData
             }],
 
-            loading: false
+            loading: true
         };
+        fetchData(device_ID);
 
-        fetchData(deviceKey);
-
-        function fetchData(deviceID)
+        function fetchData(id)
         {
-
              var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
-             dateSelected.day = "18";
-             var deviceSelected = deviceID + 1;
+             dateSelected.day = "23";
+             var deviceSelected = id;
 
-             var referenceLink = deviceSelected +"/data/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+             var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
              var data = firebase.database().ref(referenceLink);
 
+            console.log(referenceLink);
              data.once('value').then(function(snapshot)
              {
+
                  snapshot.forEach(function(d) {
                      var temp = [];
 
                      temp.push(d.val().datetime * 1000);
                      temp.push(d.val().current);
-
                      $scope.tempCurrentData.push(temp);
                  });
 
+                 $scope.chartConfig.loading = false;
                  $scope.$apply();
              });
 

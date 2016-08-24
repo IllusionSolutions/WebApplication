@@ -17,12 +17,13 @@ angular.module('yapp')
         fetchDevices();
 
 
-        $scope.viewDevice = function(key, deviceSelected) {
-            $scope.deviceKey = key;
+        $scope.viewDevice = function(deviceID, deviceSelected) {
+            $scope.deviceID = deviceID;
             $scope.selectedDevice = deviceSelected;
         };
 
-        $scope.logout = function() {
+        $scope.logout = function()
+        {
             firebase.auth().signOut().then(function() {
                 // Sign-out successful.
             }, function(error) {
@@ -34,12 +35,13 @@ angular.module('yapp')
         function fetchDevices()
         {
             console.log("Fetching devices...");
-            var referenceLink = "/";
+            var referenceLink = "/meta_data";
             var data = firebase.database().ref(referenceLink);
 
             data.once('value').then(function(snapshot) {
                 snapshot.forEach(function(d) {
                     $scope.allDevices.push(d.val());
+                    console.log(d.val());
                 });
                 console.log($scope.allDevices);
                 $scope.$apply();
