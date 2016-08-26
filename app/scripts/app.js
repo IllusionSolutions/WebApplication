@@ -23,8 +23,7 @@ angular
     .module('powerCloud', [
         'ui.router',
         'ngAnimate',
-        'highcharts-ng',
-        'angular-loading-bar'
+        'highcharts-ng'
     ])
     .config(function($stateProvider, $urlRouterProvider) {
 
@@ -52,7 +51,8 @@ angular
             .state('overview', {
                 url: '/overview',
                 parent: 'dashboard',
-                templateUrl: 'views/dashboard/overview.html'
+                templateUrl: 'views/dashboard/overview.html',
+                controller: 'OverviewCtrl'
             })
             .state('devices', {
                 url: '/devices',

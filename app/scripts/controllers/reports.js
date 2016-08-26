@@ -59,7 +59,7 @@ angular.module('powerCloud')
              var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
-             dateSelected.day = "23";
+             dateSelected.day = "24";
              var deviceSelected = id;
 
              var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
@@ -75,6 +75,7 @@ angular.module('powerCloud')
                      temp.push(d.val().datetime * 1000);
                      temp.push(d.val().current);
                      $scope.tempCurrentData.push(temp);
+
                  });
 
                  $scope.chartConfig.loading = false;

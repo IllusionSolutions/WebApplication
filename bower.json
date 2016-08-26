@@ -10,15 +10,17 @@
     "bootstrap-btn-outline-rounded": "~0.0.3",
     "angular-animate": "~1.3.15",
     "firebase": "^3.3.0",
-    "highcharts": "^4.2.6",
     "highcharts-ng": "^0.0.12",
     "bootstrap": "^3.3.7",
-    "angular-loading-bar": "^0.9.0"
+    "material-design-icons": "^2.2.3",
+    "highcharts": "^4.2.6",
+    "ngprogress": "^1.1.3"
   },
   "devDependencies": {
     "angular-mocks": "~1.3.0"
   },
   "resolutions": {
-    "angular": "1.3.14"
+    "angular": "1.5.8",
+    "angular-animate": "^1.4.8"
   }
 }
