@@ -69,7 +69,8 @@ angular
             .state('profile', {
                 url: '/profile',
                 parent: 'dashboard',
-                templateUrl: 'views/dashboard/profile.html'
+                templateUrl: 'views/dashboard/profile.html',
+                controller: 'ProfileCtrl'
             });
 
     });

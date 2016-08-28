@@ -71,14 +71,11 @@ angular.module('powerCloud')
 
              data.once('value').then(function(snapshot)
              {
-
                  snapshot.forEach(function(d) {
                      var temp = [];
-
                      temp.push(d.val().datetime * 1000);
                      temp.push(d.val().current);
                      $scope.tempCurrentData.push(temp);
-
                  });
 
                  $scope.chartConfig.loading = false;

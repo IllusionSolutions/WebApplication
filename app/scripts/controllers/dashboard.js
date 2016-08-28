@@ -10,12 +10,8 @@
  */
 
 angular.module('powerCloud')
-    .controller('DashboardCtrl', function($scope, $state, ngProgressFactory) {
+    .controller('DashboardCtrl', function($scope, $state) {
         $scope.$state = $state;
-
-        $scope.progressbar = ngProgressFactory.createInstance();
-        $scope.progressbar.setColor('#ffe11c');
-        $scope.progressbar.height = '3px';
 
         $scope.allDevices = [];
         fetchDevices();
@@ -40,14 +36,12 @@ angular.module('powerCloud')
         function fetchDevices()
         {
             var referenceLink = "/meta_data";
-            $scope.progressbar.start();
             var data = firebase.database().ref(referenceLink);
 
             data.once('value').then(function(snapshot) {
                 snapshot.forEach(function(d) {
                     $scope.allDevices.push(d.val());
                 });
-                $scope.progressbar.complete();
                 $scope.$apply();
             });
         }

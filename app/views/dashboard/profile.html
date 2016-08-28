@@ -1,6 +1,42 @@
 <!-- Profile Page, user can change profile settings, email, password, 2-factor, add/remove/modify devices etc -->
-<div>
+<div >
     <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Overview</a>
     <h2>Profile Settings</h2>
 
+    <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
+        <h4>Account Settings</h4>
+        <hr />
+        <form>
+            <div class="form-group">
+                <label for="changeEmailAddress">Change Email address: </label>
+                <input type="email" class="form-control" id="changeEmailAddress">
+                <br/>
+                <button type="submit" class="btn btn-primary">Change Email</button>
+            </div>
+        </form>
+
+        <form>
+            <div class="form-group">
+                <label for="oldPassword">Old Password: </label>
+                <input type="password" class="form-control" id="oldPassword">
+                <br/>
+                <label for="newPassword">New Password: </label>
+                <input type="password" class="form-control" id="newPassword">
+                <br/>
+                <label for="newPasswordRepeat">Repeat New Password: </label>
+                <input type="password" class="form-control" id="newPasswordRepeat">
+            </div>
+            <button type="submit" class="btn btn-primary">Change Password</button>
+        </form>
+    </div>
+
+    <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
+        <h4>Particle.io Settings</h4>
+        <hr />
+    </div>
+
+    <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
+        <h4>Device Settings</h4>
+
+    </div>
 </div>
