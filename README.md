@@ -4,10 +4,18 @@ Measures electrical data, calculates relevant power measurements, and stores it 
 
 ### Installation
 
-Once the repository has been cloned, ensure that the following is installed:
+Once the repository has been cloned, ensure that the following are installed:
+<br/>
 [NodeJS](https://nodejs.org/en/)
+<br/>
 [Bower](https://bower.io/)
+<br/>
 [Gulp](http://gulpjs.com/)
+
+Run the following commands: <br/>
+` $ bower install ` <br/>
+` $ npm install `
+
 
 ### Running the Project
 
