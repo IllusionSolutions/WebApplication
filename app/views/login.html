@@ -1,9 +1,8 @@
 <!-- Main login.html page, controlled by login.js -->
-<div class="login-page">
+<div style="overflow: hidden" class="login-page">
     <div class="row">
         <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4">
             <img src="images/flat-avatar.png" width="60%" height="60%" />
-            <!-- <h1>PowerCloud</h1> -->
             <form role="form" ng-submit="submit()">
 
                 <div class="form-content">
@@ -14,9 +13,13 @@
                     <div class="form-group">
                         <input ng-model="user.password" type="password" class="form-control input-underline input-lg" id="password" placeholder="Password">
                     </div>
-                </div>
 
-                <button type="submit" class="btn btn-white btn-outline btn-lg btn-rounded">Login</button>
+                    <button  type="submit" class="btn btn-white btn-outline btn-lg btn-rounded">Login</button>
+
+                    <div ng-show="errorVal" style="margin: 4%;" class="alert alert-danger" role="alert" >
+                        <strong>{{errorCode}}</strong><br />{{errorMessage}}
+                    </div>
+                </div>
             </form>
         </div>
     </div>
