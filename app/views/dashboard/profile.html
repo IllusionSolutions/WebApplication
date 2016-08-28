@@ -9,7 +9,7 @@
         <form>
             <div class="form-group">
                 <label for="changeEmailAddress">Change Email address: </label>
-                <input type="email" class="form-control" id="changeEmailAddress">
+                <input ng-model="changeEmail" type="email" class="form-control" id="changeEmailAddress">
                 <br/>
                 <button type="submit" class="btn btn-primary">Change Email</button>
             </div>
@@ -18,13 +18,13 @@
         <form>
             <div class="form-group">
                 <label for="oldPassword">Old Password: </label>
-                <input type="password" class="form-control" id="oldPassword">
+                <input ng-model="oldPassChange" type="password" class="form-control" id="oldPassword">
                 <br/>
                 <label for="newPassword">New Password: </label>
-                <input type="password" class="form-control" id="newPassword">
+                <input ng-model="newPassChange" type="password" class="form-control" id="newPassword">
                 <br/>
                 <label for="newPasswordRepeat">Repeat New Password: </label>
-                <input type="password" class="form-control" id="newPasswordRepeat">
+                <input ng-model="newPassRepeatChange" type="password" class="form-control" id="newPasswordRepeat">
             </div>
             <button type="submit" class="btn btn-primary">Change Password</button>
         </form>
@@ -33,10 +33,22 @@
     <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
         <h4>Particle.io Settings</h4>
         <hr />
+        <form>
+            <div class="form-group">
+                <label for="particleEmail">Particle.io Email</label>
+                <input autocomplete="off" ng-model="particleEmail" type="email" class="form-control" id="particleEmail">
+                <br/>
+                <label for="particlePass">Particle.io Password: </label>
+                <input autocomplete="off" ng-model="particlePass" type="password" class="form-control" id="particlePass">
+            </div>
+            <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="particleSumbit">Login to Particle</button>
+        </form> <br/>
+        <div ng-show="particleLoginSuccess" class="alert alert-success" role="alert">Login Success.</div>
+        <div ng-show="particleLoginFailure" class="alert alert-danger" role="alert">Login Failure. {{particleError}}</div>
     </div>
 
     <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
         <h4>Device Settings</h4>
-
+        <hr />
     </div>
 </div>

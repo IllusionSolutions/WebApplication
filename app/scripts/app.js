@@ -73,4 +73,17 @@ angular
                 controller: 'ProfileCtrl'
             });
 
+    })
+    .service('sharedProperties', function () {
+        var particleAPIToken = null;
+
+        return {
+            getParticleToken: function () {
+                return particleAPIToken;
+            },
+            setParticleToken: function(value) {
+                particleAPIToken = value;
+            }
+        };
     });
+

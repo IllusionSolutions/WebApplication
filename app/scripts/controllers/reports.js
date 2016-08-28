@@ -9,15 +9,18 @@
  * Controller of powerCloud
  */
 angular.module('powerCloud')
-    .controller('ReportsCtrl', function($scope, $state, ngProgressFactory) {
+    .controller('ReportsCtrl', function($scope, $state, ngProgressFactory, sharedProperties) {
         $scope.$state = $state;
 
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
 
+        var particle = new Particle();
         var device = $scope.selectedDevice;
         var device_ID = $scope.deviceID;
+        console.log(device_ID);
+        console.log(sharedProperties.getParticleToken());
 
         $scope.tempCurrentData = [];
         $scope.tempCategories = [];
@@ -63,7 +66,7 @@ angular.module('powerCloud')
              var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
-             dateSelected.day = "24";
+             dateSelected.day = "27";
              var deviceSelected = id;
              $scope.progressbar.start();
              var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
@@ -83,6 +86,26 @@ angular.module('powerCloud')
                  $scope.$apply();
              });
 
+        }
+
+        $scope.toggleDevice = function()
+        {
+            var authToken = sharedProperties.getParticleToken();
+            if (authToken != null)
+            {
+                var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'RandomShit', auth: authToken });
+
+                fnPr.then(
+                    function(data) {
+                        console.log('Function called succesfully:', data);
+                    }, function(err) {
+                        console.log('An error occurred:', err);
+                    });
+            }
+            else
+            {
+                console.log('Please log in to Particle. Auth token null');
+            }
         }
 
     });
