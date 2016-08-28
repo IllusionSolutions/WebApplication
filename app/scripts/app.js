@@ -23,7 +23,8 @@ angular
     .module('powerCloud', [
         'ui.router',
         'ngAnimate',
-        'highcharts-ng'
+        'highcharts-ng',
+        'ngProgress'
     ])
     .config(function($stateProvider, $urlRouterProvider) {
 

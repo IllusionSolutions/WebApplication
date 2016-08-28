@@ -9,8 +9,12 @@
  * Controller of powerCloud
  */
 angular.module('powerCloud')
-    .controller('ReportsCtrl', function($scope, $state) {
+    .controller('ReportsCtrl', function($scope, $state, ngProgressFactory) {
         $scope.$state = $state;
+
+        $scope.progressbar = ngProgressFactory.createInstance();
+        $scope.progressbar.setColor('#ffe11c');
+        $scope.progressbar.height = '3px';
 
         var device = $scope.selectedDevice;
         var device_ID = $scope.deviceID;
@@ -61,11 +65,10 @@ angular.module('powerCloud')
              dateSelected.month = "7";
              dateSelected.day = "24";
              var deviceSelected = id;
-
+             $scope.progressbar.start();
              var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
              var data = firebase.database().ref(referenceLink);
 
-            console.log(referenceLink);
              data.once('value').then(function(snapshot)
              {
 
@@ -79,6 +82,7 @@ angular.module('powerCloud')
                  });
 
                  $scope.chartConfig.loading = false;
+                 $scope.progressbar.complete();
                  $scope.$apply();
              });
 

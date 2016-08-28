@@ -11,6 +11,7 @@
 angular.module('powerCloud')
     .controller('LoginCtrl', function($scope, $location) {
         $scope.submit = function() {
+
         $scope.errorVal = false;
 
             var email = $scope.user.email;
