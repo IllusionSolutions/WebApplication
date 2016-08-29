@@ -22,8 +22,31 @@ angular.module('powerCloud')
         console.log(device_ID);
         console.log(sharedProperties.getParticleToken());
 
+        var i;
+
+        $scope.voltage = 0.0;
+
         $scope.tempCurrentData = [];
+        $scope.tempPowerData = [];
+        $scope.tempCostData = [];
+        $scope.tempEmissionData = [];
         $scope.tempCategories = [];
+
+        $scope.maxCurrent = 0;
+        $scope.minCurrent = 0;
+        $scope.avgCurrent = 0.0;
+
+        $scope.maxEmission = 0;
+        $scope.minEmission = 0;
+        $scope.avgEmission = 0.0;
+
+        $scope.maxCost = 0;
+        $scope.minCost = 0;
+        $scope.avgCost = 0.0;
+
+        $scope.maxPower = 0;
+        $scope.minPower = 0;
+        $scope.avgPower = 0.0;
 
         $scope.chartConfig = {
             options: {
@@ -61,6 +84,96 @@ angular.module('powerCloud')
         };
         fetchData(device_ID);
 
+
+        function calculations(Current, Power, Cost, Emission)
+        {
+            var log = [];
+
+            $scope.maxCurrent = 0;
+            $scope.minCurrent = 10000;
+            $scope.avgCurrent = 0.0;
+
+            angular.forEach(Current, function(value, key)
+            {
+                if($scope.maxCurrent < parseFloat(value[1]))
+                {
+                    $scope.maxCurrent = parseFloat(value[1]);
+                }
+
+                if($scope.minCurrent > parseFloat(value[1]))
+                {
+                    $scope.minCurrent = parseFloat(value[1]);
+                }
+
+                $scope.avgCurrent += parseFloat(value[1]);
+            }, log);
+            $scope.avgCurrent = $scope.avgCurrent / Current.length;
+            $scope.avgCurrent = $scope.avgCurrent.toFixed(2);
+
+            $scope.maxPower = 0;
+            $scope.minPower = 10000;
+            $scope.avgPower = 0.0;
+
+            angular.forEach(Power, function(value, key)
+            {
+                if($scope.maxPower < parseFloat(value))
+                {
+                    $scope.maxPower = parseFloat(value);
+                }
+
+                if($scope.minPower > parseFloat(value))
+                {
+                    $scope.minPower = parseFloat(value);
+                }
+
+                $scope.avgPower += parseFloat(value);
+            }, log);
+            $scope.avgPower = $scope.avgPower / Power.length;
+            $scope.avgPower = $scope.avgPower.toFixed(2);
+
+            $scope.maxEmission = 0;
+            $scope.minEmission = 10000;
+            $scope.avgEmission = 0.0;
+
+            angular.forEach(Emission, function(value, key)
+            {
+                if($scope.maxEmission < parseFloat(value))
+                {
+                    $scope.maxEmission = parseFloat(value);
+                }
+
+                if($scope.minEmission > parseFloat(value))
+                {
+                    $scope.minEmission = parseFloat(value);
+                }
+
+                $scope.avgEmission += parseFloat(value);
+            }, log);
+            $scope.avgEmission = $scope.avgEmission / Emission.length;
+            $scope.avgEmission = $scope.avgEmission.toFixed(2);
+
+            $scope.maxCost = 0;
+            $scope.minCost = 10000;
+            $scope.avgCost = 0.0;
+
+            angular.forEach(Cost, function(value, key)
+            {
+                if($scope.maxCost < parseFloat(value))
+                {
+                    $scope.maxCost = parseFloat(value);
+                }
+
+                if($scope.minCost > parseFloat(value))
+                {
+                    $scope.minCost = parseFloat(value);
+                }
+
+                $scope.avgCost += parseFloat(value);
+            }, log);
+            $scope.avgCost = $scope.avgCost / Cost.length;
+            $scope.avgCost = $scope.avgCost.toFixed(2);
+        }
+
         function fetchData(id)
         {
              var dateSelected = {};
@@ -75,12 +188,30 @@ angular.module('powerCloud')
              data.once('value').then(function(snapshot)
              {
                  snapshot.forEach(function(d) {
-                     var temp = [];
-                     temp.push(d.val().datetime * 1000);
-                     temp.push(d.val().current);
-                     $scope.tempCurrentData.push(temp);
+                     var temp1 = [];
+                     var temp2 = [];
+                     var temp3 = [];
+                     var temp4 = [];
+
+                     temp1.push(d.val().datetime * 1000);
+                     temp1.push(d.val().current);
+
+                     temp2.push(d.val().power);
+
+                     temp3.push(d.val().calculations.cost);
+
+                     temp4.push(d.val().calculations.emission);
+
+                     $scope.voltage = d.val().voltage;
+
+
+                     $scope.tempCurrentData.push(temp1);
+                     $scope.tempPowerData.push(temp2);
+                     $scope.tempCostData.push(temp3);
+                     $scope.tempEmissionData.push(temp4);
                  });
 
+                 calculations($scope.tempCurrentData,$scope.tempPowerData,$scope.tempCostData,$scope.tempEmissionData);
                  $scope.chartConfig.loading = false;
                  $scope.progressbar.complete();
                  $scope.$apply();

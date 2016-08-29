@@ -22,8 +22,7 @@ angular.module('powerCloud')
             $scope.selectedDevice = deviceSelected;
         };
 
-        $scope.logout = function()
-        {
+        $scope.logout = function() {
             firebase.auth().signOut().then(function() {
                 // Sign-out successful.
                 alert("Successfully signed out.");
@@ -45,5 +44,4 @@ angular.module('powerCloud')
                 $scope.$apply();
             });
         }
-
     });

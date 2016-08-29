@@ -5,10 +5,50 @@
     <h4>Connected to the {{selectedDevice.appliance}}</h4>
 
     <div class="row">
-        <div class="col-sm-15 col-md-12">
+        <br/><br/><br/>
+        <div class="col-sm-15 col-md-16">
+
             <button ng-click="toggleDevice()" type="button" class="btn btn-primary">Switch Off</button>
-            <highchart style="margin-right: 1%;" class="panel panel-default col-sm-8 col-md-8" id="currentChart" config="chartConfig"></highchart>
+            <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="currentChart" config="chartConfig"></highchart>
+
+            <div class="col-sm-15 col-md-5 panel panel-default">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Current (A)</th>
+                            <th>Power (KWh)</th>
+                            <th>Cost (R)</th>
+                            <th>CO2 Emissions (Kg)</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>Max</td>
+                        <td>{{maxCurrent}}</td>
+                        <td>{{maxPower}}</td>
+                        <td>{{maxCost}}</td>
+                        <td>{{maxEmission}}</td>
+                    </tr>
+                    <tr>
+                        <td>Min</td>
+                        <td>{{minCurrent}}</td>
+                        <td>{{minPower}}</td>
+                        <td>{{minCost}}</td>
+                        <td>{{minEmission}}</td>
+                    </tr>
+                    <tr>
+                        <td>Average</td>
+                        <td>{{avgCurrent}}</td>
+                        <td>{{avgPower}}</td>
+                        <td>{{avgCost}}</td>
+                        <td>{{avgEmission}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="thumbnail col-sm-15 col-md-2 panel panel-default">
+                <h4>Voltage : {{voltage}}</h4>
+                <h4>Power Factor : 1</h4>
+            </div>
         </div>
     </div>
-
 </div>
