@@ -3,9 +3,16 @@
     <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Overview</a>
     <h2>{{selectedDevice.name}}</h2>
     <h4>Connected to the {{selectedDevice.appliance}}</h4>
-
+    <div class="thumbnail">
+        <ul class="nav nav-pills nav-justified">
+            <li role="presentation" class="active"><a href="#">Overview</a></li>
+            <li role="presentation"><a href="#">Kilowatt Hours</a></li>
+            <li role="presentation"><a href="#">Current</a></li>
+            <li role="presentation"><a href="#">Real-Time</a></li>
+            <li role="presentation"><a href="#">Settings</a></li>
+        </ul>
+    </div>
     <div class="row">
-        <br/><br/><br/>
         <div class="col-sm-15 col-md-16">
 
             <button ng-click="toggleDevice()" type="button" class="btn btn-primary">Switch Off</button>
@@ -23,25 +30,32 @@
                         </tr>
                     </thead>
                     <tr>
-                        <td>Max</td>
+                        <td><h5>Max</h5></td>
                         <td>{{maxCurrent}}</td>
                         <td>{{maxPower}}</td>
                         <td>{{maxCost}}</td>
                         <td>{{maxEmission}}</td>
                     </tr>
                     <tr>
-                        <td>Min</td>
+                        <td><h5>Min</h5></td>
                         <td>{{minCurrent}}</td>
                         <td>{{minPower}}</td>
                         <td>{{minCost}}</td>
                         <td>{{minEmission}}</td>
                     </tr>
                     <tr>
-                        <td>Average</td>
+                        <td><h5>Average</h5></td>
                         <td>{{avgCurrent}}</td>
                         <td>{{avgPower}}</td>
                         <td>{{avgCost}}</td>
                         <td>{{avgEmission}}</td>
+                    </tr>
+                    <tr>
+                        <td><h5>Total</h5></td>
+                        <td>{{totalCurrent}}</td>
+                        <td>{{totalPower}}</td>
+                        <td>{{totalCost}}</td>
+                        <td>{{totalEmission}}</td>
                     </tr>
                 </table>
             </div>
