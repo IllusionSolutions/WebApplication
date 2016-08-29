@@ -33,18 +33,22 @@ angular.module('powerCloud')
         $scope.maxCurrent = 0;
         $scope.minCurrent = 0;
         $scope.avgCurrent = 0.0;
+        $scope.totalCurrent = 0;
 
         $scope.maxEmission = 0;
         $scope.minEmission = 0;
         $scope.avgEmission = 0.0;
+        $scope.totalEmission = 0;
 
         $scope.maxCost = 0;
         $scope.minCost = 0;
         $scope.avgCost = 0.0;
+        $scope.totalCost = 0;
 
         $scope.maxPower = 0;
         $scope.minPower = 0;
         $scope.avgPower = 0.0;
+        $scope.totalPower = 0;
 
         $scope.chartConfig = {
             options: {
@@ -105,6 +109,7 @@ angular.module('powerCloud')
 
                 $scope.avgCurrent += parseFloat(value[1]);
             }, log);
+            $scope.totalCurrent = $scope.avgCurrent.toFixed(2);
             $scope.avgCurrent = $scope.avgCurrent / Current.length;
             $scope.avgCurrent = $scope.avgCurrent.toFixed(2);
 
@@ -126,6 +131,7 @@ angular.module('powerCloud')
 
                 $scope.avgPower += parseFloat(value);
             }, log);
+            $scope.totalPower = $scope.avgPower.toFixed(2);
             $scope.avgPower = $scope.avgPower / Power.length;
             $scope.avgPower = $scope.avgPower.toFixed(2);
 
@@ -147,6 +153,7 @@ angular.module('powerCloud')
 
                 $scope.avgEmission += parseFloat(value);
             }, log);
+            $scope.totalEmission = $scope.avgEmission.toFixed(2);
             $scope.avgEmission = $scope.avgEmission / Emission.length;
             $scope.avgEmission = $scope.avgEmission.toFixed(2);
 
@@ -168,6 +175,7 @@ angular.module('powerCloud')
 
                 $scope.avgCost += parseFloat(value);
             }, log);
+            $scope.totalCost = $scope.avgCost.toFixed(2);
             $scope.avgCost = $scope.avgCost / Cost.length;
             $scope.avgCost = $scope.avgCost.toFixed(2);
         }
