@@ -48,7 +48,14 @@
     </div>
 
     <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
-        <h4>Device Settings</h4>
+        <h4>Firebase Settings</h4>
         <hr />
+        <form>
+            <div class="form-group">
+                <label for="firebaseURL">Realtime Database URL</label>
+                <input autocomplete="off" ng-model="particleEmail" type="text" class="form-control" id="firebaseURL">
+            </div>
+            <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Set URL</button>
+        </form>
     </div>
 </div>

@@ -22,6 +22,10 @@ angular.module('powerCloud')
             $scope.selectedDevice = deviceSelected;
         };
 
+        $scope.launchSettings = function(device){
+            $scope.settingsDevice = device;
+        };
+
         $scope.logout = function() {
             firebase.auth().signOut().then(function() {
                 // Sign-out successful.

@@ -19,8 +19,6 @@ angular.module('powerCloud')
         var particle = new Particle();
         var device = $scope.selectedDevice;
         var device_ID = $scope.deviceID;
-        console.log(device_ID);
-        console.log(sharedProperties.getParticleToken());
 
         var i;
 

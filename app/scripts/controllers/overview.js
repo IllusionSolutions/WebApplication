@@ -131,7 +131,6 @@ angular.module('powerCloud')
                         pow.push(stuff.val().datetime * 1000);
                         pow.push(stuff.val().power);
 
-
                         $scope.allCurrentData.push(curr);
                         $scope.allPowerData.push(pow);
                     });

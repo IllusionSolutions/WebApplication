@@ -16,7 +16,7 @@ gulp.task('styles', function() {
 
 gulp.task('jshint', function() {
   return gulp.src('app/scripts/**/*.js')
-    .pipe($.jshint())
+    .pipe($.jshint());
     //.pipe($.jshint.reporter('jshint-stylish'))
     //.pipe($.jshint.reporter('fail'));
 });
@@ -26,7 +26,7 @@ gulp.task('jscs', function() {
     .pipe($.jscs());
 });
 
-gulp.task('html', ['styles'], function() {
+gulp.task('html' , ['styles'], function() {
   var lazypipe = require('lazypipe');
   var cssChannel = lazypipe()
     .pipe($.csso)
@@ -111,19 +111,17 @@ gulp.task('test', function(done) {
 gulp.task('wiredep', function() {
   var wiredep = require('wiredep').stream;
   var exclude = [
-    'bootstrap',
-    'jquery',
     'es5-shim',
     'json3',
     'angular-scenario'
   ];
 
   gulp.src('app/styles/*.less')
-    .pipe(wiredep())
+    //.pipe(wiredep())
     .pipe(gulp.dest('app/styles'));
 
   gulp.src('app/*.html')
-    .pipe(wiredep({exclude: exclude}))
+    .pipe(wiredep())
     .pipe(gulp.dest('app'));
 
   gulp.src('test/*.js')
@@ -137,12 +135,12 @@ gulp.task('watch', ['connect'], function() {
   // watch for changes
   gulp.watch([
     'app/**/*.html',
-    '.tmp/styles/**/*.css',
+    //'.tmp/styles/**/*.css',
     'app/scripts/**/*.js',
     'app/images/**/*'
   ]).on('change', $.livereload.changed);
 
-  gulp.watch('app/styles/**/*.less', ['styles']);
+  //gulp.watch('app/styles/**/*.less', ['styles']);
   gulp.watch('bower.json', ['wiredep']);
 });
 
