@@ -24,7 +24,8 @@ angular
         'ui.router',
         'ngAnimate',
         'highcharts-ng',
-        'ngProgress'
+        'ngProgress',
+        '720kb.datepicker'
     ])
     .config(function($stateProvider, $urlRouterProvider) {
 

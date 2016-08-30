@@ -106,7 +106,15 @@
         <div id="currentView" role="tabpanel" class="tab-pane">
             <div class="row">
                 <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="currentChart" config="chartConfig"></highchart>
+                <div class="col-sm-2 col-md-2 well well-sm pull-right" >
+                    <h5>Selected Date:</h5>
+                    <datepicker date-format="dd MMMM yyyy">
+                        <input id="Text1" name="date" class="col-sm-11 col-md-11" ng-model="date.value" type="text"/>
+                    </datepicker>
+                </div>
             </div>
+
+
         </div>
 
         <div id="realtimeView" role="tabpanel" class="tab-pane">
