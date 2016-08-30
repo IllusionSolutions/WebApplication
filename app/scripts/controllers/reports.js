@@ -12,6 +12,11 @@ angular.module('powerCloud')
     .controller('ReportsCtrl', function($scope, $state, ngProgressFactory, sharedProperties) {
         $scope.$state = $state;
 
+        if($scope.date === undefined) {
+            $scope.date = {};
+            $scope.date.value = new Date();
+        }
+
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
@@ -56,7 +61,44 @@ angular.module('powerCloud')
                     type: 'areaspline',
                     zoomType: 'x',
                     panning: true,
-                    panKey: 'shift'
+                    panKey: 'shift',
+                    events: {
+
+                        click: function () {
+
+                        },
+                        redraw: function () {
+                            var date2 = new Date($scope.date.value);
+                            console.log(date2);
+                            $scope.tempCurrentData=[];
+                            var dateSelected = {};
+                            dateSelected.year = date2.getFullYear();
+                            dateSelected.month = date2.getMonth();
+                            dateSelected.day = date2.getDate() - 1;
+                            console.log(dateSelected.year);
+                            console.log(dateSelected.month);
+                            console.log(dateSelected.day);
+
+                            var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+                            var data = firebase.database().ref(referenceLink);
+                            console.log(referenceLink);
+                            data.once('value').then(function (snapshot) {
+                                snapshot.forEach(function (d) {
+                                    var temp = [];
+
+                                    temp.push(d.val().datetime * 1000);
+                                    temp.push(d.val().current);
+                                    $scope.tempCurrentData.push(temp);
+
+                                });
+                                $scope.chartConfig.series[0].data = $scope.tempCurrentData;
+                                console.log($scope.chartConfig.series[0].data);
+                                $scope.chartConfig.loading = false;
+                                $scope.$apply();
+                                $scope.chartConfig.options.chart.events.redraw();
+                            })
+                        }
+                    }
                 }
             },
             yAxis: {
@@ -186,6 +228,7 @@ angular.module('powerCloud')
              dateSelected.year = "2016";
              dateSelected.month = "7";
              dateSelected.day = "27";
+             $scope.deviceID = id;
              var deviceSelected = id;
              $scope.progressbar.start();
              var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
