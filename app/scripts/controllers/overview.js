@@ -17,7 +17,17 @@ angular.module('powerCloud')
         $scope.progressbar.height = '3px';
 
         $scope.allCurrentData = [];
+        $scope.allCurrentDataPI = [];
+
         $scope.allPowerData = [];
+        $scope.allPowerDataPI = [];
+
+        $scope.device = [];
+
+        $scope.name = "";
+        $scope.totalCurrent = 0;
+        $scope.totalPower = 0;
+
 
         $scope.overviewCurrentConfig = {
             options: {
@@ -89,6 +99,83 @@ angular.module('powerCloud')
             loading: true
         };
 
+        $scope.overviewCurrentPIConfig = {
+            options: {
+                chart:
+                {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                }
+            },
+            title: {
+                text: 'Current Usage Percentage'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Devices',
+                colorByPoint: true,
+                data: $scope.allCurrentDataPI
+            }],
+
+            loading : true
+        };
+
+
+        $scope.overviewPowerPIConfig = {
+            options: {
+                chart:
+                {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                }
+            },
+            title: {
+                text: 'Power Usage Percentage'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Devices',
+                colorByPoint: true,
+                data: $scope.allPowerDataPI
+            }],
+
+            loading : true
+        };
+
         var referenceLink = "/statistics";
         var data = firebase.database().ref(referenceLink);
         var dataSnapshot;
@@ -101,10 +188,10 @@ angular.module('powerCloud')
         {
             $scope.progressbar.start();
             fetchAllData();
-            populateCurrentPie();
         }
         else
         {
+
         }
 
         function fetchAllData()
@@ -113,21 +200,24 @@ angular.module('powerCloud')
             var data = firebase.database().ref(referenceLink);
             var dataSnapshot;
 
-            data.once('value').then(function(snapshot) {
+            data.once('value').then(function(snapshot)
+            {
                 snapshot.forEach(function(d)
                 {
+                    var id = d.key;
                     var temp;
-                    temp = d.child("2016/7/24");
+                    temp = d.child("2016/7/28");
 
                     temp.forEach(function(stuff)
                     {
                         var curr = [];
-                        var pow = [];
-                        var vol = [];
+                        var pow  = [];
 
+                        curr.push(id);
                         curr.push(stuff.val().datetime * 1000);
                         curr.push(stuff.val().current);
 
+                        pow.push(id);
                         pow.push(stuff.val().datetime * 1000);
                         pow.push(stuff.val().power);
 
@@ -136,16 +226,136 @@ angular.module('powerCloud')
                     });
                 });
 
+                populateCurrentPi();
+                populatePowerPi();
                 $scope.overviewCurrentConfig.loading = false;
                 $scope.overviewPowerConfig.loading = false;
+                $scope.overviewCurrentPIConfig.loading = false;
+                $scope.overviewPowerPIConfig.loading = false;
                 $scope.progressbar.complete();
                 $scope.$apply();
             });
-
         }
 
-        function populateCurrentPie()
+        function populateCurrentPi()
         {
+            var id;
+            var length = $scope.allCurrentData.length;
+            var log = [];
+            var devices = [];
+            var count = 0;
 
+            angular.forEach($scope.allCurrentData, function(value, key)
+            {
+                id = value[0];
+                console.log("Value id " + value[0]);
+                if(!contains(devices,id))
+                {
+                    devices.push(id);
+                }
+                $scope.totalCurrent += parseFloat(value[2]);
+            }, log);
+
+            var currentID = devices[0];
+            var specificTotal = 0;
+            var percent = 0.0;
+            var temp = [];
+            var length = $scope.allCurrentData.length;
+
+            angular.forEach($scope.allCurrentData, function(value, key)
+            {
+                if(count == 0)
+                {
+                    temp.push(currentID);
+                }
+
+                if(value[0] != currentID)
+                {
+                    percent = (specificTotal/$scope.totalCurrent)*100.0;
+                    temp.push(percent);
+
+                    $scope.allCurrentDataPI.push(temp);
+                    temp = [];
+
+                    currentID = value[0];
+                    temp.push(currentID);
+                    specificTotal = 0.0;
+                }
+
+                specificTotal += parseFloat(value[2]);
+                count++;
+                if(count == length)
+                {
+                    percent = (specificTotal/$scope.totalCurrent)*100.0;
+                    temp.push(percent);
+                    $scope.allCurrentDataPI.push(temp);
+                }
+            }, log);
+        }
+
+        function populatePowerPi()
+        {
+            var id;
+            var length = $scope.allPowerData.length;
+            var log = [];
+            var devices = [];
+            var count = 0;
+
+            angular.forEach($scope.allPowerData, function(value, key)
+            {
+                id = value[0];
+                console.log("Value id " + value[0]);
+                if(!contains(devices,id))
+                {
+                    devices.push(id);
+                }
+                $scope.totalPower += parseFloat(value[2]);
+            }, log);
+
+            var currentID = devices[0];
+            var specificTotal = 0;
+            var percent = 0.0;
+            var temp = [];
+            var length = $scope.allPowerData.length;
+
+            angular.forEach($scope.allPowerData, function(value, key)
+            {
+                if(count == 0)
+                {
+                    temp.push(currentID);
+                }
+
+                if(value[0] != currentID)
+                {
+                    percent = (specificTotal/$scope.totalPower)*100.0;
+                    temp.push(percent);
+
+                    $scope.allPowerDataPI.push(temp);
+                    temp = [];
+
+                    currentID = value[0];
+                    temp.push(currentID);
+                    specificTotal = 0.0;
+                }
+
+                specificTotal += parseFloat(value[2]);
+                count++;
+                if(count == length)
+                {
+                    percent = (specificTotal/$scope.totalPower)*100.0;
+                    temp.push(percent);
+                    $scope.allPowerDataPI.push(temp);
+                }
+            }, log);
+        }
+
+        function contains(device, id)
+        {
+            for(var i = 0 ; i < device.length ; i++)
+            {
+                if(device[i] == id)
+                    return true;
+            }
+            return false;
         }
     });

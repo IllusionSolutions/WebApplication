@@ -55,7 +55,7 @@ angular.module('powerCloud')
         $scope.avgPower = 0.0;
         $scope.totalPower = 0;
 
-        $scope.chartConfig = {
+        $scope.currentChartConfig = {
             options: {
                 chart: {
                     type: 'areaspline',
@@ -126,6 +126,41 @@ angular.module('powerCloud')
 
             loading: true
         };
+
+        $scope.powerChartConfig = {
+            options: {
+                chart: {
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'KWh'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                gridLineWidth: 1,
+                title: {
+                    text: 'Time'
+                }
+            },
+            tooltip: {
+                crosshairs: true
+            },
+            title: {
+                text: 'Power'
+            },
+            series: [{
+                name: 'KWh',
+                data: $scope.tempPowerData
+            }],
+
+            loading: true
+        };
         fetchData(device_ID);
 
 
@@ -161,17 +196,17 @@ angular.module('powerCloud')
 
             angular.forEach(Power, function(value, key)
             {
-                if($scope.maxPower < parseFloat(value))
+                if($scope.maxPower < parseFloat(value[1]))
                 {
-                    $scope.maxPower = parseFloat(value);
+                    $scope.maxPower = parseFloat(value[1]);
                 }
 
-                if($scope.minPower > parseFloat(value))
+                if($scope.minPower > parseFloat(value[1]))
                 {
-                    $scope.minPower = parseFloat(value);
+                    $scope.minPower = parseFloat(value[1]);
                 }
 
-                $scope.avgPower += parseFloat(value);
+                $scope.avgPower += parseFloat(value[1]);
             }, log);
             $scope.totalPower = $scope.avgPower.toFixed(2);
             $scope.avgPower = $scope.avgPower / Power.length;
@@ -245,6 +280,7 @@ angular.module('powerCloud')
                      temp1.push(d.val().datetime * 1000);
                      temp1.push(d.val().current);
 
+                     temp2.push(d.val().datetime * 1000);
                      temp2.push(d.val().power);
 
                      temp3.push(d.val().calculations.cost);
@@ -261,7 +297,8 @@ angular.module('powerCloud')
                  });
 
                  calculations($scope.tempCurrentData,$scope.tempPowerData,$scope.tempCostData,$scope.tempEmissionData);
-                 $scope.chartConfig.loading = false;
+                 $scope.currentChartConfig.loading = false;
+                 $scope.powerChartConfig.loading = false;
                  $scope.progressbar.complete();
                  $scope.$apply();
              });
