@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-sm-15 col-md-16">
                     <div style="padding: 2%;" class="thumbnail col-sm-1 col-md-3">
-                        <h4 class="text-center text-primary"><strong>Voltage:</strong> {{voltage}}</h4>
+                        <h4 class="text-center text-primary"><strong>Voltage Detected:</strong> {{voltage}}</h4>
                         <h4 class="text-center text-warning"><strong>Power Factor:</strong> 1</h4>
                     </div>
 
@@ -32,7 +32,7 @@
 
 
                     <div style="padding: 2%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-2">
-                        <h4><strong>Voltage:</strong> {{voltage}}</h4>
+                        <h4><strong>Last updated:</strong><br/><small><strong>{{lastUpdate.toLocaleDateString()}}</strong><br/>{{lastUpdate.toLocaleTimeString()}}</small></h4>
                     </div>
 
                     <div class="pull-right col-sm-2 col-md-3 thumbnail">
@@ -84,22 +84,19 @@
                         </tr>
 
                         <tfoot>
-                            <th><small><i>Source <a href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator" target="_blank">EPA</a></i></small></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th><small><i>Source: <a href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator" target="_blank">EPA</a></i></small></th>
+                            <th></th> <th></th> <th></th> <th></th>
                         </tfoot>
                     </table>
                 </div>
             </div>
-
 
         </div>
 
         <div id="kwhView" role="tabpanel" class="tab-pane">
             <div class="row">
                 <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="kwhChart" config="kwhChartConfig">
+
             </div>
         </div>
 
@@ -109,12 +106,10 @@
                 <div class="col-sm-2 col-md-2 well well-sm pull-right" >
                     <h5>Selected Date:</h5>
                     <datepicker date-format="dd MMMM yyyy">
-                        <input id="Text1" name="date" class="col-sm-11 col-md-11" ng-model="date.value" type="text"/>
+                        <input id="currentDate" name="date" class="col-sm-11 col-md-11" ng-model="date.value" type="text"/>
                     </datepicker>
                 </div>
             </div>
-
-
         </div>
 
         <div id="realtimeView" role="tabpanel" class="tab-pane">
@@ -133,19 +128,35 @@
                     <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle Power</button>
                 </div>
 
-                <div style="padding: 2%; margin: 1%;"  class="col-md-3 thumbnail">
+                <div id="changeNameDiv" style="padding: 2%; margin: 1%;"  class="col-md-3 thumbnail">
                     <h4 class="text-primary">Device Details</h4>
                     <hr/>
-                    <form>
+                    <form name="deviceNewNameForm">
                         <div class="form-group">
-                            <input autocomplete="off" ng-model="deviceNewName" type="text" class="form-control" id="deviceNewName">
+                            <input pattern="[a-zA-Z0-9]+" placeholder="{{selectedDevice.name}}" autocomplete="off" ng-model="deviceNewName" type="text" class="form-control" id="deviceNewName" name="deviceNewName">
                         </div>
-                        <button style="margin-left: 2%;" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Rename</button>
+                        <button ng-click="changeDeviceName(selectedDevice.id)" style="margin-left: 2%;" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Rename</button>
                     </form>
+                    <div style="margin-top: 5%;" ng-show="changeNameSuccess" class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5>Success</h5>
+                    </div>
+
+                    <div style="margin-top: 5%;" ng-show="changeNameFailure" class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5>Server Error.</h5>
+                    </div>
                 </div>
 
                 <div  style="padding: 2%; margin: 1%;"  class="col-md-4 thumbnail">
                     <h4 class="text-primary">Notification Settings</h4>
+                    <hr/>
+                    <form>
+                        <div class="form-group">
+                            <input placeholder="Notification Email" autocomplete="off" ng-model="notificationEmail" type="text" class="form-control" id="notificationEmail">
+                        </div>
+                        <button style="margin-left: 2%;" type="submit" class="btn btn-primary" id="notificationEmailSubmit">Save</button>
+                    </form>
                 </div>
             </div>
 
@@ -159,6 +170,8 @@
                     </div>
                 </div>
             </div>
+
+
         </div>
     </div>
 </div>

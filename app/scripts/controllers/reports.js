@@ -9,7 +9,7 @@
  * Controller of powerCloud
  */
 angular.module('powerCloud')
-    .controller('ReportsCtrl', function($scope, $location, $state, ngProgressFactory, sharedProperties) {
+    .controller('ReportsCtrl', function($scope, $location, $state, $document, ngProgressFactory, sharedProperties) {
         $scope.$state = $state;
 
         if($scope.date === undefined) {
@@ -17,9 +17,22 @@ angular.module('powerCloud')
             $scope.date.value = new Date();
         }
 
+        $scope.lastUpdate = new Date();
+
         $scope.progressbar = ngProgressFactory.createInstance();
+        $scope.changeNameProgress = ngProgressFactory.createInstance();
+
+
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
+
+
+        //var element = angular.element('#changeNameDiv');
+
+        $scope.changeNameProgress.setParent(document.getElementById('changeNameDiv'));
+        $scope.changeNameProgress.setColor('#ffe11c');
+        $scope.changeNameProgress.height = '3px';
+        console.log($scope.changeNameProgress.getDomElement());
 
         var particle = new Particle();
         var device = $scope.selectedDevice;
@@ -67,19 +80,14 @@ angular.module('powerCloud')
                         },
                         redraw: function () {
                             var date2 = new Date($scope.date.value);
-                            console.log(date2);
                             $scope.tempCurrentData=[];
                             var dateSelected = {};
                             dateSelected.year = date2.getFullYear();
                             dateSelected.month = date2.getMonth();
                             dateSelected.day = date2.getDate() - 1;
-                            console.log(dateSelected.year);
-                            console.log(dateSelected.month);
-                            console.log(dateSelected.day);
 
                             var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
                             var data = firebase.database().ref(referenceLink);
-                            console.log(referenceLink);
                             data.once('value').then(function (snapshot) {
                                 snapshot.forEach(function (d) {
                                     var temp = [];
@@ -90,7 +98,6 @@ angular.module('powerCloud')
 
                                 });
                                 $scope.chartConfig.series[0].data = $scope.tempCurrentData;
-                                console.log($scope.chartConfig.series[0].data);
                                 $scope.chartConfig.loading = false;
                                 $scope.$apply();
                                 $scope.chartConfig.options.chart.events.redraw();
@@ -161,7 +168,6 @@ angular.module('powerCloud')
         };
 
         fetchData(device_ID);
-
 
         function calculations(Current, Power, Cost, Emission)
         {
@@ -271,13 +277,14 @@ angular.module('powerCloud')
                      var temp4 = [];
 
                      var timeMilli = d.val().datetime * 1000;
+
+                     $scope.lastUpdate = new Date(timeMilli);
+
                      temp1.push(timeMilli);
                      temp1.push(d.val().current);
 
                      temp2.push(timeMilli);
                      temp2.push(d.val().power);
-
-                     console.log(d.val().power);
 
                      temp3.push(d.val().calculations.cost);
                      temp4.push(d.val().calculations.emission);
@@ -290,22 +297,21 @@ angular.module('powerCloud')
                  });
 
                  calculations($scope.tempCurrentData,$scope.tempPowerData,$scope.tempCostData,$scope.tempEmissionData);
+                 $scope.progressbar.complete();
 
                  $scope.chartConfig.loading = false;
                  $scope.kwhChartConfig.loading = false;
-                 $scope.progressbar.complete();
                  $scope.$apply();
 
              });
 
         }
 
-        $scope.toggleDevice = function()
-        {
+        $scope.toggleDevice = function() {
             var authToken = sharedProperties.getParticleToken();
             if (authToken != null)
             {
-                var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'RandomShit', auth: authToken });
+                var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'Mothusi', auth: authToken });
 
                 fnPr.then(
                     function(data) {
@@ -318,6 +324,36 @@ angular.module('powerCloud')
             {
                 console.log('Please log in to Particle. Auth token null');
             }
-        }
+        };
+
+
+        $scope.changeNameSuccess = false;
+        $scope.changeNameFailure = false;
+
+        $scope.changeDeviceName = function(id) {
+            $scope.changeNameProgress.start();
+            console.log('Changing name: ' + id);
+            console.log('New name: ' + $scope.deviceNewName);
+
+            var refLink = 'meta_data/' + id + '/';
+            var newName = $scope.deviceNewName;
+
+            firebase.database().ref(refLink).update({
+                name: newName
+            }).catch(function(onReject) {
+
+                $scope.changeNameSuccess = false;
+                $scope.changeNameFailure = true;
+
+                console.log(onReject);
+
+            }).then(function(value) {
+
+                $scope.changeNameSuccess = true;
+                $scope.changeNameFailure = false;
+                $scope.changeNameProgress.complete();
+
+            });
+        };
 
     });
