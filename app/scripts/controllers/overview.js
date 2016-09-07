@@ -12,6 +12,9 @@ angular.module('powerCloud')
     .controller('OverviewCtrl', function($scope, $state, ngProgressFactory) {
         $scope.$state = $state;
 
+        $scope.dateStringBegin = new Date();
+        $scope.dateStringEnd = new Date();
+
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
@@ -23,6 +26,7 @@ angular.module('powerCloud')
         $scope.allPowerDataPI = [];
 
         $scope.device = [];
+        $scope.dateSelected = false;
 
         $scope.name = "";
         $scope.totalCurrent = 0;
@@ -186,8 +190,8 @@ angular.module('powerCloud')
 
         if (dataSnapshot == null)
         {
-            $scope.progressbar.start();
-            fetchAllData();
+
+            //fetchAllData();
         }
         else
         {
@@ -198,34 +202,53 @@ angular.module('powerCloud')
         {
             var referenceLink = "device_data/";
             var data = firebase.database().ref(referenceLink);
-            var dataSnapshot;
+
+            var beginHolder = $scope.dateStringBegin;
+            var endHolder = $scope.dateStringEnd;
+
+            var begin = $scope.dateStringBegin;
+            console.log("Begin Date " + begin);
+            var end = $scope.dateStringEnd;
+            console.log("End Date " + end);
 
             data.once('value').then(function(snapshot)
             {
-                snapshot.forEach(function(d)
+                snapshot.forEach(function (d)
                 {
                     var id = d.key;
                     var temp;
-                    temp = d.child("2016/7/28");
-
-                    temp.forEach(function(stuff)
+                    var count = 0;
+                    while(begin <= end)
                     {
-                        var curr = [];
-                        var pow  = [];
+                        var year = begin.getFullYear();
+                        var month = begin.getMonth();
+                        var day = begin.getDate();
+                        day -= 1;
 
-                        curr.push(id);
-                        curr.push(stuff.val().datetime * 1000);
-                        curr.push(stuff.val().current);
+                        temp = d.child(year + "/" + month + "/" + day);
 
-                        pow.push(id);
-                        pow.push(stuff.val().datetime * 1000);
-                        pow.push(stuff.val().power);
+                        temp.forEach(function (stuff)
+                        {
+                            var curr = [];
+                            var pow = [];
 
-                        $scope.allCurrentData.push(curr);
-                        $scope.allPowerData.push(pow);
-                    });
+                            curr.push(id);
+                            curr.push(stuff.val().datetime * 1000);
+                            curr.push(stuff.val().current);
+
+                            pow.push(id);
+                            pow.push(stuff.val().datetime * 1000);
+                            pow.push(stuff.val().power);
+
+                            $scope.allCurrentData.push(curr);
+                            $scope.allPowerData.push(pow);
+                        });
+                        begin.setDate(begin.getDate() + 1);
+                        count++;
+                    }
+                    begin.setDate(begin.getDate() - count);
                 });
-
+                $scope.progressbar.start();
                 populateCurrentPi();
                 populatePowerPi();
                 $scope.overviewCurrentConfig.loading = false;
@@ -258,6 +281,7 @@ angular.module('powerCloud')
 
             var currentID = devices[0];
             var specificTotal = 0;
+            var ave = 0;
             var percent = 0.0;
             var temp = [];
             var length = $scope.allCurrentData.length;
@@ -271,7 +295,9 @@ angular.module('powerCloud')
 
                 if(value[0] != currentID)
                 {
-                    percent = (specificTotal/$scope.totalCurrent)*100.0;
+                    ave = specificTotal/$scope.totalCurrent;
+                    ave = ave.toFixed(4);
+                    percent = ave*100.0000;
                     temp.push(percent);
 
                     $scope.allCurrentDataPI.push(temp);
@@ -286,7 +312,9 @@ angular.module('powerCloud')
                 count++;
                 if(count == length)
                 {
-                    percent = (specificTotal/$scope.totalCurrent)*100.0;
+                    ave = specificTotal/$scope.totalCurrent;
+                    ave = ave.toFixed(4);
+                    percent = ave*100.0000;
                     temp.push(percent);
                     $scope.allCurrentDataPI.push(temp);
                 }
@@ -317,6 +345,7 @@ angular.module('powerCloud')
             var percent = 0.0;
             var temp = [];
             var length = $scope.allPowerData.length;
+            var ave = 0;
 
             angular.forEach($scope.allPowerData, function(value, key)
             {
@@ -327,7 +356,9 @@ angular.module('powerCloud')
 
                 if(value[0] != currentID)
                 {
-                    percent = (specificTotal/$scope.totalPower)*100.0;
+                    ave = specificTotal/$scope.totalPower;
+                    ave = ave.toFixed(4);
+                    percent = ave*100.0;
                     temp.push(percent);
 
                     $scope.allPowerDataPI.push(temp);
@@ -342,7 +373,9 @@ angular.module('powerCloud')
                 count++;
                 if(count == length)
                 {
-                    percent = (specificTotal/$scope.totalPower)*100.0;
+                    ave = specificTotal/$scope.totalPower;
+                    ave = ave.toFixed(4);
+                    percent = ave*100.0000;
                     temp.push(percent);
                     $scope.allPowerDataPI.push(temp);
                 }
@@ -357,5 +390,11 @@ angular.module('powerCloud')
                     return true;
             }
             return false;
+        }
+
+        $scope.genReport = function()
+        {
+            fetchAllData();
+            $scope.dateSelected = true;
         }
     });

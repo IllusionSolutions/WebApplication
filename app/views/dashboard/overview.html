@@ -15,14 +15,71 @@
     <div class="tab-content">
         <div role="tabpanel" id="overview" class="tab-pane active">
             <div class="row">
-                <div class="col-sm-15 col-md-16">
-                    <highchart style="margin-right: 1%;" class="panel panel-default" id="piChart1" config="overviewCurrentPIConfig"></highchart>
+                <div class="col-sm-15 col-md-16 panel panel-default">View Data From:
+                    <input type="date" id="start"
+                           name="input" ng-model="dateStringBegin"
+                           placeholder="yyyy-MM-dd"
+                           required /> and To:
+                    <input type="date" id="end"
+                           name="input" ng-model="dateStringEnd"
+                           placeholder="yyyy-MM-dd"
+                           required />
+                    <button class="btn btn-primary" ng-click="genReport()">Search</button>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-sm-15 col-md-16">
-                    <highchart style="margin-right: 1%;" class="panel panel-default" id="piChart2" config="overviewPowerPIConfig"></highchart>
+            <div ng-show="dateSelected == true">
+                <div class="row">
+                    <div class="col-sm-15 col-md-16">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="piChart1" config="overviewCurrentPIConfig"></highchart>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-15 col-md-16 panel panel-default">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Current (A)</th>
+                                    <th>Power (KWh)</th>
+                                    <th>Cost (R)</th>
+                                    <th>CO2 Emissions (Kg)</th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>Max</td>
+                                <td>{{maxCurrent}}</td>
+                                <td>{{maxPower}}</td>
+                                <td>{{maxCost}}</td>
+                                <td>{{maxEmission}}</td>
+                            </tr>
+                            <tr>
+                                <td>Min</td>
+                                <td>{{minCurrent}}</td>
+                                <td>{{minPower}}</td>
+                                <td>{{minCost}}</td>
+                                <td>{{minEmission}}</td>
+                            </tr>
+                            <tr>
+                                <td>Average</td>
+                                <td>{{avgCurrent}}</td>
+                                <td>{{avgPower}}</td>
+                                <td>{{avgCost}}</td>
+                                <td>{{avgEmission}}</td>
+                            </tr>
+                            <tr>
+                                <td><h5>Total</h5></td>
+                                <td>{{totalCurrent}}</td>
+                                <td>{{totalPower}}</td>
+                                <td>{{totalCost}}</td>
+                                <td>{{totalEmission}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-15 col-md-16">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="piChart2" config="overviewPowerPIConfig"></highchart>
+                    </div>
                 </div>
             </div>
         </div>
