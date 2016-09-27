@@ -9,7 +9,10 @@
  * Controller of the overview page.
  */
 angular.module('powerCloud')
-    .controller('OverviewCtrl', function($scope, $state, ngProgressFactory) {
+    .controller('OverviewCtrl', function($scope, $state, ngProgressFactory, CurrentPI, PowerPI) {
+
+        $scope.overviewCurrentPIConfig = CurrentPI;
+        $scope.overviewPowerPIConfig = PowerPI;
         $scope.$state = $state;
 
         $scope.dateStringBegin = new Date();
@@ -103,83 +106,6 @@ angular.module('powerCloud')
             loading: true
         };
 
-        $scope.overviewCurrentPIConfig = {
-            options: {
-                chart:
-                {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie'
-                }
-            },
-            title: {
-                text: 'Current Usage Percentage'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                        style: {
-                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'Devices',
-                colorByPoint: true,
-                data: $scope.allCurrentDataPI
-            }],
-
-            loading : true
-        };
-
-
-        $scope.overviewPowerPIConfig = {
-            options: {
-                chart:
-                {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie'
-                }
-            },
-            title: {
-                text: 'Power Usage Percentage'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                        style: {
-                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'Devices',
-                colorByPoint: true,
-                data: $scope.allPowerDataPI
-            }],
-
-            loading : true
-        };
-
         var referenceLink = "/statistics";
         var data = firebase.database().ref(referenceLink);
         var dataSnapshot;
@@ -187,16 +113,6 @@ angular.module('powerCloud')
         data.once('value').then(function(snapshot) {
             dataSnapshot = snapshot;
         });
-
-        if (dataSnapshot == null)
-        {
-
-            //fetchAllData();
-        }
-        else
-        {
-
-        }
 
         function fetchAllData()
         {
@@ -394,7 +310,107 @@ angular.module('powerCloud')
 
         $scope.genReport = function()
         {
+            $scope.totalCurrent = 0;
+            $scope.totalPower = 0;
+
+            $scope.allCurrentDataPI = [];
+            $scope.allCurrentData = [];
+
+            $scope.allPowerDataPI = [];
+            $scope.allPowerData = [];
+
             fetchAllData();
+
+            $scope.overviewCurrentPIConfig.series = [{ //Works
+                "name": 'Devices',
+                "colorByPoint": true,
+                "data": $scope.allCurrentDataPI
+            }];
+
+            $scope.overviewPowerPIConfig.series = [{ //Works
+                "name": 'Devices',
+                "colorByPoint": true,
+                "data": $scope.allPowerDataPI
+            }];
+
             $scope.dateSelected = true;
         }
+    });
+
+    angular.module('powerCloud')
+        .factory('CurrentPI', function ()
+        {
+                var overviewCurrentPIConfig =
+                {
+                options: {
+                    chart:
+                    {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    }
+                },
+                title: {
+                    text: 'Current Usage Percentage'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{}],
+
+                loading : true
+            };
+            return overviewCurrentPIConfig;
+        });
+
+    angular.module('powerCloud')
+    .factory('PowerPI', function ()
+    {
+        var overviewPowerPIConfig = {
+                options: {
+                    chart:
+                    {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    }
+                },
+                title: {
+                    text: 'Power Usage Percentage'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{}],
+                loading : true
+            };
+            return overviewPowerPIConfig;
     });
