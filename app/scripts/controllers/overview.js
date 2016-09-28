@@ -28,7 +28,7 @@ angular.module('powerCloud')
         $scope.allPowerData = [];
         $scope.allPowerDataPI = [];
 
-        $scope.device = [];
+        $scope.deviceMeta = [];
         $scope.dateSelected = false;
 
         $scope.name = "";
@@ -36,7 +36,8 @@ angular.module('powerCloud')
         $scope.totalPower = 0;
 
 
-        $scope.overviewCurrentConfig = {
+
+     /*   $scope.overviewCurrentConfig = {
             options: {
                 chart: {
                     type: 'areaspline',
@@ -112,11 +113,11 @@ angular.module('powerCloud')
 
         data.once('value').then(function(snapshot) {
             dataSnapshot = snapshot;
-        });
+        });*/
 
         function fetchAllData()
         {
-            var referenceLink = "device_data/";
+            var referenceLink = "/";
             var data = firebase.database().ref(referenceLink);
 
             var beginHolder = $scope.dateStringBegin;
@@ -129,10 +130,12 @@ angular.module('powerCloud')
 
             data.once('value').then(function(snapshot)
             {
-                snapshot.forEach(function (d)
+                console.log(snapshot.val());
+                var temp = snapshot.child("device_data");
+                temp.forEach(function (d)
                 {
                     var id = d.key;
-                    var temp;
+                    console.log("ID - " + id);
                     var count = 0;
                     while(begin <= end)
                     {
@@ -164,11 +167,23 @@ angular.module('powerCloud')
                     }
                     begin.setDate(begin.getDate() - count);
                 });
+
+                temp = snapshot.child("meta_data");
+                temp.forEach(function (d)
+                {
+                    var meta = [];
+                    var id = d.key;
+                    meta.push(id);
+                    meta.push(d.val().appliance);
+                    meta.push(d.val().name);
+
+                    $scope.deviceMeta.push(meta);
+                });
                 $scope.progressbar.start();
                 populateCurrentPi();
                 populatePowerPi();
-                $scope.overviewCurrentConfig.loading = false;
-                $scope.overviewPowerConfig.loading = false;
+               // $scope.overviewCurrentConfig.loading = false;
+              //  $scope.overviewPowerConfig.loading = false;
                 $scope.overviewCurrentPIConfig.loading = false;
                 $scope.overviewPowerPIConfig.loading = false;
                 $scope.progressbar.complete();
@@ -206,7 +221,8 @@ angular.module('powerCloud')
             {
                 if(count == 0)
                 {
-                    temp.push(currentID);
+                    console.log(getName(currentID));
+                    temp.push(getName(currentID));
                 }
 
                 if(value[0] != currentID)
@@ -220,7 +236,8 @@ angular.module('powerCloud')
                     temp = [];
 
                     currentID = value[0];
-                    temp.push(currentID);
+                    console.log(getName(currentID));
+                    temp.push(getName(currentID));
                     specificTotal = 0.0;
                 }
 
@@ -257,6 +274,7 @@ angular.module('powerCloud')
             }, log);
 
             var currentID = devices[0];
+
             var specificTotal = 0;
             var percent = 0.0;
             var temp = [];
@@ -267,7 +285,8 @@ angular.module('powerCloud')
             {
                 if(count == 0)
                 {
-                    temp.push(currentID);
+                    console.log(getName(currentID));
+                    temp.push(getName(currentID));
                 }
 
                 if(value[0] != currentID)
@@ -281,7 +300,8 @@ angular.module('powerCloud')
                     temp = [];
 
                     currentID = value[0];
-                    temp.push(currentID);
+                    console.log(getName(currentID));
+                    temp.push(getName(currentID));
                     specificTotal = 0.0;
                 }
 
@@ -306,6 +326,18 @@ angular.module('powerCloud')
                     return true;
             }
             return false;
+        }
+
+        function getName(id)
+        {
+            var log = [];
+            var found;
+            angular.forEach($scope.deviceMeta, function(value, key)
+            {
+                if(id == value[0])
+                    found = value[1];
+            }, log);
+            return found;
         }
 
         $scope.genReport = function()
