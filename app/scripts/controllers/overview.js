@@ -9,10 +9,11 @@
  * Controller of the overview page.
  */
 angular.module('powerCloud')
-    .controller('OverviewCtrl', function($scope, $state, ngProgressFactory, CurrentPI, PowerPI) {
+    .controller('OverviewCtrl', function($scope, $state, ngProgressFactory, CurrentPI, PowerPI, CostPI) {
 
         $scope.overviewCurrentPIConfig = CurrentPI;
         $scope.overviewPowerPIConfig = PowerPI;
+        $scope.overviewCostPIConfig = CostPI;
         $scope.$state = $state;
 
         $scope.dateStringBegin = new Date();
@@ -28,6 +29,17 @@ angular.module('powerCloud')
         $scope.allPowerData = [];
         $scope.allPowerDataPI = [];
 
+        $scope.allCalculationsData = [];
+
+        $scope.allCostData = [];
+        $scope.allCostDataPI = [];
+
+        $scope.allEmissionData = [];
+        $scope.allEmissionDataPI = [];
+
+        $scope.totalEmission = [];
+        $scope.totalCost = 0;
+
         $scope.deviceMeta = [];
         $scope.dateSelected = false;
 
@@ -35,85 +47,17 @@ angular.module('powerCloud')
         $scope.totalCurrent = 0;
         $scope.totalPower = 0;
 
+        $scope.highest_power = "";
+        $scope.lowest_power = "";
 
+        $scope.highest_current = "";
+        $scope.lowest_current = "";
 
-     /*   $scope.overviewCurrentConfig = {
-            options: {
-                chart: {
-                    type: 'areaspline',
-                    zoomType: 'x',
-                    panning: true,
-                    panKey: 'shift'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'amps'
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                gridLineWidth: 1,
-                title: {
-                    text: 'Time'
-                }
-            },
-            tooltip: {
-                crosshairs: true
-            },
-            title: {
-                text: 'Overall Current'
-            },
-            series: [{
-                name: 'Amps',
-                data: $scope.allCurrentData
-            }],
+        $scope.highest_emissions = "";
+        $scope.lowest_emissions = "";
 
-            loading: true
-        };
-
-        $scope.overviewPowerConfig = {
-            options: {
-                chart: {
-                    type: 'areaspline',
-                    zoomType: 'x',
-                    panning: true,
-                    panKey: 'shift'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'kWh'
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                gridLineWidth: 1,
-                title: {
-                    text: 'Time'
-                }
-            },
-            tooltip: {
-                crosshairs: true
-            },
-            title: {
-                text: 'Overall kWh'
-            },
-            series: [{
-                name: 'kWh',
-                data: $scope.allPowerData
-            }],
-
-            loading: true
-        };
-
-        var referenceLink = "/statistics";
-        var data = firebase.database().ref(referenceLink);
-        var dataSnapshot;
-
-        data.once('value').then(function(snapshot) {
-            dataSnapshot = snapshot;
-        });*/
+        $scope.highest_cost = "";
+        $scope.lowest_cost = "";
 
         function fetchAllData()
         {
@@ -150,6 +94,7 @@ angular.module('powerCloud')
                         {
                             var curr = [];
                             var pow = [];
+                            var calculations = [];
 
                             curr.push(id);
                             curr.push(stuff.val().datetime * 1000);
@@ -159,6 +104,15 @@ angular.module('powerCloud')
                             pow.push(stuff.val().datetime * 1000);
                             pow.push(stuff.val().power);
 
+                            var obj = stuff.val();
+                            var t = JSON.stringify(obj);
+                            obj = JSON.parse(t);
+
+                            calculations.push(id);
+                            calculations.push(obj.calculations.cost);
+                         //   calculations.push(obj.calculations.emission);
+
+                            $scope.allCalculationsData.push(calculations);
                             $scope.allCurrentData.push(curr);
                             $scope.allPowerData.push(pow);
                         });
@@ -180,12 +134,17 @@ angular.module('powerCloud')
                     $scope.deviceMeta.push(meta);
                 });
                 $scope.progressbar.start();
+
+               // console.log(" ----------------------------- \n" + $scope.allCalculationsData + "\n ----------------------------- ");
                 populateCurrentPi();
                 populatePowerPi();
-               // $scope.overviewCurrentConfig.loading = false;
-              //  $scope.overviewPowerConfig.loading = false;
+                populateCostPi();
+                populateOverviewTable();
+                //$scope.overviewCurrentConfig.loading = false;
+                //$scope.overviewPowerConfig.loading = false;
                 $scope.overviewCurrentPIConfig.loading = false;
                 $scope.overviewPowerPIConfig.loading = false;
+                $scope.overviewCostPIConfig.loading = false;
                 $scope.progressbar.complete();
                 $scope.$apply();
             });
@@ -228,7 +187,7 @@ angular.module('powerCloud')
                 if(value[0] != currentID)
                 {
                     ave = specificTotal/$scope.totalCurrent;
-                    ave = ave.toFixed(4);
+                    ave = ave.toFixed(2);
                     percent = ave*100.0000;
                     temp.push(percent);
 
@@ -246,7 +205,7 @@ angular.module('powerCloud')
                 if(count == length)
                 {
                     ave = specificTotal/$scope.totalCurrent;
-                    ave = ave.toFixed(4);
+                    ave = ave.toFixed(2);
                     percent = ave*100.0000;
                     temp.push(percent);
                     $scope.allCurrentDataPI.push(temp);
@@ -292,7 +251,7 @@ angular.module('powerCloud')
                 if(value[0] != currentID)
                 {
                     ave = specificTotal/$scope.totalPower;
-                    ave = ave.toFixed(4);
+                    ave = ave.toFixed(2);
                     percent = ave*100.0;
                     temp.push(percent);
 
@@ -310,12 +269,146 @@ angular.module('powerCloud')
                 if(count == length)
                 {
                     ave = specificTotal/$scope.totalPower;
-                    ave = ave.toFixed(4);
+                    ave = ave.toFixed(2);
                     percent = ave*100.0000;
                     temp.push(percent);
                     $scope.allPowerDataPI.push(temp);
                 }
             }, log);
+        }
+
+        function populateCostPi()
+        {
+            var id;
+            var length = $scope.allCalculationsData.length;
+            var log = [];
+            var devices = [];
+            var count = 0;
+
+            angular.forEach($scope.allCalculationsData, function(value, key)
+            {
+                id = value[0];
+                console.log("Value id " + value[0]);
+                if(!contains(devices,id))
+                {
+                    devices.push(id);
+                }
+                $scope.totalCost += parseFloat(value[1]);
+                console.log("----------\n" + $scope.totalCost + "\n");
+            }, log);
+
+            var currentID = devices[0];
+
+            var specificTotal = 0;
+            var percent = 0.0;
+            var temp = [];
+            var length = $scope.allCalculationsData.length;
+            var ave = 0;
+
+            angular.forEach($scope.allCalculationsData, function(value, key)
+            {
+                if(count == 0)
+                {
+                    temp.push(getName(currentID));
+                }
+
+                if(value[0] != currentID)
+                {
+                    ave = specificTotal/$scope.totalCost;
+                    ave = ave.toFixed(2);
+                    percent = ave*100.0;
+                    temp.push(percent);
+
+                    $scope.allCostDataPI.push(temp);
+                    temp = [];
+
+                    currentID = value[0];
+                    console.log(getName(currentID));
+                    temp.push(getName(currentID));
+                    specificTotal = 0.0;
+                }
+
+                specificTotal += parseFloat(value[1]);
+                count++;
+                if(count == length)
+                {
+                    ave = specificTotal/$scope.totalCost;
+                    ave = ave.toFixed(2);
+                    percent = ave*100.0;
+                    temp.push(percent);
+                    $scope.allCostDataPI.push(temp);
+                }
+            }, log);
+        }
+
+        function populateOverviewTable()
+        {
+            var log = [];
+            var biggest = 0;
+            var smallest = 99999;
+            var name = "";
+            angular.forEach($scope.allCurrentDataPI, function(value, key)
+            {
+                if(value[1] > biggest)
+                {
+                    name = value[0];
+                    biggest = value[1];
+                }
+            }, log);
+
+            biggest = ((biggest/100)*$scope.totalCurrent);
+            $scope.highest_current = name + " - " + biggest.toFixed(2);
+            biggest = 0;
+
+            angular.forEach($scope.allPowerDataPI, function(value, key)
+            {
+                if(value[1] > biggest)
+                {
+                    name = value[0];
+                    biggest = value[1];
+                }
+            }, log);
+
+            biggest = ((biggest/100)*$scope.totalPower);
+            $scope.highest_power = name + " - " + biggest.toFixed(2);
+            biggest = 0;
+
+            angular.forEach($scope.allCostDataPI, function(value, key)
+            {
+                if(value[2] > biggest)
+                {
+                    name = value[0];
+                    biggest = value[1];
+                }
+            }, log);
+
+            biggest = ((biggest/100)*$scope.totalCost);
+            $scope.highest_cost = name + " - R" + biggest.toFixed(2);
+
+            angular.forEach($scope.allCurrentDataPI, function(value, key)
+            {
+                if(value[1] < smallest)
+                {
+                    name = value[0];
+                    smallest = value[1];
+                }
+            }, log);
+
+            smallest = ((smallest/100)*$scope.totalCurrent);
+            $scope.lowest_current = name + " - " + smallest.toFixed(2);
+            smallest = 999999;
+
+            angular.forEach($scope.allPowerDataPI, function(value, key)
+            {
+                if(value[1] < smallest)
+                {
+                    name = value[0];
+                    smallest = value[1];
+                }
+            }, log);
+
+            smallest = ((smallest/100)*$scope.totalPower);
+            $scope.lowest_power = name + " - " + smallest.toFixed(2);
         }
 
         function contains(device, id)
@@ -344,12 +437,22 @@ angular.module('powerCloud')
         {
             $scope.totalCurrent = 0;
             $scope.totalPower = 0;
+            $scope.totalCost = 0;
 
             $scope.allCurrentDataPI = [];
             $scope.allCurrentData = [];
 
             $scope.allPowerDataPI = [];
             $scope.allPowerData = [];
+
+            $scope.allCalculationsData = [];
+
+            $scope.allCostData = [];
+            $scope.allCostDataPI = [];
+
+            $scope.allEmissionData = [];
+            $scope.allEmissionDataPI = [];
+
 
             fetchAllData();
 
@@ -363,6 +466,12 @@ angular.module('powerCloud')
                 "name": 'Devices',
                 "colorByPoint": true,
                 "data": $scope.allPowerDataPI
+            }];
+
+            $scope.overviewCostPIConfig.series = [{ //Works
+                "name": 'Devices',
+                "colorByPoint": true,
+                "data": $scope.allCostDataPI
             }];
 
             $scope.dateSelected = true;
@@ -445,4 +554,42 @@ angular.module('powerCloud')
                 loading : true
             };
             return overviewPowerPIConfig;
+    });
+
+angular.module('powerCloud')
+    .factory('CostPI', function ()
+    {
+        var overviewCostPIConfig = {
+            options: {
+                chart:
+                {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                }
+            },
+            title: {
+                text: 'Power Usage Percentage'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{}],
+            loading : true
+        };
+        return overviewCostPIConfig;
     });
