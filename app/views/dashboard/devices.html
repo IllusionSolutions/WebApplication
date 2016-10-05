@@ -2,7 +2,6 @@
 <div>
     <!-- <a ui-sref="reports" class="pull-right btn btn-primary btn-outline btn-rounded">Reports</a> -->
     <div class="pull-right">
-
         <a ui-sref="overview" class=" btn btn-primary btn-outline btn-rounded">Overview</a>
     </div>
 
@@ -23,9 +22,13 @@
         <div class="col-sm-4 col-md-2">
             <div class="thumbnail" >
                 <img src="" alt="">
-                <p>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">New</button>
-                </p>
+                <div class="caption">
+                    <h3 class="text-primary">Add Device</h3>
+                    <h5>Click new</h5>
+                    <p>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">New</button>
+                    </p>
+                </div>
 
                 <!-- Modal -->
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -45,14 +48,20 @@
                                     </p>
                                     <p>Appliance:
                                         <input name="appliancce" ng-model="device.appliance"  required>
-                                        <div ng-show="addForm.$submitted || addForm.name.$touched">
+                                        <div ng-show="addForm.$submitted || addForm.appliancce.$touched">
                                             <div style="color:red;" ng-show="addForm.appliancce.$error.required">Appliance is required.</div>
                                         </div>
                                     </p>
                                     <p>ID:
                                         <input name="id" ng-model="device.id" required>
-                                        <div ng-show="addForm.$submitted || addForm.name.$touched">
+                                        <div ng-show="addForm.$submitted || addForm.id.$touched">
                                             <div style="color:red;" ng-show="addForm.id.$error.required">ID is required.</div>
+                                        </div>
+                                    </p>
+                                    <p>Threshold:
+                                        <input name="threshold" ng-model="device.threshold" required>
+                                        <div ng-show="addForm.$submitted || addForm.threshold.$touched">
+                                            <div style="color:red;" ng-show="addForm.threshold.$error.required">Threshold is required.</div>
                                         </div>
                                     </p>
                                     <input type="submit" ng-click="addDevice(device)" value="Save" />
