@@ -59,7 +59,8 @@ angular
             .state('devices', {
                 url: '/devices',
                 parent: 'dashboard',
-                templateUrl: 'views/dashboard/devices.html'
+                templateUrl: 'views/dashboard/devices.html',
+                controller: 'DevicesCtrl'
             })
             .state('reports', {
                 url: '/reports',
