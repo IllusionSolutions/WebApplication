@@ -10,9 +10,10 @@
  */
 angular.module('powerCloud')
     .controller('LoginCtrl', function($scope, $location) {
+
         $scope.submit = function() {
 
-        $scope.errorVal = false;
+            $scope.errorVal = false;
 
             var email = $scope.user.email;
             var pass = $scope.user.password;
@@ -26,14 +27,12 @@ angular.module('powerCloud')
                 .catch(function(error)
                 {
                     $scope.errorVal = true;
-                    $scope.errorCode = error.code;
-                    $scope.errorMessage = error.message;
+                    $scope.errorCode = 100;
+                    $scope.errorMessage = "Incorrect login credentials.";
 
                     console.log(error.message);
                     $scope.$apply();
                 });
-
-            return false;
         }
 
     });

@@ -19,6 +19,9 @@ angular.module('powerCloud')
 
         $scope.lastUpdate = new Date();
 
+        $scope.relayStatusText = 'Unknown';
+        $scope.relayStatus = false;
+
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.changeNameProgress = ngProgressFactory.createInstance();
 
@@ -26,13 +29,9 @@ angular.module('powerCloud')
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
 
-
-        //var element = angular.element('#changeNameDiv');
-
         $scope.changeNameProgress.setParent(document.getElementById('changeNameDiv'));
         $scope.changeNameProgress.setColor('#ffe11c');
         $scope.changeNameProgress.height = '3px';
-        console.log($scope.changeNameProgress.getDomElement());
 
         var particle = new Particle();
         var device = $scope.selectedDevice;
@@ -131,7 +130,6 @@ angular.module('powerCloud')
 
             loading: true
         };
-
         $scope.kwhChartConfig = {
             options: {
                 chart: {
@@ -168,6 +166,7 @@ angular.module('powerCloud')
         };
 
         fetchData(device_ID);
+        checkDeviceStatus();
 
         function calculations(Current, Power, Cost, Emission)
         {
@@ -307,25 +306,56 @@ angular.module('powerCloud')
 
         }
 
+        function checkDeviceStatus() {
+
+            var authToken = sharedProperties.getParticleToken();
+            if (authToken != null) {
+                var varParticle = particle.getVariable({ deviceId: device_ID, name: 'relayStatus', auth: authToken });
+
+                varParticle.then(
+                    function (data) {
+                        var online = data.body.result;
+
+                        if (online) {
+                            $scope.relayStatusText = 'Online';
+                            $scope.relayStatus = online;
+                        }
+                        else {
+                            $scope.relayStatusText = 'Offline';
+                            $scope.relayStatus = online;
+                        }
+                        console.log(data);
+                    },
+                    function (err) {
+                        console.log(err);
+                    }
+                );
+            }
+            else {
+                console.log('Please login to Particle. Auth token null.');
+            }
+        }
+
         $scope.toggleDevice = function() {
             var authToken = sharedProperties.getParticleToken();
             if (authToken != null)
             {
+
                 var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'Mothusi', auth: authToken });
 
                 fnPr.then(
-                    function(data) {
+                    function (data) {
                         console.log('Function called succesfully:', data);
+                        checkDeviceStatus();
                     }, function(err) {
                         console.log('An error occurred:', err);
                     });
             }
             else
             {
-                console.log('Please log in to Particle. Auth token null');
+                console.log('Please log in to Particle. Auth token null.');
             }
         };
-
 
         $scope.changeNameSuccess = false;
         $scope.changeNameFailure = false;
