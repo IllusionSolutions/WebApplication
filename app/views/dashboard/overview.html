@@ -4,18 +4,106 @@
     <h4>This is a statistical overview of all of your devices.</h4>
 
     <div class="row thumbnail">
-        <ul class="nav nav-pills nav-justified">
-            <li role="presentation" class="active"><a href="#">Overview</a></li>
-            <li role="presentation"><a href="#">Kilwatt Overview</a></li>
-            <li role="presentation"><a href="#">Current Overview</a></li>
-            <li role="presentation"><a href="#">Settings</a></li>
+        <ul class="nav nav-pills nav-justified" role="tablist">
+            <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview">Overview</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView">Kilowatt Hours Overview</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current Overview</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="settingsView" data-target="#settingsView">Settings</a></li>
         </ul>
     </div>
 
-    <div class="row">
-        <div class="col-sm-15 col-md-12">
-            <highchart style="margin-bottom: 1%; margin-right: 1%;" class="col-sm-7 col-md-5 panel panel-default" id="overviewCurrentChart" config="overviewCurrentConfig"></highchart>
-            <highchart style="margin-bottom: 1%;" class="col-sm-7 col-md-5 panel panel-default" id="overviewPowerChart" config="overviewPowerConfig"></highchart>
+    <div class="tab-content">
+        <div role="tabpanel" id="overview" class="tab-pane active">
+            <div class="row thumbnail col-sm-15 col-md-16 panel panel-default">
+                <div>
+                    <label>Single Day:<input type="radio" name="dataView" ng-model="choice" ng-value="single" ng-click="select()"></label><br/>
+                    <label>Multiple Days:<input type="radio" name="dataView" ng-model="choice" ng-value="multi" ng-click="select()"></label>
+                </div>
+
+                <div ng-show="multiDate == true">View Data From:
+                    <input type="date" id="start1"
+                           name="input" ng-model="dateStringBegin"
+                           placeholder="yyyy-MM-dd"
+                           required /> and To:
+                    <input type="date" id="end"
+                           name="input" ng-model="dateStringEnd"
+                           placeholder="yyyy-MM-dd"
+                           required />
+                    <button class="btn btn-primary" ng-click="genReport()">Search</button>
+                </div>
+                <div ng-show="singleDate == true">View Data From:
+                    <input type="date" id="start2"
+                           name="input" ng-model="dateStringBegin"
+                           placeholder="yyyy-MM-dd"
+                           required />
+                    <button class="btn btn-primary" ng-click="genReport()">Search</button>
+                </div>
+            </div>
+            <div ng-show="dateSelected == true">
+                <div class="row">
+                    <div class="col-sm-15 col-md-16">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="piChart1" config="overviewCurrentPIConfig"></highchart>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-15 col-md-16 panel panel-default">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Current (A)</th>
+                                    <th>Power (KWh)</th>
+                                    <th>Cost (R)</th>
+                                    <th>CO2 Emissions (Kg)</th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>Max</td>
+                                <td>{{highest_current}}</td>
+                                <td>{{highest_power}}</td>
+                                <td>{{highest_cost}}</td>
+                                <td>{{highest_emissions}}</td>
+                            </tr>
+                            <tr>
+                                <td>Min</td>
+                                <td>{{lowest_current}}</td>
+                                <td>{{lowest_power}}</td>
+                                <td>{{lowest_cost}}</td>
+                                <td>{{lowest_emissions}}</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td>{{total_current}}</td>
+                                <td>{{total_power}}</td>
+                                <td>{{total_cost}}</td>
+                                <td>{{total_emissions}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-15 col-md-16">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="piChart2" config="overviewPowerPIConfig"></highchart>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="kwhView" role="tabpanel" class="tab-pane">
+
+        </div>
+
+        <div id="currentView" role="tabpanel" class="tab-pane">
+
+        </div>
+
+
+        <div id="settingsView" class="tab-pane" role="tabpanel">
+            <div class="row">
+                <div class="col-sm-2 col-md-4 thumbnail">
+                        <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

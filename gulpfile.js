@@ -4,6 +4,7 @@
 var gulp = require('gulp');
 var karma = require('karma').server;
 var argv = require('yargs').argv;
+var gulpif = require('gulp-if');
 var $ = require('gulp-load-plugins')();
 
 gulp.task('styles', function() {
@@ -26,7 +27,7 @@ gulp.task('jscs', function() {
     .pipe($.jscs());
 });
 
-gulp.task('html' , ['styles'], function() {
+gulp.task('html', ['styles'], function() {
   var lazypipe = require('lazypipe');
   var cssChannel = lazypipe()
     .pipe($.csso)
@@ -36,12 +37,12 @@ gulp.task('html' , ['styles'], function() {
 
   return gulp.src('app/**/*.html')
     .pipe(assets)
-    .pipe($.if('*.js', $.ngAnnotate()))
-    .pipe($.if('*.js', $.uglify()))
-    .pipe($.if('*.css', cssChannel()))
+    .pipe(gulpif('./*.js', $.ngAnnotate()))
+    .pipe(gulpif('./*.js', $.uglify()))
+    .pipe(gulpif('./*.css', cssChannel()))
     .pipe(assets.restore())
     .pipe($.useref())
-    .pipe($.if('*.html', $.minifyHtml({conditionals: true, loose: true})))
+    .pipe(gulpif('*.html', $.minifyHtml({conditionals: true, loose: true})))
     .pipe(gulp.dest('dist'));
 });
 
@@ -124,9 +125,11 @@ gulp.task('wiredep', function() {
     .pipe(wiredep())
     .pipe(gulp.dest('app'));
 
+    /*
   gulp.src('test/*.js')
     .pipe(wiredep({exclude: exclude, devDependencies: true}))
     .pipe(gulp.dest('test'));
+    */
 });
 
 gulp.task('watch', ['connect'], function() {
@@ -144,7 +147,7 @@ gulp.task('watch', ['connect'], function() {
   gulp.watch('bower.json', ['wiredep']);
 });
 
-gulp.task('builddist', ['jshint', 'jscs', 'html', 'images', 'fonts', 'extras'],
+gulp.task('builddist', ['jshint',/* 'jscs',*/ 'html', 'images', 'fonts', 'extras'],
   function() {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });

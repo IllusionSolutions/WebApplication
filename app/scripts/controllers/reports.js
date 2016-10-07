@@ -37,6 +37,8 @@ angular.module('powerCloud')
         var device = $scope.selectedDevice;
         var device_ID = $scope.deviceID;
 
+        var i;
+
         $scope.voltage = 0.0;
 
         $scope.tempCurrentData = [];
@@ -65,7 +67,7 @@ angular.module('powerCloud')
         $scope.avgPower = 0.0;
         $scope.totalPower = 0;
 
-        $scope.chartConfig = {
+        $scope.currentChartConfig = {
             options: {
                 chart: {
                     type: 'areaspline',
@@ -130,6 +132,41 @@ angular.module('powerCloud')
 
             loading: true
         };
+
+        $scope.powerChartConfig = {
+            options: {
+                chart: {
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'KWh'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                gridLineWidth: 1,
+                title: {
+                    text: 'Time'
+                }
+            },
+            tooltip: {
+                crosshairs: true
+            },
+            title: {
+                text: 'Power'
+            },
+            series: [{
+                name: 'KWh',
+                data: $scope.tempPowerData
+            }],
+
+            loading: true
+        };
         $scope.kwhChartConfig = {
             options: {
                 chart: {
@@ -188,7 +225,6 @@ angular.module('powerCloud')
 
                 $scope.avgCurrent += parseFloat(value[1]);
             }, log);
-
             $scope.totalCurrent = $scope.avgCurrent.toFixed(2);
             $scope.avgCurrent = $scope.avgCurrent / Current.length;
             $scope.avgCurrent = $scope.avgCurrent.toFixed(2);
@@ -261,7 +297,8 @@ angular.module('powerCloud')
              var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
-             dateSelected.day = "29";
+             dateSelected.day = "27";
+             $scope.deviceID = id;
              var deviceSelected = id;
              $scope.progressbar.start();
              var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
@@ -275,14 +312,10 @@ angular.module('powerCloud')
                      var temp3 = [];
                      var temp4 = [];
 
-                     var timeMilli = d.val().datetime * 1000;
-
-                     $scope.lastUpdate = new Date(timeMilli);
-
-                     temp1.push(timeMilli);
+                     temp1.push(d.val().datetime * 1000);
                      temp1.push(d.val().current);
 
-                     temp2.push(timeMilli);
+                     temp2.push(d.val().datetime * 1000);
                      temp2.push(d.val().power);
 
                      temp3.push(d.val().calculations.cost);
@@ -296,6 +329,8 @@ angular.module('powerCloud')
                  });
 
                  calculations($scope.tempCurrentData,$scope.tempPowerData,$scope.tempCostData,$scope.tempEmissionData);
+                 $scope.currentChartConfig.loading = false;
+                 $scope.powerChartConfig.loading = false;
                  $scope.progressbar.complete();
 
                  $scope.chartConfig.loading = false;
