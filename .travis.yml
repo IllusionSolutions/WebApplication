@@ -1,0 +1,36 @@
+sudo: required
+
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+language: node_js
+
+node_js:
+    - "6.7.0"
+
+before_install:
+    - npm install -g gulp
+    - npm install -g bower
+
+install:
+    - npm install
+    - bower install
+
+script:
+    - gulp test
+
+#after_success:
+#-
+
+#addons:
+#ssh_known_hosts: simplysentient.com
+
+#after_success:
+# - bash <(curl -s https://codecov.io/bash) -t e0e8c63b-befd-4c3f-8308-99e5352007a0
+# - scp -o StrictHostKeyChecking=no target/applicationServer-*.jar $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
