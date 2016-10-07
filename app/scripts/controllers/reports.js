@@ -17,6 +17,8 @@ angular.module('powerCloud')
             $scope.date.value = new Date();
         }
 
+        $scope.meta = {};
+
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
@@ -24,6 +26,7 @@ angular.module('powerCloud')
         var particle = new Particle();
         var device = $scope.selectedDevice;
         var device_ID = $scope.deviceID;
+
 
         var i;
 
@@ -302,7 +305,6 @@ angular.module('powerCloud')
                  $scope.progressbar.complete();
                  $scope.$apply();
              });
-
         }
 
         $scope.toggleDevice = function()
@@ -312,10 +314,10 @@ angular.module('powerCloud')
             {
                 var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'RandomShit', auth: authToken });
 
-                fnPr.then(
-                    function(data) {
+                fnPr.then(function(data) {
                         console.log('Function called succesfully:', data);
-                    }, function(err) {
+                    },
+                    function(err) {
                         console.log('An error occurred:', err);
                     });
             }
@@ -325,4 +327,33 @@ angular.module('powerCloud')
             }
         }
 
+        $scope.deactivateDevice = function()
+        {
+            console.log($scope.selectedDevice.active);
+            $scope.selectedDevice.active = 0;
+            $scope.meta = angular.copy($scope.selectedDevice);
+
+            var newPostKey = $scope.selectedDevice.id;
+
+            // Write the new post's data simultaneously in the posts list and the user's post list.
+            var updates = {};
+            updates['/meta_data/' + newPostKey] = $scope.meta;
+
+            return firebase.database().ref().update(updates);
+        }
+
+        $scope.activateDevice = function ()
+        {
+            console.log($scope.selectedDevice.active);
+            $scope.selectedDevice.active = 1;
+            $scope.meta = angular.copy($scope.selectedDevice);
+
+            var newPostKey = $scope.selectedDevice.id;
+
+            // Write the new post's data simultaneously in the posts list and the user's post list.
+            var updates = {};
+            updates['/meta_data/' + newPostKey] = $scope.meta;
+
+            return firebase.database().ref().update(updates);
+        }
     });
