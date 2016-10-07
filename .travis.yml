@@ -23,7 +23,7 @@ install:
     - bower install
 
 script:
-    - gulp test
+    - gulp build
 
 #after_success:
 #-
