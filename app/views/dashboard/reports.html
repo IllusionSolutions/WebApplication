@@ -84,8 +84,6 @@
                     </datepicker>
                 </div>
             </div>
-
-
         </div>
 
         <div id="realtimeView" role="tabpanel" class="tab-pane">
@@ -96,11 +94,53 @@
 
         <div id="settingsView" class="tab-pane" role="tabpanel">
             <div class="row">
-                <div class="col-sm-2 col-md-4 thumbnail">
-                    <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle</button>
+                <div class="col-sm-4 col-md-2">
+                    <div class="thumbnail" >
+                        <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle</button>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-2">
+                    <div class="thumbnail" >
+                        <button style="margin-right: 1%;" ng-click="deactivateDevice()" type="button" class="btn btn-primary">Deactivate</button>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-2">
+                    <div class="thumbnail" >
+                        <button style="margin-right: 1%;" ng-click="activateDevice()" type="button" class="btn btn-primary">Activate</button>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail" >
+                        <form novalidate class="simple-form" name="addForm">
+                            <p>Name:
+                                <input name="name" ng-model="device.name"  required>
+                            <div ng-show="addForm.$submitted || addForm.name.$touched">
+                                <div style="color:red;" ng-show="addForm.name.$error.required">Name is required.</div>
+                            </div>
+                            </p>
+                            <p>Appliance:
+                                <input name="appliancce" ng-model="device.appliance"  required>
+                            <div ng-show="addForm.$submitted || addForm.appliancce.$touched">
+                                <div style="color:red;" ng-show="addForm.appliancce.$error.required">Appliance is required.</div>
+                            </div>
+                            </p>
+                            <p>ID:
+                                <input name="id" ng-model="device.id" required>
+                            <div ng-show="addForm.$submitted || addForm.id.$touched">
+                                <div style="color:red;" ng-show="addForm.id.$error.required">ID is required.</div>
+                            </div>
+                            </p>
+                            <p>Threshold:
+                                <input name="threshold" ng-model="device.threshold" required>
+                            <div ng-show="addForm.$submitted || addForm.threshold.$touched">
+                                <div style="color:red;" ng-show="addForm.threshold.$error.required">Threshold is required.</div>
+                            </div>
+                            </p>
+                            <input type="submit" ng-click="addDevice(device)" value="Save" />
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>

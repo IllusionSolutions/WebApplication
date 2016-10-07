@@ -10,15 +10,21 @@
  */
 
 angular.module('powerCloud')
-    .controller('DevicesCtrl', function($scope,  $state) {
+    .controller('DevicesCtrl', function($scope,  $state)
+    {
         $scope.$state = $state;
-
-        $scope.meta = {};
+        $scope.meta = {"active":1};
 
         $scope.addDevice = function(device)
         {
             console.log(device);
-            $scope.meta = angular.copy(device);
+            $scope.meta = {
+                "active":1,
+                "appliance":device.appliance,
+                "name":device.name,
+                "id":device.id,
+                "threshold":device.threshold
+            };
 
             // Get a key for a new Post.
             var newPostKey = $scope.meta.id;
