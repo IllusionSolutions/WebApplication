@@ -2,6 +2,9 @@
 
 Measures electrical data, calculates relevant power measurements, and stores it on a cloud service, which can be accessed later.
 
+### Status:
+[![Build Status](https://travis-ci.org/IllusionSolutions/WebApplication.svg?branch=master)](https://travis-ci.org/IllusionSolutions/WebApplication)
+
 ### Installation
 
 Once the repository has been cloned, ensure that the following are installed:
@@ -32,4 +35,10 @@ To build static files which can then be placed in a web server:
 
 `
 $ gulp build
+`
+
+### Running Unit Tests
+
+`
+$ gulp test
 `

@@ -43,8 +43,14 @@
             </div>
             <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="particleSumbit">Login to Particle</button>
         </form> <br/>
-        <div ng-show="particleLoginSuccess" class="alert alert-success" role="alert">Login Success.</div>
-        <div ng-show="particleLoginFailure" class="alert alert-danger" role="alert">Login Failure. {{particleError}}</div>
+        <div ng-show="particleLoginSuccess" class="alert alert-success" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            Login Success.
+        </div>
+        <div ng-show="particleLoginFailure" class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            Login Failure. <br/> {{particleError.body.error_description}}
+        </div>
     </div>
 
     <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
@@ -53,7 +59,7 @@
         <form>
             <div class="form-group">
                 <label for="firebaseURL">Realtime Database URL</label>
-                <input autocomplete="off" ng-model="particleEmail" type="text" class="form-control" id="firebaseURL">
+                <input autocomplete="off" ng-model="firebaseURL" type="text" class="form-control" id="firebaseURL">
             </div>
             <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Set URL</button>
         </form>

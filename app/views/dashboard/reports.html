@@ -8,69 +8,95 @@
         <ul class="nav nav-pills nav-justified" role="tablist">
             <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview">Overview</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView">Kilowatt Hours</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current Usage</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="realtimeView" data-target="#realtimeView">Realtime Data</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="settingsView" data-target="#settingsView">Settings</a></li>
         </ul>
     </div>
 
     <div class="tab-content">
-        <div role="tabpanel" id="overview" class="tab-pane active">
+        <div id="overview" role="tabpanel" class="tab-pane active">
             <div class="row">
                 <div class="col-sm-15 col-md-16">
-                    <div class="col-sm-15 col-md-5 panel panel-default">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Current (A)</th>
-                                    <th>Power (KWh)</th>
-                                    <th>Cost (R)</th>
-                                    <th>CO2 Emissions (Kg)</th>
-                                </tr>
-                            </thead>
-                            <tr>
-                                <td>Max</td>
-                                <td>{{maxCurrent}}</td>
-                                <td>{{maxPower}}</td>
-                                <td>{{maxCost}}</td>
-                                <td>{{maxEmission}}</td>
-                            </tr>
-                            <tr>
-                                <td>Min</td>
-                                <td>{{minCurrent}}</td>
-                                <td>{{minPower}}</td>
-                                <td>{{minCost}}</td>
-                                <td>{{minEmission}}</td>
-                            </tr>
-                            <tr>
-                                <td>Average</td>
-                                <td>{{avgCurrent}}</td>
-                                <td>{{avgPower}}</td>
-                                <td>{{avgCost}}</td>
-                                <td>{{avgEmission}}</td>
-                            </tr>
-                            <tr>
-                                <td><h5>Total</h5></td>
-                                <td>{{totalCurrent}}</td>
-                                <td>{{totalPower}}</td>
-                                <td>{{totalCost}}</td>
-                                <td>{{totalEmission}}</td>
-                            </tr>
-                        </table>
+                    <div style="padding: 2%;" class="thumbnail col-sm-1 col-md-3">
+                        <h4 class="text-center text-primary"><strong>Voltage Detected:</strong> {{voltage}}</h4>
+                        <h4 class="text-center text-warning"><strong>Power Factor:</strong> 1</h4>
                     </div>
 
-                    <div style="padding: 2%; margin: 2%;" class="thumbnail col-sm-2 col-md-4 panel panel-default">
-                        <h4><strong>Voltage:</strong> {{voltage}}</h4>
-                        <h4><strong>Power Factor:</strong> 1</h4>
+                    <div style="padding: 1%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-3">
+                        <h4 class="text-center text-primary">Usage Cost:</h4>
+                        <h4 class="text-center"><strong>R </strong>{{totalCost}}</h4>
+
+                        <p class="text-center"><small ><i>Only an estimate using <a target="_blank" href="http://www.eskom.co.za/CustomerCare/TariffsAndCharges/Pages/Tariffs_And_Charges.aspx">Eskom</a> tariffs.</i></small></p>
+                    </div>
+
+
+                    <div style="padding: 2%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-2">
+                        <h4><strong>Last updated:</strong><br/><small><strong>{{lastUpdate.toLocaleDateString()}}</strong><br/>{{lastUpdate.toLocaleTimeString()}}</small></h4>
+                    </div>
+
+                    <div class="pull-right col-sm-2 col-md-3 thumbnail">
+                        <h4 class="text-center">Notifications</h4>
+                        <hr />
+                        <p class="text-center">No new notifications</p>
                     </div>
                 </div>
             </div>
+            <div class="col-sm-15 col-md-5 row">
+                <div class="panel panel-default">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Current (A)</th>
+                            <th>Power (KWh)</th>
+                            <th>Cost (R)</th>
+                            <th>CO2 Emissions (Kg)</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td>Max</td>
+                            <td>{{maxCurrent}}</td>
+                            <td>{{maxPower}}</td>
+                            <td>{{maxCost}}</td>
+                            <td>{{maxEmission}}</td>
+                        </tr>
+                        <tr>
+                            <td>Min</td>
+                            <td>{{minCurrent}}</td>
+                            <td>{{minPower}}</td>
+                            <td>{{minCost}}</td>
+                            <td>{{minEmission}}</td>
+                        </tr>
+                        <tr>
+                            <td>Average</td>
+                            <td>{{avgCurrent}}</td>
+                            <td>{{avgPower}}</td>
+                            <td>{{avgCost}}</td>
+                            <td>{{avgEmission}}</td>
+                        </tr>
+                        <tr>
+                            <td><h5>Total</h5></td>
+                            <td>{{totalCurrent}}</td>
+                            <td>{{totalPower}}</td>
+                            <td>{{totalCost}}</td>
+                            <td>{{totalEmission}}</td>
+                        </tr>
+
+                        <tfoot>
+                            <th><small><i>Source: <a href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator" target="_blank">EPA</a></i></small></th>
+                            <th></th> <th></th> <th></th> <th></th>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
         <div id="kwhView" role="tabpanel" class="tab-pane">
             <div class="row">
-                <h5>kWh Statistics</h5>
+                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="kwhChart" config="kwhChartConfig">
+
             </div>
         </div>
 
@@ -80,7 +106,7 @@
                 <div class="col-sm-2 col-md-2 well well-sm pull-right" >
                     <h5>Selected Date:</h5>
                     <datepicker date-format="dd MMMM yyyy">
-                        <input id="Text1" name="date" class="col-sm-11 col-md-11" ng-model="date.value" type="text"/>
+                        <input id="currentDate" name="date" class="col-sm-11 col-md-11" ng-model="date.value" type="text"/>
                     </datepicker>
                 </div>
             </div>
@@ -94,53 +120,56 @@
 
         <div id="settingsView" class="tab-pane" role="tabpanel">
             <div class="row">
-                <div class="col-sm-4 col-md-2">
-                    <div class="thumbnail" >
-                        <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle</button>
+                <div style="padding: 2%; margin: 1%;"  class="col-sm-2 col-md-4 thumbnail">
+                    <h4 class="text-primary">Device Status</h4>
+                    <hr/>
+                    <p>Device is power is: <span ng-class="(relayStatus) ? 'label-success' : 'label-warning'" class="label">{{relayStatusText}}</span></p>
+                    <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle Power</button>
+                </div>
+
+                <div id="changeNameDiv" style="padding: 2%; margin: 1%;"  class="col-md-3 thumbnail">
+                    <h4 class="text-primary">Device Details</h4>
+                    <hr/>
+                    <form name="deviceNewNameForm">
+                        <div class="form-group">
+                            <input pattern="[a-zA-Z0-9]+" placeholder="{{selectedDevice.name}}" autocomplete="off" ng-model="deviceNewName" type="text" class="form-control" id="deviceNewName" name="deviceNewName">
+                        </div>
+                        <button ng-click="changeDeviceName(selectedDevice.id)" style="margin-left: 2%;" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Rename</button>
+                    </form>
+                    <div style="margin-top: 5%;" ng-show="changeNameSuccess" class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5>Success</h5>
+                    </div>
+
+                    <div style="margin-top: 5%;" ng-show="changeNameFailure" class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5>Server Error.</h5>
                     </div>
                 </div>
-                <div class="col-sm-4 col-md-2">
-                    <div class="thumbnail" >
-                        <button style="margin-right: 1%;" ng-click="deactivateDevice()" type="button" class="btn btn-primary">Deactivate</button>
-                    </div>
+
+                <div  style="padding: 2%; margin: 1%;"  class="col-md-4 thumbnail">
+                    <h4 class="text-primary">Notification Settings</h4>
+                    <hr/>
+                    <form>
+                        <div class="form-group">
+                            <input placeholder="Notification Email" autocomplete="off" ng-model="notificationEmail" type="text" class="form-control" id="notificationEmail">
+                        </div>
+                        <button style="margin-left: 2%;" type="submit" class="btn btn-primary" id="notificationEmailSubmit">Save</button>
+                    </form>
                 </div>
-                <div class="col-sm-4 col-md-2">
-                    <div class="thumbnail" >
-                        <button style="margin-right: 1%;" ng-click="activateDevice()" type="button" class="btn btn-primary">Activate</button>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4">
-                    <div class="thumbnail" >
-                        <form novalidate class="simple-form" name="addForm">
-                            <p>Name:
-                                <input name="name" ng-model="device.name"  required>
-                            <div ng-show="addForm.$submitted || addForm.name.$touched">
-                                <div style="color:red;" ng-show="addForm.name.$error.required">Name is required.</div>
-                            </div>
-                            </p>
-                            <p>Appliance:
-                                <input name="appliancce" ng-model="device.appliance"  required>
-                            <div ng-show="addForm.$submitted || addForm.appliancce.$touched">
-                                <div style="color:red;" ng-show="addForm.appliancce.$error.required">Appliance is required.</div>
-                            </div>
-                            </p>
-                            <p>ID:
-                                <input name="id" ng-model="device.id" required>
-                            <div ng-show="addForm.$submitted || addForm.id.$touched">
-                                <div style="color:red;" ng-show="addForm.id.$error.required">ID is required.</div>
-                            </div>
-                            </p>
-                            <p>Threshold:
-                                <input name="threshold" ng-model="device.threshold" required>
-                            <div ng-show="addForm.$submitted || addForm.threshold.$touched">
-                                <div style="color:red;" ng-show="addForm.threshold.$error.required">Threshold is required.</div>
-                            </div>
-                            </p>
-                            <input type="submit" ng-click="addDevice(device)" value="Save" />
-                        </form>
+            </div>
+
+            <div class="row col-sm-4 col-md-6">
+                <div class=" panel panel-danger">
+                    <div class="panel-heading">Device Management</div>
+                    <div class="panel-body">
+                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="deleteDevice">Delete Device</button>
+                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="unclaimDevice">Unclaim Device</button>
+                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="reflashDevice">Flash Device</button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

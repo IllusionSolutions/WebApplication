@@ -9,7 +9,7 @@
  * Controller of powerCloud
  */
 angular.module('powerCloud')
-    .controller('ReportsCtrl', function($scope, $state, ngProgressFactory, sharedProperties) {
+    .controller('ReportsCtrl', function($scope, $location, $state, $document, ngProgressFactory, sharedProperties) {
         $scope.$state = $state;
 
         if($scope.date === undefined) {
@@ -17,16 +17,25 @@ angular.module('powerCloud')
             $scope.date.value = new Date();
         }
 
-        $scope.meta = {};
+        $scope.lastUpdate = new Date();
+
+        $scope.relayStatusText = 'Unknown';
+        $scope.relayStatus = false;
 
         $scope.progressbar = ngProgressFactory.createInstance();
+        $scope.changeNameProgress = ngProgressFactory.createInstance();
+
+
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
+
+        $scope.changeNameProgress.setParent(document.getElementById('changeNameDiv'));
+        $scope.changeNameProgress.setColor('#ffe11c');
+        $scope.changeNameProgress.height = '3px';
 
         var particle = new Particle();
         var device = $scope.selectedDevice;
         var device_ID = $scope.deviceID;
-
 
         var i;
 
@@ -72,19 +81,14 @@ angular.module('powerCloud')
                         },
                         redraw: function () {
                             var date2 = new Date($scope.date.value);
-                            console.log(date2);
                             $scope.tempCurrentData=[];
                             var dateSelected = {};
                             dateSelected.year = date2.getFullYear();
                             dateSelected.month = date2.getMonth();
                             dateSelected.day = date2.getDate() - 1;
-                            console.log(dateSelected.year);
-                            console.log(dateSelected.month);
-                            console.log(dateSelected.day);
 
                             var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
                             var data = firebase.database().ref(referenceLink);
-                            console.log(referenceLink);
                             data.once('value').then(function (snapshot) {
                                 snapshot.forEach(function (d) {
                                     var temp = [];
@@ -95,7 +99,6 @@ angular.module('powerCloud')
 
                                 });
                                 $scope.chartConfig.series[0].data = $scope.tempCurrentData;
-                                console.log($scope.chartConfig.series[0].data);
                                 $scope.chartConfig.loading = false;
                                 $scope.$apply();
                                 $scope.chartConfig.options.chart.events.redraw();
@@ -164,8 +167,43 @@ angular.module('powerCloud')
 
             loading: true
         };
-        fetchData(device_ID);
+        $scope.kwhChartConfig = {
+            options: {
+                chart: {
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'kWh'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                gridLineWidth: 1,
+                title: {
+                    text: 'Time'
+                }
+            },
+            tooltip: {
+                crosshairs: true
+            },
+            title: {
+                text: 'Kilowatt Hours'
+            },
+            series: [{
+                name: 'kWh',
+                data: $scope.tempPowerData
+            }],
 
+            loading: true
+        };
+
+        fetchData(device_ID);
+        checkDeviceStatus();
 
         function calculations(Current, Power, Cost, Emission)
         {
@@ -177,13 +215,11 @@ angular.module('powerCloud')
 
             angular.forEach(Current, function(value, key)
             {
-                if($scope.maxCurrent < parseFloat(value[1]))
-                {
+                if($scope.maxCurrent < parseFloat(value[1])) {
                     $scope.maxCurrent = parseFloat(value[1]);
                 }
 
-                if($scope.minCurrent > parseFloat(value[1]))
-                {
+                if($scope.minCurrent > parseFloat(value[1])) {
                     $scope.minCurrent = parseFloat(value[1]);
                 }
 
@@ -211,6 +247,7 @@ angular.module('powerCloud')
 
                 $scope.avgPower += parseFloat(value[1]);
             }, log);
+
             $scope.totalPower = $scope.avgPower.toFixed(2);
             $scope.avgPower = $scope.avgPower / Power.length;
             $scope.avgPower = $scope.avgPower.toFixed(2);
@@ -219,15 +256,12 @@ angular.module('powerCloud')
             $scope.minEmission = 10000;
             $scope.avgEmission = 0.0;
 
-            angular.forEach(Emission, function(value, key)
-            {
-                if($scope.maxEmission < parseFloat(value))
-                {
+            angular.forEach(Emission, function(value, key)  {
+                if($scope.maxEmission < parseFloat(value)) {
                     $scope.maxEmission = parseFloat(value);
                 }
 
-                if($scope.minEmission > parseFloat(value))
-                {
+                if($scope.minEmission > parseFloat(value)) {
                     $scope.minEmission = parseFloat(value);
                 }
 
@@ -241,20 +275,18 @@ angular.module('powerCloud')
             $scope.minCost = 10000;
             $scope.avgCost = 0.0;
 
-            angular.forEach(Cost, function(value, key)
-            {
-                if($scope.maxCost < parseFloat(value))
-                {
+            angular.forEach(Cost, function(value, key) {
+                if($scope.maxCost < parseFloat(value)) {
                     $scope.maxCost = parseFloat(value);
                 }
 
-                if($scope.minCost > parseFloat(value))
-                {
+                if($scope.minCost > parseFloat(value)) {
                     $scope.minCost = parseFloat(value);
                 }
 
                 $scope.avgCost += parseFloat(value);
             }, log);
+
             $scope.totalCost = $scope.avgCost.toFixed(2);
             $scope.avgCost = $scope.avgCost / Cost.length;
             $scope.avgCost = $scope.avgCost.toFixed(2);
@@ -287,11 +319,8 @@ angular.module('powerCloud')
                      temp2.push(d.val().power);
 
                      temp3.push(d.val().calculations.cost);
-
                      temp4.push(d.val().calculations.emission);
-
                      $scope.voltage = d.val().voltage;
-
 
                      $scope.tempCurrentData.push(temp1);
                      $scope.tempPowerData.push(temp2);
@@ -303,57 +332,93 @@ angular.module('powerCloud')
                  $scope.currentChartConfig.loading = false;
                  $scope.powerChartConfig.loading = false;
                  $scope.progressbar.complete();
+
+                 $scope.chartConfig.loading = false;
+                 $scope.kwhChartConfig.loading = false;
                  $scope.$apply();
+
              });
+
         }
 
-        $scope.toggleDevice = function()
-        {
+        function checkDeviceStatus() {
+
+            var authToken = sharedProperties.getParticleToken();
+            if (authToken != null) {
+                var varParticle = particle.getVariable({ deviceId: device_ID, name: 'relayStatus', auth: authToken });
+
+                varParticle.then(
+                    function (data) {
+                        var online = data.body.result;
+
+                        if (online) {
+                            $scope.relayStatusText = 'Online';
+                            $scope.relayStatus = online;
+                        }
+                        else {
+                            $scope.relayStatusText = 'Offline';
+                            $scope.relayStatus = online;
+                        }
+                        console.log(data);
+                    },
+                    function (err) {
+                        console.log(err);
+                    }
+                );
+            }
+            else {
+                console.log('Please login to Particle. Auth token null.');
+            }
+        }
+
+        $scope.toggleDevice = function() {
             var authToken = sharedProperties.getParticleToken();
             if (authToken != null)
             {
-                var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'RandomShit', auth: authToken });
 
-                fnPr.then(function(data) {
+                var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'Mothusi', auth: authToken });
+
+                fnPr.then(
+                    function (data) {
                         console.log('Function called succesfully:', data);
-                    },
-                    function(err) {
+                        checkDeviceStatus();
+                    }, function(err) {
                         console.log('An error occurred:', err);
                     });
             }
             else
             {
-                console.log('Please log in to Particle. Auth token null');
+                console.log('Please log in to Particle. Auth token null.');
             }
-        }
+        };
 
-        $scope.deactivateDevice = function()
-        {
-            console.log($scope.selectedDevice.active);
-            $scope.selectedDevice.active = 0;
-            $scope.meta = angular.copy($scope.selectedDevice);
+        $scope.changeNameSuccess = false;
+        $scope.changeNameFailure = false;
 
-            var newPostKey = $scope.selectedDevice.id;
+        $scope.changeDeviceName = function(id) {
+            $scope.changeNameProgress.start();
+            console.log('Changing name: ' + id);
+            console.log('New name: ' + $scope.deviceNewName);
 
-            // Write the new post's data simultaneously in the posts list and the user's post list.
-            var updates = {};
-            updates['/meta_data/' + newPostKey] = $scope.meta;
+            var refLink = 'meta_data/' + id + '/';
+            var newName = $scope.deviceNewName;
 
-            return firebase.database().ref().update(updates);
-        }
+            firebase.database().ref(refLink).update({
+                name: newName
+            }).catch(function(onReject) {
 
-        $scope.activateDevice = function ()
-        {
-            console.log($scope.selectedDevice.active);
-            $scope.selectedDevice.active = 1;
-            $scope.meta = angular.copy($scope.selectedDevice);
+                $scope.changeNameSuccess = false;
+                $scope.changeNameFailure = true;
 
-            var newPostKey = $scope.selectedDevice.id;
+                console.log(onReject);
 
-            // Write the new post's data simultaneously in the posts list and the user's post list.
-            var updates = {};
-            updates['/meta_data/' + newPostKey] = $scope.meta;
+            }).then(function(value) {
 
-            return firebase.database().ref().update(updates);
-        }
+                $scope.changeNameSuccess = true;
+                $scope.changeNameFailure = false;
+                $scope.changeNameProgress.complete();
+
+            });
+        };
+
     });

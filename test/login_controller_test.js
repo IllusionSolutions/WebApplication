@@ -7,20 +7,35 @@ describe('LoginCtrl', function() {
         $controller = _$controller_;
     }));
 
-    describe('$scope.submit', function() {
-        it('checks if login succeeds based on correct credentials', function() {
+    describe('$scope.submit', function()
+    {
+        it('Checks if login succeeds based on correct credentials.', function() {
+            var $scope = {
+                user: {}
+            };
 
-
-            var $scope = {};
             var controller = $controller('LoginCtrl', { $scope: $scope });
-            /*
-                $scope.user.email = '';
-                $scope.user.password = '';
-                $scope.submit();
 
-                expect($scope.strength).toEqual('strong');
-            */
+            $scope.user.email = 'stuart.andrews123@gmail.com';
+            $scope.user.password = 'Password1';
+            $scope.submit();
 
+            expect($scope.errorVal).toEqual(false);
+        });
+
+        it('Login fails based on incorrect credentials.', function() {
+            var $scope = {
+                user: {
+                    email : 'wrongInformation@gmail.com',
+                    password : 'WrongPassword'
+                },
+                errorVal: false
+            };
+
+            var controller = $controller('LoginCtrl', { $scope: $scope});
+            $scope.submit();
+
+            expect($scope.errorVal).toEqual(false);
         });
     });
 });
