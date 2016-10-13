@@ -37,4 +37,4 @@ examples/
 .idea/
 test/out-fixtures/*
 test/watch-*.txt
-app/styles/
+
