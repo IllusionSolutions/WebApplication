@@ -86,5 +86,17 @@ angular
                 particleAPIToken = value;
             }
         };
+    })
+    .service('userDataService', function() {
+        var userData = null;
+
+        return {
+            getUserData: function () {
+                return userData;
+            },
+            setUserData: function(value) {
+                userData = value;
+            }
+        };
     });
 

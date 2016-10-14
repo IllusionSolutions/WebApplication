@@ -9,7 +9,7 @@
  * Controller of powerCloud
  */
 angular.module('powerCloud')
-    .controller('ReportsCtrl', function($scope, $location, $state, $document, ngProgressFactory, sharedProperties) {
+    .controller('ReportsCtrl', function($scope, $location, $state, $document, ngProgressFactory, sharedProperties, userDataService) {
         $scope.$state = $state;
 
         if($scope.date === undefined) {
@@ -267,6 +267,7 @@ angular.module('powerCloud')
 
                 $scope.avgEmission += parseFloat(value);
             }, log);
+
             $scope.totalEmission = $scope.avgEmission.toFixed(2);
             $scope.avgEmission = $scope.avgEmission / Emission.length;
             $scope.avgEmission = $scope.avgEmission.toFixed(2);
@@ -297,7 +298,7 @@ angular.module('powerCloud')
              var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
-             dateSelected.day = "27";
+             dateSelected.day = "26";
              $scope.deviceID = id;
              var deviceSelected = id;
              $scope.progressbar.start();
@@ -332,8 +333,6 @@ angular.module('powerCloud')
                  $scope.currentChartConfig.loading = false;
                  $scope.powerChartConfig.loading = false;
                  $scope.progressbar.complete();
-
-                 $scope.chartConfig.loading = false;
                  $scope.kwhChartConfig.loading = false;
                  $scope.$apply();
 
@@ -349,17 +348,19 @@ angular.module('powerCloud')
 
                 varParticle.then(
                     function (data) {
-                        var online = data.body.result;
+                        var status = false;
+                        status = data.body.result;
 
-                        if (online) {
+                        if (status) {
                             $scope.relayStatusText = 'Online';
-                            $scope.relayStatus = online;
+                            $scope.relayStatus = status;
                         }
                         else {
                             $scope.relayStatusText = 'Offline';
-                            $scope.relayStatus = online;
+                            $scope.relayStatus = status;
                         }
-                        console.log(data);
+                        $scope.$apply();
+                        console.log("Relay Status: " + status);
                     },
                     function (err) {
                         console.log(err);
@@ -372,9 +373,11 @@ angular.module('powerCloud')
         }
 
         $scope.toggleDevice = function() {
+
             var authToken = sharedProperties.getParticleToken();
-            if (authToken != null)
-            {
+            console.log("User data: " + userDataService.getUserData());
+
+            if (authToken != null) {
 
                 var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'Mothusi', auth: authToken });
 
@@ -397,8 +400,6 @@ angular.module('powerCloud')
 
         $scope.changeDeviceName = function(id) {
             $scope.changeNameProgress.start();
-            console.log('Changing name: ' + id);
-            console.log('New name: ' + $scope.deviceNewName);
 
             var refLink = 'meta_data/' + id + '/';
             var newName = $scope.deviceNewName;
