@@ -38,15 +38,34 @@ angular.module('powerCloud')
                     sharedProperties.setParticleToken(data.body.access_token);
 
                     console.log('API call completed on promise resolve: ', data.body.access_token);
+                    saveAccessToken(data.body.access_token);
                 },
 
                 function(err) {
                     $scope.progressbar.complete();
                     $scope.particleLoginFailure = true;
                     $scope.particleError = err;
+
                     console.log('API call completed on promise fail: ', err);
                 }
             );
         };
+
+        function saveAccessToken(token) {
+
+            var refLink = 'userdata/particle/';
+
+            firebase.database().ref(refLink).update({
+                access_token: token
+            }).catch(function(onReject) {
+
+                console.log(onReject);
+
+            }).then(function(value) {
+
+                console.log(value);
+            });
+        };
+
 
     });

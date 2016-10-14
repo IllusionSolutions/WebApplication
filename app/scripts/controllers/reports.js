@@ -203,6 +203,7 @@ angular.module('powerCloud')
         };
 
         fetchData(device_ID);
+        getParticleToken();
         checkDeviceStatus();
 
         function calculations(Current, Power, Cost, Emission)
@@ -340,6 +341,15 @@ angular.module('powerCloud')
 
         }
 
+        function getParticleToken() {
+            var data = firebase.database().ref('/userdata/particle/access_token');
+
+            data.once('value').then(function(snapshot) {
+                sharedProperties.setParticleToken(snapshot.val());
+            });
+        }
+
+
         function checkDeviceStatus() {
 
             var authToken = sharedProperties.getParticleToken();
@@ -375,11 +385,10 @@ angular.module('powerCloud')
         $scope.toggleDevice = function() {
 
             var authToken = sharedProperties.getParticleToken();
-            console.log("User data: " + userDataService.getUserData());
-
+            var userEmail = firebase.auth().currentUser.email;
             if (authToken != null) {
 
-                var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: 'Mothusi', auth: authToken });
+                var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: userEmail, auth: authToken });
 
                 fnPr.then(
                     function (data) {

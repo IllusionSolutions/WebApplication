@@ -18,10 +18,11 @@
         <div id="overview" role="tabpanel" class="tab-pane active">
             <div class="row">
                 <div class="col-sm-15 col-md-16">
-                    <div style="padding: 2%;" class="thumbnail col-sm-1 col-md-3">
-                        <h4 class="text-center text-primary"><strong>Voltage Detected:</strong> {{voltage}}</h4>
+                    <!-- <div style="padding: 2%;" class="thumbnail col-sm-1 col-md-3">
+                         <h4 class="text-center text-primary"><strong>Voltage Detected:</strong> {{voltage}}</h4>
                         <h4 class="text-center text-warning"><strong>Power Factor:</strong> 1</h4>
                     </div>
+                    -->
 
                     <div style="padding: 1%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-3">
                         <h4 class="text-center text-primary">Usage Cost:</h4>
@@ -123,7 +124,7 @@
                 <div style="padding: 2%; margin: 1%;"  class="col-sm-2 col-md-4 thumbnail">
                     <h4 class="text-primary">Device Status</h4>
                     <hr/>
-                    <p>Device is power is: <span ng-class="(relayStatus) ? 'label-success' : 'label-warning'" class="label">{{relayStatusText}}</span></p>
+                    <p>Device power is: <span ng-class="(relayStatus) ? 'label-success' : 'label-warning'" class="label">{{relayStatusText}}</span></p>
                     <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle Power</button>
                 </div>
 
@@ -163,7 +164,7 @@
                 <div class=" panel panel-danger">
                     <div class="panel-heading">Device Management</div>
                     <div class="panel-body">
-                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="deleteDevice">Delete Device</button>
+                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="deleteDevice">Disable Device</button>
                         <button style="margin: 10px;" type="button" class="btn btn-danger" id="unclaimDevice">Unclaim Device</button>
                         <button style="margin: 10px;" type="button" class="btn btn-danger" id="reflashDevice">Flash Device</button>
                     </div>
