@@ -341,13 +341,14 @@ angular.module('powerCloud')
         }
 
         function getParticleToken() {
-            var data = firebase.database().ref('/userdata/particle/access_token');
+            if (sharedProperties.getParticleToken() == null) {
+                var data = firebase.database().ref('/userdata/particle/access_token');
 
-            data.once('value').then(function(snapshot) {
-                sharedProperties.setParticleToken(snapshot.val());
-            });
+                data.once('value').then(function(snapshot) {
+                    sharedProperties.setParticleToken(snapshot.val());
+                });
+            }
         }
-
 
         function checkDeviceStatus() {
 
