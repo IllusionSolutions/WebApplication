@@ -430,5 +430,4 @@ angular.module('powerCloud')
 
             });
         };
-
     });

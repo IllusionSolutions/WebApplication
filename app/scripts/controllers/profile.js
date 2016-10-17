@@ -21,7 +21,11 @@ angular.module('powerCloud')
         $scope.particleLoginFailure = false;
         $scope.particleLoginSuccess = false;
 
+        $scope.tokenTestResult = null;
+        $scope.tokenText = 'Uknown';
+
         var particle = new Particle();
+        testAccessToken();
 
         $scope.loginParticle = function() {
 
@@ -65,7 +69,45 @@ angular.module('powerCloud')
 
                 console.log(value);
             });
+        }
+
+        function testAccessToken() {
+
+            var refLink = '/userdata/particle/access_token';
+            var data = firebase.database().ref(refLink);
+
+            data.once('value').then(function(snapshot) {
+
+                var token = snapshot.val();
+                var devicesPr = particle.listDevices({ auth: token });
+
+                devicesPr.then (
+                    function(devices) {
+                        $scope.tokenTestResult = true;
+                        $scope.tokenText = 'Access Granted';
+                        $scope.$apply();
+                        //console.log('Devices: ', devices);
+                    },
+                    function(err) {
+                        $scope.tokenTestResult = false;
+                        $scope.tokenText = 'Access Denied';
+                        $scope.$apply();
+                        //console.log('List devices call failed: ', err);
+                    }
+                );
+            });
+        }
+
+        $scope.removeToken = function () {
+            var refLink = 'userdata/particle/access_token';
+
+            firebase.database().ref(refLink)
+                .remove()
+                .then(function(value) {
+                    $scope.tokenTestResult = false;
+                    $scope.tokenText = 'No Token Found';
+                    $scope.$apply();
+                    //console.log(value);
+                });
         };
-
-
     });
