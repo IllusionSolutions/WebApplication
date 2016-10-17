@@ -41,7 +41,7 @@ angular.module('powerCloud')
                     $scope.particleLoginSuccess = true;
                     sharedProperties.setParticleToken(data.body.access_token);
 
-                    console.log('API call completed on promise resolve: ', data.body.access_token);
+                    //console.log('API call completed on promise resolve: ', data.body.access_token);
                     saveAccessToken(data.body.access_token);
                 },
 
@@ -50,7 +50,7 @@ angular.module('powerCloud')
                     $scope.particleLoginFailure = true;
                     $scope.particleError = err;
 
-                    console.log('API call completed on promise fail: ', err);
+                    //console.log('API call completed on promise fail: ', err);
                 }
             );
         };
@@ -73,29 +73,32 @@ angular.module('powerCloud')
 
         function testAccessToken() {
 
-            var refLink = '/userdata/particle/access_token';
-            var data = firebase.database().ref(refLink);
+            if (sharedProperties.getParticleToken() == null) {
+                var refLink = '/userdata/particle/access_token';
+                var data = firebase.database().ref(refLink);
 
-            data.once('value').then(function(snapshot) {
+                data.once('value').then(function(snapshot) {
 
-                var token = snapshot.val();
-                var devicesPr = particle.listDevices({ auth: token });
+                    var token = snapshot.val();
+                    var devicesPr = particle.listDevices({ auth: token });
 
-                devicesPr.then (
-                    function(devices) {
-                        $scope.tokenTestResult = true;
-                        $scope.tokenText = 'Access Granted';
-                        $scope.$apply();
-                        //console.log('Devices: ', devices);
-                    },
-                    function(err) {
-                        $scope.tokenTestResult = false;
-                        $scope.tokenText = 'Access Denied';
-                        $scope.$apply();
-                        //console.log('List devices call failed: ', err);
-                    }
-                );
-            });
+                    devicesPr.then (
+                        function(devices) {
+                            $scope.tokenTestResult = true;
+                            $scope.tokenText = 'Access Granted';
+                            sharedProperties.setParticleToken(token);
+                            $scope.$apply();
+                            //console.log('Devices: ', devices);
+                        },
+                        function(err) {
+                            $scope.tokenTestResult = false;
+                            $scope.tokenText = 'Access Denied';
+                            $scope.$apply();
+                            //console.log('List devices call failed: ', err);
+                        }
+                    );
+                });
+            }
         }
 
         $scope.removeToken = function () {

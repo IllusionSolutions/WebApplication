@@ -10,12 +10,15 @@
  */
 
 angular.module('powerCloud')
-    .controller('DashboardCtrl', function($scope, $state) {
+    .controller('DashboardCtrl', function($scope, $state, sharedProperties) {
         $scope.$state = $state;
 
         $scope.allDevices = [];
-        fetchDevices();
 
+        var particle = new Particle();
+
+        testAccessToken();
+        fetchDevices();
 
         $scope.viewDevice = function(deviceID, deviceSelected) {
             $scope.deviceID = deviceID;
@@ -47,5 +50,29 @@ angular.module('powerCloud')
                 });
                 $scope.$apply();
             });
+        }
+
+        function testAccessToken() {
+
+            if (sharedProperties.getParticleToken() == null) {
+                var refLink = '/userdata/particle/access_token';
+                var data = firebase.database().ref(refLink);
+
+                data.once('value').then(function(snapshot) {
+
+                    var token = snapshot.val();
+                    var devicesPr = particle.listDevices({ auth: token });
+
+                    devicesPr.then (
+                        function(devices) {
+                            sharedProperties.setParticleToken(token);
+                            //console.log('Devices: ', devices);
+                        },
+                        function(err) {
+                            //console.log('List devices call failed: ', err);
+                        }
+                    );
+                });
+            }
         }
     });

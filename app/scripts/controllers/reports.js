@@ -338,7 +338,6 @@ angular.module('powerCloud')
                  $scope.$apply();
 
              });
-
         }
 
         function getParticleToken() {
@@ -370,7 +369,7 @@ angular.module('powerCloud')
                             $scope.relayStatus = status;
                         }
                         $scope.$apply();
-                        console.log("Relay Status: " + status);
+                        //console.log("Relay Status: " + status);
                     },
                     function (err) {
                         console.log(err);
@@ -392,10 +391,10 @@ angular.module('powerCloud')
 
                 fnPr.then(
                     function (data) {
-                        console.log('Function called succesfully:', data);
+                        //console.log('Function called succesfully:', data);
                         checkDeviceStatus();
                     }, function(err) {
-                        console.log('An error occurred:', err);
+                        //console.log('An error occurred:', err);
                     });
             }
             else
