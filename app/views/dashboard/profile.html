@@ -35,20 +35,19 @@
         <hr />
 
         <div ng-show="tokenTestResult" id="tokenDiv">
-            <form>
-                <div class="form-group">
-                    <label >Particle.io API:</label> <br/>
-                    <span ng-class="(tokenTestResult) ? 'label-success' : 'label-danger'" class="label">{{tokenText}}</span>
-                </div>
-                <button ng-click="removeToken()" type="button" class="btn btn-primary" id="removeToken">Remove Token</button>
-            </form>
+            <div class="form-group">
+                <label >Particle.io API:</label> <br/>
+                <span ng-class="(tokenTestResult) ? 'label-success' : 'label-danger'" class="label">{{tokenText}}</span>
+                <p ng-hide="tokenTestResult"><i>Please remove the token and re-login.</i></p>
+            </div>
+            <button ng-click="removeToken()" type="button" class="btn btn-primary" id="removeToken">Remove Token</button>
             <br/>
         </div>
 
-        <div ng-hide="tokenTestResult == null ? true : tokenTestResult" id="loginDiv">
+        <div ng-hide="tokenExists" id="loginDiv">
             <form>
                 <div class="form-group">
-                    <label for="particleEmail">Particle.io Email</label>
+                    <label for="particleEmail">Particle.io Email: </label>
                     <input autocomplete="off" ng-model="particleEmail" type="email" class="form-control" id="particleEmail" />
                     <br/>
                     <label for="particlePass">Particle.io Password: </label>
