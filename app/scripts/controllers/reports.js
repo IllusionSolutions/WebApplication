@@ -167,6 +167,7 @@ angular.module('powerCloud')
 
             loading: true
         };
+
         $scope.kwhChartConfig = {
             options: {
                 chart: {
@@ -206,8 +207,7 @@ angular.module('powerCloud')
         getParticleToken();
         checkDeviceStatus();
 
-        function calculations(Current, Power, Cost, Emission)
-        {
+        function calculations(Current, Power, Cost, Emission) {
             var log = [];
 
             $scope.maxCurrent = 0;
@@ -294,8 +294,7 @@ angular.module('powerCloud')
             $scope.avgCost = $scope.avgCost.toFixed(2);
         }
 
-        function fetchData(id)
-        {
+        function fetchData(id) {
              var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
@@ -410,24 +409,41 @@ angular.module('powerCloud')
         $scope.changeDeviceName = function(id) {
             $scope.changeNameProgress.start();
 
-            var refLink = 'meta_data/' + id + '/';
             var newName = $scope.deviceNewName;
 
-            firebase.database().ref(refLink).update({
-                name: newName
-            }).catch(function(onReject) {
-
-                $scope.changeNameSuccess = false;
-                $scope.changeNameFailure = true;
-
-                console.log(onReject);
-
-            }).then(function(value) {
+            //Change the device name on Particle first
+            particle.renameDevice({ deviceId: device_ID, name: newName, auth: sharedProperties.getParticleToken() }).then(function(data) {
+                console.log('(Particle) Device renamed successfully:', data);
 
                 $scope.changeNameSuccess = true;
                 $scope.changeNameFailure = false;
-                $scope.changeNameProgress.complete();
 
+                //Change the device name on firebase
+                var refLink = 'meta_data/' + id + '/';
+                firebase.database().ref(refLink).update({
+                    name: newName
+                }).catch(function(onReject) {
+
+                    $scope.changeNameSuccess = false;
+                    $scope.changeNameFailure = true;
+
+                    console.log(onReject);
+
+                }).then(function(value) {
+
+                    $scope.changeNameSuccess = true;
+                    $scope.changeNameFailure = false;
+                    $scope.changeNameProgress.complete();
+
+                });
+
+            }, function(err) {
+                console.log('(Particle) An error occurred while renaming device:', err);
+
+                $scope.changeNameSuccess = false;
+                $scope.changeNameFailure = true;
             });
+
+
         };
     });
