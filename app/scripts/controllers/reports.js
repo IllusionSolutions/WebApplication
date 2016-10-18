@@ -9,7 +9,8 @@
  * Controller of powerCloud
  */
 angular.module('powerCloud')
-    .controller('ReportsCtrl', function($scope, $location, $state, $document, ngProgressFactory, sharedProperties, userDataService) {
+    .controller('ReportsCtrl', function( $scope, $location, $state, $document, ngProgressFactory, sharedProperties, userDataService, Upload )
+    {
         $scope.$state = $state;
 
         if($scope.date === undefined) {
@@ -29,9 +30,10 @@ angular.module('powerCloud')
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
 
-        $scope.changeNameProgress.setParent(document.getElementById('changeNameDiv'));
         $scope.changeNameProgress.setColor('#ffe11c');
         $scope.changeNameProgress.height = '3px';
+
+        $scope.firmwareFile = null;
 
         var particle = new Particle();
         var device = $scope.selectedDevice;
@@ -446,4 +448,17 @@ angular.module('powerCloud')
 
 
         };
+
+        $scope.uploadFirmware = function(file, errFiles) {
+
+            var storageRef = firebase.storage().ref().child('firmware/' + device_ID);
+            $scope.firmwareFile = file;
+            var firmwareRef = storageRef.child(file.name);
+
+            console.log('Uploading: ' + file);
+
+            firmwareRef.put(file).then(function(snapshot) {
+                console.log('File successfully uploaded to firebase.');
+            });
+        }
     });
