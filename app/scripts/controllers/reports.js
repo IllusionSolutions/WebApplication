@@ -12,9 +12,50 @@ angular.module('powerCloud')
     .controller('ReportsCtrl', function($scope, $state, ngProgressFactory, sharedProperties) {
         $scope.$state = $state;
 
+        var currentG = false;
+        var realT = false;
+        $scope.setOverview = function()
+        {
+            currentG = false;
+            realT = false;
+            console.log("current: " + currentG + "real: " + realT);
+        }
+
+        $scope.setKw = function()
+        {
+            currentG = false;
+            realT = false;
+            console.log("current: " + currentG + "real: " + realT);
+        }
+
+        $scope.setCurrent = function()
+        {
+            currentG = true;
+            realT = false;
+            console.log("current: " + currentG + "real: " + realT);
+            setTimeout($scope.currentChartConfig.options.chart.events.redraw(), 5000);
+            setTimeout($scope.realTimeCurrentConfig.options.chart.events.redraw(), 5000);
+            setTimeout($scope.realTimePowerConfig.options.chart.events.redraw(), 5000);
+        }
+
+        $scope.setReal = function()
+        {
+            currentG = false;
+            realT = true;
+            $scope.currentChartConfig.options.chart.events.redraw();
+            console.log("current: " + currentG + "real: " + realT);
+
+            setTimeout($scope.realTimeCurrentConfig.options.chart.events.redraw(), 5000);
+            setTimeout($scope.realTimePowerConfig.options.chart.events.redraw(), 5000);
+        }
+
+
+        //$scope.currentChartConfig = CurrentChart;
+
         if($scope.date === undefined) {
             $scope.date = {};
-            $scope.date.value = new Date();
+            $scope.date.from = new Date();
+            $scope.date.to = new Date($scope.date.from);
         }
 
         $scope.progressbar = ngProgressFactory.createInstance();
@@ -55,6 +96,31 @@ angular.module('powerCloud')
         $scope.avgPower = 0.0;
         $scope.totalPower = 0;
 
+
+        /*$scope.genReport = function()
+        {
+            $scope.voltage = 0.0;
+
+            $scope.tempCurrentData = [];
+            $scope.tempPowerData = [];
+            $scope.tempCostData = [];
+            $scope.tempEmissionData = [];
+            $scope.tempCategories = [];
+
+            $scope.maxCurrent = 0;
+            $scope.minCurrent = 0;
+            $scope.avgCurrent = 0.0;
+            $scope.totalCurrent = 0;
+
+            fetchAllData();
+
+            $scope.currentChartConfig.series = [{
+                name: 'Amps',
+                data: $scope.tempCurrentData
+            }];
+
+            $scope.dateSelected = true;
+        }*/
         $scope.currentChartConfig = {
             options: {
                 chart: {
@@ -63,40 +129,89 @@ angular.module('powerCloud')
                     panning: true,
                     panKey: 'shift',
                     events: {
-
-                        click: function () {
-
-                        },
                         redraw: function () {
-                            var date2 = new Date($scope.date.value);
-                            console.log(date2);
-                            $scope.tempCurrentData=[];
-                            var dateSelected = {};
-                            dateSelected.year = date2.getFullYear();
-                            dateSelected.month = date2.getMonth();
-                            dateSelected.day = date2.getDate() - 1;
-                            console.log(dateSelected.year);
-                            console.log(dateSelected.month);
-                            console.log(dateSelected.day);
+                            if(currentG==true) {
+                                var date2 = new Date($scope.date.from);
+                                console.log(date2);
+                                $scope.tempCurrentData = [];
+                                var dateSelected = {};
+                                dateSelected.year = date2.getFullYear();
+                                dateSelected.month = date2.getMonth();
+                                dateSelected.day = date2.getDate() - 1;
+                                console.log(dateSelected.year);
+                                console.log(dateSelected.month);
+                                console.log(dateSelected.day);
 
-                            var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
-                            var data = firebase.database().ref(referenceLink);
-                            console.log(referenceLink);
-                            data.once('value').then(function (snapshot) {
-                                snapshot.forEach(function (d) {
-                                    var temp = [];
+                                var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+                                var data = firebase.database().ref(referenceLink);
+                                console.log(referenceLink);
+                                data.once('value').then(function (snapshot) {
+                                    snapshot.forEach(function (d) {
+                                        var temp = [];
 
-                                    temp.push(d.val().datetime * 1000);
-                                    temp.push(d.val().current);
-                                    $scope.tempCurrentData.push(temp);
+                                        temp.push(d.val().datetime * 1000);
+                                        temp.push(d.val().current);
+                                        $scope.tempCurrentData.push(temp);
+
+                                    });
+                                    $scope.currentChartConfig.series[0].data = $scope.tempCurrentData;
+                                    console.log($scope.currentChartConfig.series[0].data);
+                                    $scope.currentChartConfig.loading = false;
+                                    $scope.$apply();
+                                    if(currentG==true) {
+                                        setTimeout($scope.currentChartConfig.options.chart.events.redraw(), 10000);
+                                    }
+                                    return;
 
                                 });
-                                $scope.chartConfig.series[0].data = $scope.tempCurrentData;
-                                console.log($scope.chartConfig.series[0].data);
-                                $scope.chartConfig.loading = false;
-                                $scope.$apply();
-                                $scope.chartConfig.options.chart.events.redraw();
-                            })
+                            }
+
+                               /*
+                            /*else {
+                                console.log("here2");
+                                //var between = $scope.chartConfig.options.chart.events.getDate(dateFrom, dateTo);
+                                //console.log(between);
+                                var dateSelectedTo = {};
+                                dateSelectedTo.year = dateTo.getFullYear();
+                                dateSelectedTo.month = dateTo.getMonth();
+                                dateSelectedTo.day = dateTo.getDate() - 1;
+                                var k = dateSelected.day;
+                                var i = dateSelected.year;
+                                var j = dateSelected.month;
+
+                                for (; i < dateSelectedTo.year+1; i++)
+                                {
+                                    for(; j<dateSelectedTo.month; j++)
+                                    {
+                                        var walkerDate = dateFrom;
+                                        while(dateFrom<dateTo+1)
+                                        {
+                                            var referenceLink = "/device_data/" + device_ID + "/" + walkerDate.year + "/" + walkerDate.month + "/" + walkerDate.day;
+                                            var data = firebase.database().ref(referenceLink);
+                                            console.log(referenceLink);
+                                            data.once('value').then(function (snapshot) {
+                                            snapshot.forEach(function (d) {
+                                            var temp = [];
+
+                                            temp.push(d.val().datetime * 1000);
+                                            temp.push(d.val().current);
+                                            $scope.tempCurrentData.push(temp);
+
+                                            });
+                                            $scope.currentChartConfig.series[0].data = $scope.tempCurrentData;
+                                            //console.log($scope.chartConfig.series[0].data);
+                                            $scope.currentChartConfig.loading = false;
+                                            $scope.$apply();
+
+                                            walkerDate++;
+                                            })
+                                        }
+                                }
+                                }
+                            }*/
+                            //$scope.$watchGroup(['date.from', 'date.to'], $scope.currentChartConfig.options.chart.events.redraw);
+                            //$scope.$apply();
+
                         }
                     }
                 }
@@ -161,6 +276,204 @@ angular.module('powerCloud')
 
             loading: true
         };
+
+        $scope.realTimeCurrentConfig = {
+            options: {
+                chart: {
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift',
+                    events: {
+                        redraw: function () {
+                            if(realT==true) {
+                                var dateFrom = new Date();
+
+                                $scope.tempCurrentData = [];
+                                var dateSelected = {};
+                                dateSelected.year = dateFrom.getFullYear();
+                                dateSelected.month = dateFrom.getMonth();
+                                dateSelected.day = dateFrom.getDate() - 1;
+                                console.log(dateSelected.year);
+                                console.log(dateSelected.month);
+                                console.log(dateSelected.day);
+                                console.log("here realtime");
+                                var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+                                var data = firebase.database().ref(referenceLink);
+                                console.log(referenceLink);
+                                data.on('value', function (snapshot) {
+                                    snapshot.forEach(function (d) {
+                                        //
+                                        var year = dateFrom.getFullYear();
+                                        var month = dateFrom.getMonth();
+                                        var day = dateFrom.getDate();
+                                        snapshot = d.child(year + "/" + month + "/" + day);
+                                        var temp = [];
+
+                                        temp.push(d.val().datetime * 1000);
+                                        temp.push(d.val().current);
+                                        $scope.tempCurrentData.push(temp);
+                                        //series.addPoint(temp);
+                                    });
+                                    $scope.realTimeCurrentConfig.series[0].data = $scope.tempCurrentData;
+                                    //console.log($scope.realTimeCurrentConfig.series[0].data);
+                                    $scope.realTimeCurrentConfig.loading = false;
+                                    $scope.$apply();
+                                    if(realT==false) {
+                                        return;
+                                    }
+
+                                });
+                            }
+
+
+                        }
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'amps'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                gridLineWidth: 1,
+                title: {
+                    text: 'Time'
+                }
+            },
+            tooltip: {
+                crosshairs: true
+            },
+            title: {
+                text: 'Current'
+            },
+            series: [{
+                name: 'Amps',
+                data: $scope.tempCurrentData
+            }],
+
+            loading: true
+        };
+
+        $scope.powerChartConfig = {
+            options: {
+                chart: {
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'KWh'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                gridLineWidth: 1,
+                title: {
+                    text: 'Time'
+                }
+            },
+            tooltip: {
+                crosshairs: true
+            },
+            title: {
+                text: 'Power'
+            },
+            series: [{
+                name: 'KWh',
+                data: $scope.tempPowerData
+            }],
+
+            loading: true
+        };
+
+        $scope.realTimePowerConfig = {
+            options: {
+                chart: {
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift',
+                    events: {
+                        redraw: function () {
+                            if(realT==true) {
+                                var dateFrom = new Date();
+
+                                $scope.tempPowerData = [];
+                                var dateSelected = {};
+                                dateSelected.year = dateFrom.getFullYear();
+                                dateSelected.month = dateFrom.getMonth();
+                                dateSelected.day = dateFrom.getDate() - 1;
+                                console.log(dateSelected.year);
+                                console.log(dateSelected.month);
+                                console.log(dateSelected.day);
+                                console.log("here realtime");
+                                var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+                                var data = firebase.database().ref(referenceLink);
+                                console.log(referenceLink);
+                                data.on('value', function (snapshot) {
+
+
+                                    snapshot.forEach(function (d) {
+                                        //
+                                        var year = dateFrom.getFullYear();
+                                        var month = dateFrom.getMonth();
+                                        var day = dateFrom.getDate();
+                                        snapshot = d.child(year + "/" + month + "/" + day);
+                                        var temp = [];
+
+                                        temp.push(d.val().datetime * 1000);
+                                        temp.push(d.val().power);
+                                        $scope.tempPowerData.push(temp);
+                                        //series.addPoint(temp);
+                                    });
+                                    $scope.realTimePowerConfig.series[0].data = $scope.tempPowerData;
+                                    //console.log($scope.realTimeCurrentConfig.series[0].data);
+                                    $scope.realTimePowerConfig.loading = false;
+                                    $scope.$apply();
+                                    if(realT==false) {
+                                        return;
+                                    }
+
+                                });
+                            }
+                            //setInterval($scope.realTimeCurrentConfig.options.chart.events.redraw(), 5000);
+
+                        }
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'KiloWatt'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                gridLineWidth: 1,
+                title: {
+                    text: 'Time'
+                }
+            },
+            tooltip: {
+                crosshairs: true
+            },
+            title: {
+                text: 'Kilowatt'
+            },
+            series: [{
+                name: 'kW',
+                data: $scope.tempPowerData
+            }],
+
+            loading: true
+        };
+
         fetchData(device_ID);
 
 
@@ -257,9 +570,72 @@ angular.module('powerCloud')
             $scope.avgCost = $scope.avgCost.toFixed(2);
         }
 
+        function populateCurrentChart()
+        {
+            var id;
+            var length = $scope.allCurrentData.length;
+            var log = [];
+            var devices = [];
+            var count = 0;
+
+            angular.forEach($scope.allCurrentData, function(value, key)
+            {
+                id = value[0];
+                console.log("Value id " + value[0]);
+                if(!contains(devices,id))
+                {
+                    devices.push(id);
+                }
+                $scope.totalCurrent += parseFloat(value[2]);
+            }, log);
+
+            var currentID = devices[0];
+            var specificTotal = 0;
+            var ave = 0;
+            var percent = 0.0;
+            var temp = [];
+            var length = $scope.allCurrentData.length;
+
+            angular.forEach($scope.allCurrentData, function(value, key)
+            {
+                if(count == 0)
+                {
+                    console.log(getName(currentID));
+                    temp.push(getName(currentID));
+                }
+
+                if(value[0] != currentID)
+                {
+                    ave = specificTotal/$scope.totalCurrent;
+                    ave = ave.toFixed(4);
+                    percent = ave*100.0000;
+                    temp.push(percent);
+
+                    $scope.allCurrentDataPI.push(temp);
+                    temp = [];
+
+                    currentID = value[0];
+                    console.log(getName(currentID));
+                    temp.push(getName(currentID));
+                    specificTotal = 0.0;
+                }
+
+                specificTotal += parseFloat(value[2]);
+                count++;
+                if(count == length)
+                {
+                    ave = specificTotal/$scope.totalCurrent;
+                    ave = ave.toFixed(4);
+                    percent = ave*100.0000;
+                    temp.push(percent);
+                    $scope.allCurrentDataPI.push(temp);
+                }
+            }, log);
+        }
+
         function fetchData(id)
         {
-             var dateSelected = {};
+             /*var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
              dateSelected.day = "27";
@@ -301,9 +677,91 @@ angular.module('powerCloud')
                  $scope.powerChartConfig.loading = false;
                  $scope.progressbar.complete();
                  $scope.$apply();
-             });
+             });*/
+
+            /*var dateFrom = $scope.date.from;
+            var dateTo = $scope.date.to;
+            var beginHolder = $scope.date.from;
+            var endHolder = $scope.date.to;
+
+            console.log(dateFrom);
+            $scope.tempCurrentData = [];
+            var dateSelected = {};
+            dateSelected.year = dateFrom.getFullYear();
+            dateSelected.month = dateFrom.getMonth();
+            dateSelected.day = dateFrom.getDate() - 1;
+            console.log(dateSelected.year);
+            console.log(dateSelected.month);
+            console.log(dateSelected.day);
+
+            if(dateFrom==dateTo)
+            {
+                console.log("here");
+                var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+                var data = firebase.database().ref(referenceLink);
+                console.log(referenceLink);
+                data.once('value').then(function (snapshot) {
+                    snapshot.forEach(function (d) {
+                        var temp = [];
+
+                        temp.push(d.val().datetime * 1000);
+                        temp.push(d.val().current);
+                        $scope.tempCurrentData.push(temp);
+
+                    });
+                    $scope.currentChartConfig.series[0].data = $scope.tempCurrentData;
+                    //console.log($scope.chartConfig.series[0].data);
+                    $scope.currentChartConfig.loading = false;
+                    $scope.$apply();
+                    $scope.currentChartConfig.options.chart.events.redraw();
+
+                })
+            }
+
+            else {
+                console.log("here2");
+                //var between = $scope.chartConfig.options.chart.events.getDate(dateFrom, dateTo);
+                //console.log(between);
+                var dateSelectedTo = {};
+                dateSelectedTo.year = dateTo.getFullYear();
+                dateSelectedTo.month = dateTo.getMonth();
+                dateSelectedTo.day = dateTo.getDate() - 1;
+                var k = dateSelected.day;
+                var i = dateSelected.year;
+                var j = dateSelected.month;
+
+                for (; i < dateSelectedTo.year + 1; i++) {
+                    for (; j < dateSelectedTo.month; j++) {
+                        var walkerDate = dateFrom;
+                        while (dateFrom < dateTo + 1) {
+                            var referenceLink = "/device_data/" + device_ID + "/" + walkerDate.year + "/" + walkerDate.month + "/" + walkerDate.day;
+                            var data = firebase.database().ref(referenceLink);
+                            console.log(referenceLink);
+                            data.once('value').then(function (snapshot) {
+                                snapshot.forEach(function (d) {
+                                    var temp = [];
+
+                                    temp.push(d.val().datetime * 1000);
+                                    temp.push(d.val().current);
+                                    $scope.tempCurrentData.push(temp);
+
+                                });
+                                $scope.currentChartConfig.series[0].data = $scope.tempCurrentData;
+                                //console.log($scope.chartConfig.series[0].data);
+                                $scope.currentChartConfig.loading = false;
+                                $scope.$apply();
+
+                                walkerDate++;
+                            })
+                        }
+                    }
+                }*/
+                //$scope.currentChartConfig.options.chart.events.redraw();
+                //$scope.realTimeCurrentConfig.options.chart.events.redraw();
+            //}
 
         }
+
 
         $scope.toggleDevice = function()
         {
@@ -326,3 +784,121 @@ angular.module('powerCloud')
         }
 
     });
+
+    /*angular.module('powerCloud')
+    .factory('CurrentChart', function ()
+    {
+        var currentChartConfig = {
+            options: {
+                chart: {
+                    type: 'areaspline',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift',
+                    events: {
+                        redraw: function () {
+                            var dateFrom = new Date($scope.date.from);
+                            var dateTo = new Date($scope.date.to);
+                            console.log(dateFrom);
+                            $scope.tempCurrentData = [];
+                            var dateSelected = {};
+                            dateSelected.year = dateFrom.getFullYear();
+                            dateSelected.month = dateFrom.getMonth();
+                            dateSelected.day = dateFrom.getDate() - 1;
+                            console.log(dateSelected.year);
+                            console.log(dateSelected.month);
+                            console.log(dateSelected.day);
+
+                            if (dateFrom.getTime() == dateTo.getTime()) {
+                                console.log("here");
+                                var referenceLink = "/device_data/" + device_ID + "/" + dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+                                var data = firebase.database().ref(referenceLink);
+                                console.log(referenceLink);
+                                data.once('value').then(function (snapshot) {
+                                    snapshot.forEach(function (d) {
+                                        var temp = [];
+
+                                        temp.push(d.val().datetime * 1000);
+                                        temp.push(d.val().current);
+                                        $scope.tempCurrentData.push(temp);
+
+                                    });
+                                    $scope.chartConfig.series[0].data = $scope.tempCurrentData;
+                                    //console.log($scope.chartConfig.series[0].data);
+                                    $scope.chartConfig.loading = false;
+                                    $scope.$apply();
+                                    $scope.chartConfig.options.chart.events.redraw();
+
+                                })
+                            }
+
+                            else {
+                                console.log("here2");
+                                //var between = $scope.chartConfig.options.chart.events.getDate(dateFrom, dateTo);
+                                //console.log(between);
+                                var dateSelectedTo = {};
+                                 dateSelectedTo.year = dateTo.getFullYear();
+                                 dateSelectedTo.month = dateTo.getMonth();
+                                 dateSelectedTo.day = dateTo.getDate() - 1;
+                                 var k = dateSelected.day;
+                                 var i = dateSelected.year;
+                                 var j = dateSelected.month;
+
+                                 for (; i < dateSelectedTo.year+1; i++)
+                                 {
+                                 for(; j<dateSelectedTo.month; j++)
+                                 {
+                                 var walkerDate = dateFrom;
+                                while (dateFrom < dateTo + 1) {
+                                    var referenceLink = "/device_data/" + device_ID + "/" + walkerDate.year + "/" + walkerDate.month + "/" + walkerDate.day;
+                                    var data = firebase.database().ref(referenceLink);
+                                    console.log(referenceLink);
+                                    data.once('value').then(function (snapshot) {
+                                        snapshot.forEach(function (d) {
+                                            var temp = [];
+
+                                            temp.push(d.val().datetime * 1000);
+                                            temp.push(d.val().current);
+                                            $scope.tempCurrentData.push(temp);
+
+                                        });
+                                        $scope.chartConfig.series[0].data = $scope.tempCurrentData;
+                                        //console.log($scope.chartConfig.series[0].data);
+                                        $scope.chartConfig.loading = false;
+                                        $scope.$apply();
+
+                                        walkerDate++;
+                                    })
+                                }
+                                }
+                                 }
+                            }
+                            $scope.chartConfig.options.chart.events.redraw();
+                        }
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'amps'
+                }
+            },
+            xAxis: {
+                type: 'datetime',
+                gridLineWidth: 1,
+                title: {
+                    text: 'Time'
+                }
+            },
+            tooltip: {
+                crosshairs: true
+            },
+            title: {
+                text: 'Current'
+            },
+            series: [{ }],
+
+            loading: true
+        };
+        return currentChartConfig;
+    });*/
