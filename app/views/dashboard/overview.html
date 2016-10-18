@@ -8,37 +8,38 @@
             <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview">Overview</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView">Kilowatt Hours Overview</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current Overview</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="settingsView" data-target="#settingsView">Settings</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current Overview</a></li>
         </ul>
+    </div>
+
+    <div class="row thumbnail col-sm-15 col-md-16 panel panel-default">
+        <div>
+            <label>Single Day:<input type="radio" name="dataView" ng-model="choice" ng-value="single" ng-click="select()"></label><br/>
+            <label>Multiple Days:<input type="radio" name="dataView" ng-model="choice" ng-value="multi" ng-click="select()"></label>
+        </div>
+
+        <div ng-show="multiDate == true">View Data From:
+            <input type="date" id="start1"
+                   name="input" ng-model="dateStringBegin"
+                   placeholder="yyyy-MM-dd"
+                   required /> and To:
+            <input type="date" id="end"
+                   name="input" ng-model="dateStringEnd"
+                   placeholder="yyyy-MM-dd"
+                   required />
+            <button class="btn btn-primary" ng-click="genReport()">Search</button>
+        </div>
+        <div ng-show="singleDate == true">View Data From:
+            <input type="date" id="start2"
+                   name="input" ng-model="dateStringBegin"
+                   placeholder="yyyy-MM-dd"
+                   required />
+            <button class="btn btn-primary" ng-click="genReport()">Search</button>
+        </div>
     </div>
 
     <div class="tab-content">
         <div role="tabpanel" id="overview" class="tab-pane active">
-            <div class="row thumbnail col-sm-15 col-md-16 panel panel-default">
-                <div>
-                    <label>Single Day:<input type="radio" name="dataView" ng-model="choice" ng-value="single" ng-click="select()"></label><br/>
-                    <label>Multiple Days:<input type="radio" name="dataView" ng-model="choice" ng-value="multi" ng-click="select()"></label>
-                </div>
-
-                <div ng-show="multiDate == true">View Data From:
-                    <input type="date" id="start1"
-                           name="input" ng-model="dateStringBegin"
-                           placeholder="yyyy-MM-dd"
-                           required /> and To:
-                    <input type="date" id="end"
-                           name="input" ng-model="dateStringEnd"
-                           placeholder="yyyy-MM-dd"
-                           required />
-                    <button class="btn btn-primary" ng-click="genReport()">Search</button>
-                </div>
-                <div ng-show="singleDate == true">View Data From:
-                    <input type="date" id="start2"
-                           name="input" ng-model="dateStringBegin"
-                           placeholder="yyyy-MM-dd"
-                           required />
-                    <button class="btn btn-primary" ng-click="genReport()">Search</button>
-                </div>
-            </div>
             <div ng-show="dateSelected == true">
                 <div class="row">
                     <div class="col-sm-15 col-md-16">
@@ -90,18 +91,21 @@
         </div>
 
         <div id="kwhView" role="tabpanel" class="tab-pane">
-
+            <div  ng-show="dateSelected == true">
+                <div class="row">
+                    <div class="col-sm-15 col-md-16">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart1" config="overviewPowerBarConfig"></highchart>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="currentView" role="tabpanel" class="tab-pane">
-
-        </div>
-
-
-        <div id="settingsView" class="tab-pane" role="tabpanel">
-            <div class="row">
-                <div class="col-sm-2 col-md-4 thumbnail">
-                        <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle</button>
+        <div id="emissonsView" role="tabpanel" class="tab-pane">
+            <div  ng-show="dateSelected == true">
+                <div class="row">
+                    <div class="col-sm-15 col-md-16">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart3" config="overviewCurrentBarConfig"></highchart>
+                    </div>
                 </div>
             </div>
         </div>
