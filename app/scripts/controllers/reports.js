@@ -21,6 +21,12 @@ angular.module('powerCloud')
         $scope.togglingDevice = false;
         $scope.toggleResult = null;
 
+        $scope.changeNameSuccess = false;
+        $scope.changeNameFailure = false;
+
+        $scope.emailChangeResult = false;
+        $scope.emailChangeResultText = '';
+
         if($scope.date === undefined) {
             $scope.date = {};
             $scope.date.value = new Date();
@@ -44,8 +50,6 @@ angular.module('powerCloud')
         $scope.firmwareFile = null;
 
         var i;
-
-        console.log("Device Active: " + device.active);
 
         $scope.voltage = 0.0;
 
@@ -413,10 +417,7 @@ angular.module('powerCloud')
             }
         };
 
-        $scope.changeNameSuccess = false;
-        $scope.changeNameFailure = false;
-
-        $scope.changeDeviceName = function(id) {
+        $scope.changeDeviceName = function() {
             $scope.changeNameProgress.start();
 
             var newName = $scope.deviceNewName;
@@ -429,7 +430,7 @@ angular.module('powerCloud')
                 $scope.changeNameFailure = false;
 
                 //Change the device name on firebase
-                var refLink = 'meta_data/' + id + '/';
+                var refLink = 'meta_data/' + device_ID + '/';
                 firebase.database().ref(refLink).update({
                     name: newName
                 }).catch(function(onReject) {
@@ -517,5 +518,29 @@ angular.module('powerCloud')
 
         $scope.toggleDeviceModalClose = function() {
             $scope.toggleResult = null;
-        }
+        };
+
+        $scope.updateNotificationEmail = function() {
+            $scope.changeNameProgress.start();
+
+            var email = $scope.notificationEmail;
+            if (email != null) {
+                var refLink = 'meta_data/' + device_ID + '/';
+
+                firebase.database().ref(refLink).update({
+                    notificationEmail:email
+                }).catch(function(onReject) {
+                    $scope.emailChangeResultText = onReject.message;
+                    $scope.emailChangeResult = false;
+                    $scope.changeNameProgress.complete();
+                }).then(function(value) {
+                    $scope.emailChangeResultText = 'Notification Email updated.';
+                    $scope.emailChangeResult = true;
+                    $scope.changeNameProgress.complete();
+                });
+
+            }
+
+        };
+
     });

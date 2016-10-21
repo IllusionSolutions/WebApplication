@@ -135,7 +135,7 @@
                         <div class="form-group">
                             <input pattern="[a-zA-Z0-9]+" placeholder="{{selectedDevice.name}}" autocomplete="off" ng-model="deviceNewName" type="text" class="form-control" id="deviceNewName" name="deviceNewName">
                         </div>
-                        <button ng-click="changeDeviceName(selectedDevice.id)" style="margin-left: 2%;" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Rename</button>
+                        <button ng-click="changeDeviceName()" style="margin-left: 2%;" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Rename</button>
                     </form>
                     <div style="margin-top: 5%;" ng-show="changeNameSuccess" class="alert alert-success alert-dismissible" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -153,9 +153,13 @@
                     <hr/>
                     <form>
                         <div class="form-group">
-                            <input placeholder="Notification Email" autocomplete="off" ng-model="notificationEmail" type="text" class="form-control" id="notificationEmail">
+                            <input placeholder="{{(selectedDevice.notificationEmail) ? selectedDevice.notificationEmail : 'No notification email set'}}" autocomplete="off" ng-model="notificationEmail" type="email" class="form-control" id="notificationEmail" ng-bind="notificationEmail">
                         </div>
-                        <button style="margin-left: 2%;" type="submit" class="btn btn-primary" id="notificationEmailSubmit">Save</button>
+                        <div style="margin-top: 5%;" ng-show="emailChangeResult" ng-class="(emailChangeResult) ? 'alert-success' :'alert-danger'" class="alert  alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h5>{{emailChangeResultText}}</h5>
+                        </div>
+                        <button style="margin-left: 2%;" type="submit" class="btn btn-primary" id="notificationEmailSubmit" ng-click="updateNotificationEmail()">Save</button>
                     </form>
                 </div>
             </div>
@@ -202,10 +206,10 @@
                 <div class="modal-dialog modal-sm" role="document">
                     <div class="modal-content text-center">
                         <div class="modal-header"><h3>{{(deviceActive) ? 'Disable' : 'Enable'}} {{selectedDevice.name}}?</h3></div>
-                        <div class="modal-body">{{(deviceActive) ? "This will notify the server to ignore data from this device." : "This will notify the server to allow data from this device."}}</div>
-                        <span ng-show="(toggleResult != null)" ng-class="(toggleResult) ? 'label-success' : 'label-danger'" class="label">{{(toggleResult) ? "Success" : "Fail"}}</span>
+                        <div class="modal-body" style="padding-bottom: 2%;">{{(deviceActive) ? "This will notify the server to ignore data from this device." : "This will notify the server to allow data from this device."}}</div>
+                        <div style="padding-bottom: 4%;" ng-show="(toggleResult != null)"><span ng-class="(toggleResult) ? 'label-success' : 'label-danger'" class="label">{{(toggleResult) ? "Success" : "Fail"}}</span>
                         <div ng-show="togglingDevice" class="progress progress-striped active">
-                            <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%; margin-bottom: 0;"></div>
+                            <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%; margin-bottom: 0;"></div></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="toggleDeviceModalClose()">Close</button>
