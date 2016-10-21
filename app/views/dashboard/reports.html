@@ -9,9 +9,8 @@
             <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview" ng-click="setOverview()">Overview</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView" ng-click="setKw()">Kilowatt Hours</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView" ng-click="setCurrent()">Current Usage</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="realtimeView" data-target="#realtimeView" ng-click="setReal()">Realtime Data</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-contro
-                                       ls="settingsView" data-target="#settingsView">Settings</a></li>
+            <li id="realTime" role="presentation"><a role="tab" data-toggle="tab" aria-controls="realtimeView" data-target="#realtimeView" >Realtime Data</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="settingsView" data-target="#settingsView">Settings</a></li>
         </ul>
     </div>
 
@@ -71,7 +70,13 @@
 
         <div id="kwhView" role="tabpanel" class="tab-pane">
             <div class="row">
-                <h5>kWh Statistics</h5>
+                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="powerChart" config="powerChartConfig"></highchart>
+                <div class="col-sm-2 col-md-2 well well-sm pull-right" style="margin-right: 4%;">
+                    <h5>Selected Date:</h5>
+                    <datepicker date-format="dd MMMM yyyy">
+                        From:<input id="TextP" name="date" class="col-sm-11 col-md-11" ng-model="dateP.from" type="text"/>
+                    </datepicker>
+                </div>
             </div>
         </div>
 
@@ -92,7 +97,7 @@
 
         </div>
 
-        <div id="realtimeView" role="tabpanel" class="tab-pane">
+        <div id="realtimeView" role="tabpanel" class="tab-pane" dom-on-create="setReal()">
             <div class="row">
                 <h5>Realtime Statistics</h5>
                 <div class="row">
