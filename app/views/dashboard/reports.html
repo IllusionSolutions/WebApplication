@@ -205,8 +205,11 @@
             <div id="confirmToggleModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDisableModal">
                 <div class="modal-dialog modal-sm" role="document">
                     <div class="modal-content text-center">
-                        <div class="modal-header"><h3>{{(deviceActive) ? 'Disable' : 'Enable'}} {{selectedDevice.name}}?</h3></div>
-                        <div class="modal-body" style="padding-bottom: 2%;">{{(deviceActive) ? "This will notify the server to ignore data from this device." : "This will notify the server to allow data from this device."}}</div>
+                        <div class="modal-header" ng-hide="(toggleResult != null)"><h3>{{(deviceActive) ? 'Disable' : 'Enable'}} {{selectedDevice.name}}?</h3></div>
+                        <div class="modal-header" ng-show="(toggleResult != null)"><h3>Completed!</h3></div>
+
+                        <div class="modal-body" style="padding-bottom: 2%;" ng-hide="(toggleResult != null)">{{(deviceActive) ? "This will notify the server to ignore data from this device." : "This will notify the server to allow data from this device."}}</div>
+                        <div class="modal-body" style="padding-bottom: 2%;" ng-show="(toggleResult != null)">{{(deviceActive) ? "The server will now accept data from this device." : "The server will now ignore data from this device."}}</div>
                         <div style="padding-bottom: 4%;" ng-show="(toggleResult != null)"><span ng-class="(toggleResult) ? 'label-success' : 'label-danger'" class="label">{{(toggleResult) ? "Success" : "Fail"}}</span>
                         <div ng-show="togglingDevice" class="progress progress-striped active">
                             <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%; margin-bottom: 0;"></div></div>
