@@ -13,7 +13,7 @@ angular.module('powerCloud')
     .controller('DashboardCtrl', function($scope, $state, sharedProperties) {
         $scope.$state = $state;
 
-        $scope.allDevices = [];
+        $scope.allDevices = null;
 
         var particle = new Particle();
 
@@ -65,6 +65,7 @@ angular.module('powerCloud')
             var data = firebase.database().ref(referenceLink);
 
             data.once('value').then(function(snapshot) {
+                $scope.allDevices = [];
                 snapshot.forEach(function(d) {
                     $scope.allDevices.push(d.val());
                 });

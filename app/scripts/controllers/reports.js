@@ -27,6 +27,8 @@ angular.module('powerCloud')
         $scope.emailChangeResult = false;
         $scope.emailChangeResultText = '';
 
+
+
         if($scope.date === undefined) {
             $scope.date = {};
             $scope.date.value = new Date();
@@ -458,17 +460,30 @@ angular.module('powerCloud')
 
         };
 
-        $scope.uploadFirmware = function(file, errFiles) {
+        $scope.flashFirmware = function(file, errFiles) {
 
+            //Upload firmware to Firebase
             var storageRef = firebase.storage().ref().child('firmware/' + device_ID);
             $scope.firmwareFile = file;
             var firmwareRef = storageRef.child(file.name);
 
-            console.log('Uploading: ' + file);
+            firmwareRef.put(file)
+                .then(function(snapshot) {
+                    console.log('File successfully uploaded to firebase.');
 
-            firmwareRef.put(file).then(function(snapshot) {
-                console.log('File successfully uploaded to firebase.');
-            });
+                    particle.flashDevice({ deviceId: device_ID, files: { file1: file }, auth: sharedProperties.getParticleToken() })
+                        .then(function(data) {
+                            console.log('Device flashing started successfully: ', data);
+                        }, function(err) {
+                            console.log('An error occurred while flashing the device: ', err);
+                        });
+
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+
+
         };
 
         $scope.toggleDevice = function () {
