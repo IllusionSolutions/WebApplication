@@ -14,14 +14,26 @@
 
     <div class="tab-content">
         <div role="tabpanel" id="overview" class="tab-pane active">
-            <div class="row">
-                <div class="col-sm-15 col-md-16 panel panel-default">View Data From:
-                    <input type="date" id="start"
+            <div class="row thumbnail col-sm-15 col-md-16 panel panel-default">
+                <div>
+                    <label>Single Day:<input type="radio" name="dataView" ng-model="choice" ng-value="single" ng-click="select()"></label><br/>
+                    <label>Multiple Days:<input type="radio" name="dataView" ng-model="choice" ng-value="multi" ng-click="select()"></label>
+                </div>
+
+                <div ng-show="multiDate == true">View Data From:
+                    <input type="date" id="start1"
                            name="input" ng-model="dateStringBegin"
                            placeholder="yyyy-MM-dd"
                            required /> and To:
                     <input type="date" id="end"
                            name="input" ng-model="dateStringEnd"
+                           placeholder="yyyy-MM-dd"
+                           required />
+                    <button class="btn btn-primary" ng-click="genReport()">Search</button>
+                </div>
+                <div ng-show="singleDate == true">View Data From:
+                    <input type="date" id="start2"
+                           name="input" ng-model="dateStringBegin"
                            placeholder="yyyy-MM-dd"
                            required />
                     <button class="btn btn-primary" ng-click="genReport()">Search</button>
@@ -47,31 +59,24 @@
                             </thead>
                             <tr>
                                 <td>Max</td>
-                                <td>{{maxCurrent}}</td>
-                                <td>{{maxPower}}</td>
-                                <td>{{maxCost}}</td>
-                                <td>{{maxEmission}}</td>
+                                <td>{{highest_current}}</td>
+                                <td>{{highest_power}}</td>
+                                <td>{{highest_cost}}</td>
+                                <td>{{highest_emissions}}</td>
                             </tr>
                             <tr>
                                 <td>Min</td>
-                                <td>{{minCurrent}}</td>
-                                <td>{{minPower}}</td>
-                                <td>{{minCost}}</td>
-                                <td>{{minEmission}}</td>
+                                <td>{{lowest_current}}</td>
+                                <td>{{lowest_power}}</td>
+                                <td>{{lowest_cost}}</td>
+                                <td>{{lowest_emissions}}</td>
                             </tr>
                             <tr>
-                                <td>Average</td>
-                                <td>{{avgCurrent}}</td>
-                                <td>{{avgPower}}</td>
-                                <td>{{avgCost}}</td>
-                                <td>{{avgEmission}}</td>
-                            </tr>
-                            <tr>
-                                <td><h5>Total</h5></td>
-                                <td>{{totalCurrent}}</td>
-                                <td>{{totalPower}}</td>
-                                <td>{{totalCost}}</td>
-                                <td>{{totalEmission}}</td>
+                                <td>Total</td>
+                                <td>{{total_current}}</td>
+                                <td>{{total_power}}</td>
+                                <td>{{total_cost}}</td>
+                                <td>{{total_emissions}}</td>
                             </tr>
                         </table>
                     </div>
@@ -101,12 +106,4 @@
             </div>
         </div>
     </div>
-
-
-    <!--div class="row">
-        <div class="col-sm-15 col-md-12">
-            <highchart style="margin-bottom: 1%; margin-right: 1%;" class="col-sm-7 col-md-5 panel panel-default" id="overviewCurrentChart" config="overviewCurrentConfig"></highchart>
-            <highchart style="margin-bottom: 1%;" class="col-sm-7 col-md-5 panel panel-default" id="overviewPowerChart" config="overviewPowerConfig"></highchart>
-        </div>
-    </div-->
 </div>

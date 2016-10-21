@@ -15,7 +15,7 @@ var config = {
     apiKey: "AIzaSyD7ec7C79ogJZSJTiRvJLZJEEvywfYGg1Y",
     authDomain: "powercloud-bf968.firebaseapp.com",
     databaseURL: "https://powercloud-bf968.firebaseio.com",
-    storageBucket: "powercloud-bf968.appspot.com",
+    storageBucket: "powercloud-bf968.appspot.com"
 };
 firebase.initializeApp(config);
 
@@ -25,7 +25,8 @@ angular
         'ngAnimate',
         'highcharts-ng',
         'ngProgress',
-        '720kb.datepicker'
+        '720kb.datepicker',
+        'ngFileUpload'
     ])
     .config(function($stateProvider, $urlRouterProvider) {
 
@@ -90,6 +91,18 @@ angular
             },
             setParticleToken: function(value) {
                 particleAPIToken = value;
+            }
+        };
+    })
+    .service('userDataService', function() {
+        var userData = null;
+
+        return {
+            getUserData: function () {
+                return userData;
+            },
+            setUserData: function(value) {
+                userData = value;
             }
         };
     });

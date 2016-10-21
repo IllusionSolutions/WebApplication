@@ -7,10 +7,12 @@
     "test": "gulp test"
   },
   "devDependencies": {
+    "allow-methods": "^1.0.3",
     "apache-server-configs": "^2.11.0",
     "chai": "^2.1.0",
     "connect": "^3.3.4",
     "connect-livereload": "^0.5.3",
+    "cors": "^2.8.1",
     "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-autoprefixer": "^2.1.0",
@@ -44,7 +46,7 @@
     "main-bower-files": "^2.5.0",
     "mocha": "^2.1.0",
     "mock-gulp-dest": "^0.1.1",
-    "opn": "^1.0.1",
+    "opn": "^4.0.2",
     "serve-index": "^1.6.2",
     "serve-static": "^1.9.1",
     "wiredep": "^2.2.2",

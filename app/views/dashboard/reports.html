@@ -15,55 +15,80 @@
     </div>
 
     <div class="tab-content">
-        <div role="tabpanel" id="overview" class="tab-pane active">
+        <div id="overview" role="tabpanel" class="tab-pane active">
             <div class="row">
                 <div class="col-sm-15 col-md-16">
-                    <div class="col-sm-15 col-md-5 panel panel-default">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Current (A)</th>
-                                    <th>Power (KWh)</th>
-                                    <th>Cost (R)</th>
-                                    <th>CO2 Emissions (Kg)</th>
-                                </tr>
-                            </thead>
-                            <tr>
-                                <td>Max</td>
-                                <td>{{maxCurrent}}</td>
-                                <td>{{maxPower}}</td>
-                                <td>{{maxCost}}</td>
-                                <td>{{maxEmission}}</td>
-                            </tr>
-                            <tr>
-                                <td>Min</td>
-                                <td>{{minCurrent}}</td>
-                                <td>{{minPower}}</td>
-                                <td>{{minCost}}</td>
-                                <td>{{minEmission}}</td>
-                            </tr>
-                            <tr>
-                                <td>Average</td>
-                                <td>{{avgCurrent}}</td>
-                                <td>{{avgPower}}</td>
-                                <td>{{avgCost}}</td>
-                                <td>{{avgEmission}}</td>
-                            </tr>
-                            <tr>
-                                <td><h5>Total</h5></td>
-                                <td>{{totalCurrent}}</td>
-                                <td>{{totalPower}}</td>
-                                <td>{{totalCost}}</td>
-                                <td>{{totalEmission}}</td>
-                            </tr>
-                        </table>
+                    <!-- <div style="padding: 2%;" class="thumbnail col-sm-1 col-md-3">
+                         <h4 class="text-center text-primary"><strong>Voltage Detected:</strong> {{voltage}}</h4>
+                        <h4 class="text-center text-warning"><strong>Power Factor:</strong> 1</h4>
+                    </div>
+                    -->
+
+                    <div style="padding: 1%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-3">
+                        <h4 class="text-center text-primary">Usage Cost:</h4>
+                        <h4 class="text-center"><strong>R </strong>{{totalCost}}</h4>
+
+                        <p class="text-center"><small ><i>Only an estimate using <a target="_blank" href="http://www.eskom.co.za/CustomerCare/TariffsAndCharges/Pages/Tariffs_And_Charges.aspx">Eskom</a> tariffs.</i></small></p>
                     </div>
 
-                    <div style="padding: 2%; margin: 2%;" class="thumbnail col-sm-2 col-md-4 panel panel-default">
-                        <h4><strong>Voltage:</strong> {{voltage}}</h4>
-                        <h4><strong>Power Factor:</strong> 1</h4>
+
+                    <div style="padding: 2%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-2">
+                        <h4><strong>Last updated:</strong><br/><small><strong>{{lastUpdate.toLocaleDateString()}}</strong><br/>{{lastUpdate.toLocaleTimeString()}}</small></h4>
                     </div>
+
+                    <div class="pull-right col-sm-2 col-md-3 thumbnail">
+                        <h4 class="text-center">Notifications</h4>
+                        <hr />
+                        <p class="text-center">No new notifications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-15 col-md-5 row">
+                <div class="panel panel-default">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Current (A)</th>
+                            <th>Power (KWh)</th>
+                            <th>Cost (R)</th>
+                            <th>CO2 Emissions (Kg)</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td>Max</td>
+                            <td>{{maxCurrent}}</td>
+                            <td>{{maxPower}}</td>
+                            <td>{{maxCost}}</td>
+                            <td>{{maxEmission}}</td>
+                        </tr>
+                        <tr>
+                            <td>Min</td>
+                            <td>{{minCurrent}}</td>
+                            <td>{{minPower}}</td>
+                            <td>{{minCost}}</td>
+                            <td>{{minEmission}}</td>
+                        </tr>
+                        <tr>
+                            <td>Average</td>
+                            <td>{{avgCurrent}}</td>
+                            <td>{{avgPower}}</td>
+                            <td>{{avgCost}}</td>
+                            <td>{{avgEmission}}</td>
+                        </tr>
+                        <tr>
+                            <td><h5>Total</h5></td>
+                            <td>{{totalCurrent}}</td>
+                            <td>{{totalPower}}</td>
+                            <td>{{totalCost}}</td>
+                            <td>{{totalEmission}}</td>
+                        </tr>
+
+                        <tfoot>
+                            <th><small><i>Source: <a href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator" target="_blank">EPA</a></i></small></th>
+                            <th></th> <th></th> <th></th> <th></th>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
@@ -93,8 +118,6 @@
                     </datepicker>
                 </div>
             </div>
-
-
         </div>
 
         <div id="realtimeView" role="tabpanel" class="tab-pane" dom-on-create="setReal()">
@@ -115,11 +138,99 @@
 
         <div id="settingsView" class="tab-pane" role="tabpanel">
             <div class="row">
-                <div class="col-sm-2 col-md-4 thumbnail">
-                    <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle</button>
+                <div style="padding: 2%; margin: 1%;"  class="col-sm-2 col-md-4 thumbnail">
+                    <h4 class="text-primary">Device Status</h4>
+                    <hr/>
+                    <p>Device power is: <span ng-class="(relayStatus) ? 'label-success' : 'label-warning'" class="label">{{relayStatusText}}</span></p>
+                    <button style="margin-right: 1%;" ng-click="toggleDevicePower()" type="button" class="btn btn-primary">Toggle Power</button>
+                </div>
+
+                <div id="changeNameDiv" style="padding: 2%; margin: 1%;"  class="col-md-3 thumbnail">
+                    <h4 class="text-primary">Device Details</h4>
+                    <hr/>
+                    <form name="deviceNewNameForm">
+                        <div class="form-group">
+                            <input pattern="[a-zA-Z0-9]+" placeholder="{{selectedDevice.name}}" autocomplete="off" ng-model="deviceNewName" type="text" class="form-control" id="deviceNewName" name="deviceNewName">
+                        </div>
+                        <button ng-click="changeDeviceName(selectedDevice.id)" style="margin-left: 2%;" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Rename</button>
+                    </form>
+                    <div style="margin-top: 5%;" ng-show="changeNameSuccess" class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5>Success</h5>
+                    </div>
+
+                    <div style="margin-top: 5%;" ng-show="changeNameFailure" class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5>Server Error.</h5>
+                    </div>
+                </div>
+
+                <div  style="padding: 2%; margin: 1%;"  class="col-md-4 thumbnail">
+                    <h4 class="text-primary">Notification Settings</h4>
+                    <hr/>
+                    <form>
+                        <div class="form-group">
+                            <input placeholder="Notification Email" autocomplete="off" ng-model="notificationEmail" type="text" class="form-control" id="notificationEmail">
+                        </div>
+                        <button style="margin-left: 2%;" type="submit" class="btn btn-primary" id="notificationEmailSubmit">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row col-sm-4 col-md-6">
+                <div class=" panel panel-danger">
+                    <div class="panel-heading">Device Management</div>
+                    <div class="panel-body">
+                        <button style="margin: 10px;" type="button" ng-class="(deviceActive) ? 'btn-danger' : 'btn-success'" class="btn" id="toggleDeviceActivity" data-toggle="modal" data-target="#confirmToggleModal">{{(deviceActive) ? 'Disable Device' : 'Enable Device'}}</button>
+                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="unclaimDevice">Unclaim Device</button>
+                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="reflashDevice" data-toggle="modal" data-target="#flashDeviceModal">Flash Device</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modals for Device Management -->
+
+            <!-- Flash Device with new Firmware Modal -->
+            <div class="modal fade" id="flashDeviceModal" tabindex="-1" role="dialog" aria-labelledby="flashDeviceModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="flashDeviceModalLabel">Upload Firmware</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form">
+                                <div class="form-group">
+                                    <button ngf-select="uploadFirmware($file, $invalidFiles)" ngf-max-size="1MB" accept=".bin" class="btn btn-default btn-file" for="firmwareFilePath">Browse...</button>
+                                    <p>{{(firmwareFile == null) ? "No File selected" : firmwareFile.name}}</p>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger">Flash Device</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirm disable device Modal -->
+            <div id="confirmToggleModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDisableModal">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content text-center">
+                        <div class="modal-header"><h3>{{(deviceActive) ? 'Disable' : 'Enable'}} {{selectedDevice.name}}?</h3></div>
+                        <div class="modal-body">{{(deviceActive) ? "This will notify the server to ignore data from this device." : "This will notify the server to allow data from this device."}}</div>
+                        <span ng-show="(toggleResult != null)" ng-class="(toggleResult) ? 'label-success' : 'label-danger'" class="label">{{(toggleResult) ? "Success" : "Fail"}}</span>
+                        <div ng-show="togglingDevice" class="progress progress-striped active">
+                            <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%; margin-bottom: 0;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="toggleDeviceModalClose()">Close</button>
+                            <button type="button" class="btn btn-danger" ng-disabled="(toggleResult != null)" ng-click="toggleDevice()">Yes</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>

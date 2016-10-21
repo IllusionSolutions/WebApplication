@@ -10,12 +10,15 @@
  */
 
 angular.module('powerCloud')
-    .controller('DashboardCtrl', function($scope, $state) {
+    .controller('DashboardCtrl', function($scope, $state, sharedProperties) {
         $scope.$state = $state;
 
         $scope.allDevices = [];
-        fetchDevices();
 
+        var particle = new Particle();
+
+        testAccessToken();
+        fetchDevices();
 
         $scope.viewDevice = function(deviceID, deviceSelected) {
             $scope.deviceID = deviceID;
@@ -36,8 +39,28 @@ angular.module('powerCloud')
             });
         };
 
-        function fetchDevices()
-        {
+        $scope.viewDeviceInfo = function (deviceID) {
+            var particleToken = sharedProperties.getParticleToken();
+
+            $scope.deviceAttr = null;
+
+            var devicesPr = particle.getDevice({ deviceId: deviceID, auth: particleToken });
+            devicesPr.then (
+                function(data) {
+                    $scope.deviceAttr = data.body;
+                    var lastDate = new Date(data.body.last_heard);
+                    $scope.deviceAttr.date = lastDate.toDateString() + ' at ' + lastDate.toLocaleTimeString();
+
+                    console.log('Device attrs retrieved successfully:', $scope.deviceAttr);
+                    $scope.$apply();
+                },
+                function(err) {
+                    //console.log('API call failed: ', err);
+                }
+            );
+        };
+
+        function fetchDevices() {
             var referenceLink = "/meta_data";
             var data = firebase.database().ref(referenceLink);
 
@@ -47,5 +70,28 @@ angular.module('powerCloud')
                 });
                 $scope.$apply();
             });
+        }
+
+        function testAccessToken() {
+            if (sharedProperties.getParticleToken() == null) {
+                var refLink = '/userdata/particle/access_token';
+                var data = firebase.database().ref(refLink);
+
+                data.once('value').then(function(snapshot) {
+
+                    var token = snapshot.val();
+                    var devicesPr = particle.listDevices({ auth: token });
+
+                    devicesPr.then (
+                        function(devices) {
+                            sharedProperties.setParticleToken(token);
+                            //console.log('Devices: ', devices);
+                        },
+                        function(err) {
+                            //console.log('List devices call failed: ', err);
+                        }
+                    );
+                });
+            }
         }
     });

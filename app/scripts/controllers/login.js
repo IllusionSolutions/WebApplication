@@ -9,10 +9,11 @@
  * Controller for the login page.
  */
 angular.module('powerCloud')
-    .controller('LoginCtrl', function($scope, $location) {
+    .controller('LoginCtrl', function($scope, $location, userDataService) {
+
         $scope.submit = function() {
 
-        $scope.errorVal = false;
+            $scope.errorVal = false;
 
             var email = $scope.user.email;
             var pass = $scope.user.password;
@@ -20,20 +21,18 @@ angular.module('powerCloud')
             firebase.auth().signInWithEmailAndPassword(email, pass)
                 .then(function(result)
                 {
+                    userDataService.setUserData(result);
                     $location.path('/dashboard');
                     $scope.$apply();
                 })
                 .catch(function(error)
                 {
                     $scope.errorVal = true;
-                    $scope.errorCode = error.code;
                     $scope.errorMessage = error.message;
 
                     console.log(error.message);
                     $scope.$apply();
                 });
-
-            return false;
         }
 
     });
