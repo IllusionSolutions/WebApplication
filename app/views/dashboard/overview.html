@@ -8,7 +8,7 @@
             <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview">Overview</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView">Kilowatt Hours Overview</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current Overview</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current Overview</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="emissionView" data-target="#emissionView">Emission Overview</a></li>
         </ul>
     </div>
 
@@ -100,11 +100,32 @@
             </div>
         </div>
 
-        <div id="emissonsView" role="tabpanel" class="tab-pane">
-            <div  ng-show="dateSelected == true">
+        <div id="currentView" role="tabpanel" class="tab-pane">
+            <div  ng-show="dateSelected == true" id="test" >
                 <div class="row">
                     <div class="col-sm-15 col-md-16">
-                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart3" config="overviewCurrentBarConfig"></highchart>
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="emissionView" role="tabpanel" class="tab-pane">
+            <div  ng-show="dateSelected == true" >
+                    <div class="row">
+                        <div class="thumbnail col-sm-10 col-md-10">
+                            <img class="pull-left" src="images/mine-cart.png"/><br />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="thumbnail col-sm-10 col-md-10">
+                            <img class="pull-left" src="images/light-bulb.png"/><br />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="thumbnail col-sm-10 col-md-10">
+                            <img class="pull-left" src="images/co2.png"/><br />
+                        </div>
                     </div>
                 </div>
             </div>

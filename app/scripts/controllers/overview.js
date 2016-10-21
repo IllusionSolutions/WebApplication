@@ -580,12 +580,13 @@ angular.module('powerCloud')
 
             var maxed = false;
             var minned = false;
+            var avgCount = 0;
 
             angular.forEach($scope.allPowerData, function(value, key)
             {
                 if(getName(value[0]) != current)
                 {
-                    ave = specificTotal/$scope.totalPower;
+                    ave = specificTotal/avgCount;
                     ave = ave.toFixed(2);
                     ave = parseFloat(ave);
 
@@ -597,6 +598,7 @@ angular.module('powerCloud')
                     $scope.allPowerDataBar.push(tempDeviceMax);
                     $scope.allPowerDataBar.push(tempDeviceMin);
 
+                    avgCount = 0;
                     current = getName(value[0]);
                     specificTotal = 0;
                     min = 999999;
@@ -615,10 +617,12 @@ angular.module('powerCloud')
 
                 specificTotal += parseFloat(value[2]);
                 count++;
+                avgCount++;
 
                 if(count == length)
                 {
-                    ave = specificTotal/$scope.totalPower;
+                    console.log(avgCount);
+                    ave = specificTotal/avgCount;
                     ave = ave.toFixed(2);
                     ave = parseFloat(ave);
 
@@ -676,12 +680,13 @@ angular.module('powerCloud')
 
             var maxed = false;
             var minned = false;
+            var avgCount = 0;
 
             angular.forEach($scope.allCurrentData, function(value, key)
             {
                 if(getName(value[0]) != current)
                 {
-                    ave = specificTotal/$scope.totalCurrent;
+                    ave = specificTotal/avgCount;
                     ave = ave.toFixed(2);
                     ave = parseFloat(ave);
 
@@ -711,10 +716,11 @@ angular.module('powerCloud')
 
                 specificTotal += parseFloat(value[2]);
                 count++;
+                avgCount++;
 
                 if(count == length)
                 {
-                    ave = specificTotal/$scope.totalCurrent;
+                    ave = specificTotal/avgCount;
                     ave = ave.toFixed(2);
                     ave = parseFloat(ave);
 
@@ -818,11 +824,6 @@ angular.module('powerCloud')
             $scope.dateSelected = true;
         }
 
-        function intervals()
-        {
-            console.log("------------------------> " + JSON.stringify($scope.allPowerData,null,2));
-        }
-
         $scope.select = function()
         {
             $scope.singleDate = false;
@@ -879,7 +880,6 @@ angular.module('powerCloud')
                 options: {
                     chart:
                     {
-                        renderTo: 'container',
                         type: 'pie'
                     }
                 },
@@ -947,11 +947,14 @@ angular.module('powerCloud')
                 },
             },
             plotOptions: {
-                bar: {
                     dataLabels: {
-                        enabled: true
-                    }
-                }
+                        enabled: true,
+                        align: 'right',
+                        color: '#FFFFFF',
+                        x: -10
+                    },
+                    pointPadding: 0.1,
+                    groupPadding: 0
             },
             credits: {
                 enabled: false
@@ -1001,7 +1004,6 @@ angular.module('powerCloud')
                 },
             },
             plotOptions: {
-                bar: {
                     dataLabels: {
                         enabled: true,
                         align: 'right',
@@ -1010,7 +1012,6 @@ angular.module('powerCloud')
                     },
                     pointPadding: 0.1,
                     groupPadding: 0
-                }
             },
             credits: {
                 enabled: false
