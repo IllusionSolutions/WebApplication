@@ -13,6 +13,14 @@ angular.module('powerCloud')
     {
         $scope.$state = $state;
 
+        var particle = new Particle();
+        var device = $scope.selectedDevice;
+        var device_ID = $scope.deviceID;
+
+        $scope.deviceActive = device.active;
+        $scope.togglingDevice = false;
+        $scope.toggleResult = null;
+
         if($scope.date === undefined) {
             $scope.date = {};
             $scope.date.value = new Date();
@@ -35,11 +43,9 @@ angular.module('powerCloud')
 
         $scope.firmwareFile = null;
 
-        var particle = new Particle();
-        var device = $scope.selectedDevice;
-        var device_ID = $scope.deviceID;
-
         var i;
+
+        console.log("Device Active: " + device.active);
 
         $scope.voltage = 0.0;
 
@@ -207,7 +213,6 @@ angular.module('powerCloud')
 
         fetchData(device_ID);
         getParticleToken();
-        checkDeviceStatus();
 
         function calculations(Current, Power, Cost, Emission) {
             var log = [];
@@ -348,6 +353,10 @@ angular.module('powerCloud')
                 data.once('value').then(function(snapshot) {
                     sharedProperties.setParticleToken(snapshot.val());
                 });
+                checkDeviceStatus();
+            }
+            else {
+                checkDeviceStatus();
             }
         }
 
@@ -371,9 +380,9 @@ angular.module('powerCloud')
                             $scope.relayStatus = status;
                         }
                         $scope.$apply();
-                        //console.log("Relay Status: " + status);
                     },
                     function (err) {
+
                         console.log(err);
                     }
                 );
@@ -383,11 +392,10 @@ angular.module('powerCloud')
             }
         }
 
-        $scope.toggleDevice = function() {
+        $scope.toggleDevicePower = function() {
 
-            var authToken = sharedProperties.getParticleToken();
             var userEmail = firebase.auth().currentUser.email;
-            if (authToken != null) {
+            if (sharedProperties.getParticleToken() != null) {
 
                 var fnPr = particle.callFunction({ deviceId: device_ID, name: 'relayToggle', argument: userEmail, auth: authToken });
 
@@ -460,5 +468,54 @@ angular.module('powerCloud')
             firmwareRef.put(file).then(function(snapshot) {
                 console.log('File successfully uploaded to firebase.');
             });
+        };
+
+        $scope.toggleDevice = function () {
+
+            $scope.togglingDevice = true;
+
+            if ($scope.deviceActive) {
+                //Disable Device
+                firebase.database().ref('meta_data/' + device_ID + '/').update({
+                    active: false
+                }).catch(function(onReject) {
+
+                    $scope.toggleResult = false;
+                    console.log(onReject);
+
+                }).then(function(value) {
+
+                    $scope.toggleResult = true;
+                    $scope.deviceActive = false;
+                    $scope.togglingDevice = false;
+
+                    $scope.$apply();
+                    console.log("Device disabled.");
+                });
+
+            }
+            else {
+                //Enable Device
+                firebase.database().ref('meta_data/' + device_ID + '/').update({
+                    active: true
+                }).catch(function(onReject) {
+
+                    $scope.toggleResult = false;
+                    console.log(onReject);
+
+                }).then(function(value) {
+
+                    $scope.toggleResult = true;
+                    $scope.deviceActive = true;
+                    $scope.togglingDevice = false;
+
+                    $scope.$apply();
+                    console.log("Device enabled.");
+                });
+            }
+        };
+
+        $scope.toggleDeviceModalClose = function() {
+            $scope.toggleResult = null;
         }
     });
