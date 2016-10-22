@@ -8,8 +8,6 @@
  * # profileCtrl
  * Controller of powerCloud
  */
-
-
 angular.module('powerCloud')
     .controller('ProfileCtrl', function($scope, $state, $document, ngProgressFactory, sharedProperties) {
         $scope.$state = $state;
@@ -17,6 +15,15 @@ angular.module('powerCloud')
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
+
+        $scope.firebaseUser = firebase.auth().currentUser;
+
+        var updateDataFlag = -1; // -1 No update, 0 Update Email, 1 Update Password
+
+        $scope.changeEmail ='';
+        $scope.newPassChange = '';
+        $scope.newPassRepeatChange = '';
+        $scope.authenticated = false;
 
         $scope.particleLoginFailure = false;
         $scope.particleLoginSuccess = false;
@@ -127,4 +134,57 @@ angular.module('powerCloud')
                     //console.log(value);
                 });
         };
+
+        $scope.re_authenticate = function() {
+
+            var email = $scope.user.email;
+            var pass = $scope.user.password;
+
+            var user = firebase.auth().currentUser;
+            var credentials = firebase.auth.EmailAuthProvider.credential( email, pass );
+
+            user.reauthenticate(credentials).then(function() {
+                $scope.authenticated = true;
+
+                if (updateDataFlag == 0) {
+                    changeEmailAddress();
+                }
+                else if (updateDataFlag = 1) {
+                    changePassword();
+                }
+
+            }, function(error) {
+                $scope.authenticated = false;
+            });
+        };
+
+        $scope.updateType = function(type) {
+            updateDataFlag = type;
+        };
+
+        function changeEmailAddress() {
+            var user = firebase.auth().currentUser;
+            var newEmail = $scope.changeEmail;
+
+            if(user.email != newEmail) {
+                user.updateEmail(newEmail).then(function() {
+                    console.log("Email update success");
+                }, function(error) {
+                    console.log(error);
+                });
+            }
+        }
+
+        function changePassword() {
+            if ($scope.newPassChange == $scope.newPassRepeatChange) {
+                var user = firebase.auth().currentUser;
+                var newPassword = $scope.newPassRepeatChange;
+
+                user.updatePassword(newPassword).then(function() {
+                    console.log("Password update success");
+                }, function(error) {
+                    console.log(error);
+                });
+            }
+        }
     });
