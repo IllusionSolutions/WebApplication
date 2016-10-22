@@ -94,7 +94,7 @@
             <div  ng-show="dateSelected == true">
                 <div class="row">
                     <div class="col-sm-15 col-md-16">
-                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart1" config="overviewPowerBarConfig"></highchart>
+                        <highchart style="margin-right: 1%;" class="panel panel-default" class="panel panel-default" id="barChart1" config="overviewPowerBarConfig"></highchart>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
             <div  ng-show="dateSelected == true" id="test" >
                 <div class="row">
                     <div class="col-sm-15 col-md-16">
-                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
+                        <highchart style="margin-right: 1%;" class="panel panel-default" class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
                     </div>
                 </div>
             </div>
@@ -114,17 +114,20 @@
             <div  ng-show="dateSelected == true" >
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
-                            <img class="pull-left" src="images/mine-cart.png"/><br />
+                            <img class="pull-left" src="images/mine-cart.png"/>
+                            <div>{{coal}}</div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
-                            <img class="pull-left" src="images/light-bulb.png"/><br />
+                            <img class="pull-left" src="images/light-bulb.png"/>
+                            <div>{{household}}</div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
-                            <img class="pull-left" src="images/co2.png"/><br />
+                            <img class="pull-left" src="images/co2.png"/>
+                            <div>{{total_emissions}}</div>
                         </div>
                     </div>
                 </div>

@@ -76,6 +76,10 @@ angular.module('powerCloud')
         $scope.total_power = "";
         $scope.total_emissions = "";
 
+        $scope.coal = 0.0;
+        $scope.household = 0.0;
+        $scope.co2 = 0.0;
+
         $scope.test;
 
         function fetchAllData()
@@ -169,6 +173,7 @@ angular.module('powerCloud')
                 populateOverviewTable();
                 populatePowerBarData();
                 populateCurrentBarData();
+                calculations();
 
                 console.log(JSON.stringify($scope.allPowerDataBar,null,2));
                 console.log(JSON.stringify($scope.allCurrentDataBar,null,2));
@@ -735,6 +740,13 @@ angular.module('powerCloud')
             }, log);
         }
 
+        function calculations()
+        {
+            $scope.coal = $scope.total_power/8.141;
+            $scope.household = $scope.total_power/21.67;
+            $scope.co2 = $scope.total_emissions;
+        }
+
         function contains(device, id)
         {
             for(var i = 0 ; i < device.length ; i++)
@@ -819,7 +831,10 @@ angular.module('powerCloud')
                 $scope.overviewCurrentBarConfig.subtitle.text = 'From the ' + $scope.dateStringBegin.getDate() + '/' + month1 + '/' + $scope.dateStringBegin.getFullYear() + ' to the ' + $scope.dateStringEnd.getDate() + '/' + month2 + '/' + $scope.dateStringEnd.getFullYear();
             }
             $scope.overviewCurrentBarConfig.series = $scope.allCurrentDataBar;
-            $scope.overviewCurrentBarConfig.options.chart.renderTo = $scope.test;
+            $scope.overviewPowerBarConfig.options.chart.renderTo = $scope.test;
+
+            setTimeout(function () { $scope.overviewPowerBarConfig.options.chart.events.load(); }, 0);
+
             //$scope.overviewPowerLineConfig.series = $scope.allPowerDataBar;
             $scope.dateSelected = true;
         }
@@ -834,6 +849,8 @@ angular.module('powerCloud')
             else
                 $scope.multiDate = true;
         }
+
+
     });
 
     angular.module('powerCloud')
@@ -915,7 +932,14 @@ angular.module('powerCloud')
         {
             options: {
                 chart: {
-                    type: 'bar'
+                    type: 'bar',
+                    events: {
+                        load: function ()
+                        {
+                                var chart = this;
+                                setTimeout(function () { overviewPowerBarConfig.options.chart.events.reflow(); }, 0);
+                        }
+                    }
                 }
             },
             legend: {
@@ -947,14 +971,11 @@ angular.module('powerCloud')
                 },
             },
             plotOptions: {
+                bar: {
                     dataLabels: {
-                        enabled: true,
-                        align: 'right',
-                        color: '#FFFFFF',
-                        x: -10
-                    },
-                    pointPadding: 0.1,
-                    groupPadding: 0
+                        enabled: true
+                    }
+                }
             },
             credits: {
                 enabled: false
@@ -1004,6 +1025,7 @@ angular.module('powerCloud')
                 },
             },
             plotOptions: {
+                bar: {
                     dataLabels: {
                         enabled: true,
                         align: 'right',
@@ -1012,6 +1034,7 @@ angular.module('powerCloud')
                     },
                     pointPadding: 0.1,
                     groupPadding: 0
+                }
             },
             credits: {
                 enabled: false
