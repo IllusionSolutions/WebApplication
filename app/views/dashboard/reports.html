@@ -6,10 +6,10 @@
 
     <div class="row thumbnail" >
         <ul class="nav nav-pills nav-justified" role="tablist">
-            <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview">Overview</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView">Kilowatt Hours</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView">Current</a></li>
-            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="realtimeView" data-target="#realtimeView">Realtime Data</a></li>
+            <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview" ng-click="setOverview()">Overview</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView" ng-click="setKw()">Kilowatt Hours</a></li>
+            <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView" ng-click="setCurrent()">Current Usage</a></li>
+            <li id="realTime" role="presentation"><a role="tab" data-toggle="tab" aria-controls="realtimeView" data-target="#realtimeView" >Realtime Data</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="settingsView" data-target="#settingsView">Settings</a></li>
         </ul>
     </div>
@@ -18,10 +18,11 @@
         <div id="overview" role="tabpanel" class="tab-pane active">
             <div class="row">
                 <div class="col-sm-15 col-md-16">
-                    <div style="padding: 2%;" class="thumbnail col-sm-1 col-md-3">
-                        <h4 class="text-center text-primary"><strong>Voltage Detected:</strong> {{voltage}}</h4>
+                    <!-- <div style="padding: 2%;" class="thumbnail col-sm-1 col-md-3">
+                         <h4 class="text-center text-primary"><strong>Voltage Detected:</strong> {{voltage}}</h4>
                         <h4 class="text-center text-warning"><strong>Power Factor:</strong> 1</h4>
                     </div>
+                    -->
 
                     <div style="padding: 1%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-3">
                         <h4 class="text-center text-primary">Usage Cost:</h4>
@@ -90,31 +91,48 @@
                     </table>
                 </div>
             </div>
-
         </div>
 
         <div id="kwhView" role="tabpanel" class="tab-pane">
             <div class="row">
-                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="kwhChart" config="kwhChartConfig">
-
-            </div>
-        </div>
-
-        <div id="currentView" role="tabpanel" class="tab-pane">
-            <div class="row">
-                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="currentChart" config="chartConfig"></highchart>
-                <div class="col-sm-2 col-md-2 well well-sm pull-right" >
+                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="powerChart" config="powerChartConfig"></highchart>
+                <div class="col-sm-2 col-md-2 well well-sm pull-right" style="margin-right: 4%;">
                     <h5>Selected Date:</h5>
                     <datepicker date-format="dd MMMM yyyy">
-                        <input id="currentDate" name="date" class="col-sm-11 col-md-11" ng-model="date.value" type="text"/>
+                        From:<input id="TextP" name="date" class="col-sm-11 col-md-11" ng-model="dateP.from" type="text"/>
                     </datepicker>
                 </div>
             </div>
         </div>
 
-        <div id="realtimeView" role="tabpanel" class="tab-pane">
+        <div id="currentView" role="tabpanel" class="tab-pane">
+            <div class="row">
+                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="currentChart" config="currentChartConfig"></highchart>
+                <div class="col-sm-2 col-md-2 well well-sm pull-right" style="margin-right: 4%;">
+                    <h5>Selected Date:</h5>
+                    <datepicker date-format="dd MMMM yyyy">
+                        From:<input id="Text1" name="date" class="col-sm-11 col-md-11" ng-model="date.from" type="text"/>
+                    </datepicker>
+                    <datepicker date-format="dd MMMM yyyy">
+                        To:<input id="Text2" name="date" class="col-sm-11 col-md-11" ng-model="date.to" type="text"/>
+                    </datepicker>
+                </div>
+            </div>
+        </div>
+
+        <div id="realtimeView" role="tabpanel" class="tab-pane" dom-on-create="setReal()">
             <div class="row">
                 <h5>Realtime Statistics</h5>
+                <div class="row">
+                    <div class="col-sm-5 col-md-5 well well-sm pull-left">
+                        <h6>Current</h6>
+                        <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-4" id="realTimeCurrent" config="realTimeCurrentConfig"></highchart>
+                    </div>
+                    <div class="col-sm-5 col-md-5 well well-sm pull-left" style="margin-left: 4%;">
+                        <h6>Power</h6>
+                        <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-4" id="realTimePower" config="realTimePowerConfig"></highchart>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -123,8 +141,8 @@
                 <div style="padding: 2%; margin: 1%;"  class="col-sm-2 col-md-4 thumbnail">
                     <h4 class="text-primary">Device Status</h4>
                     <hr/>
-                    <p>Device is power is: <span ng-class="(relayStatus) ? 'label-success' : 'label-warning'" class="label">{{relayStatusText}}</span></p>
-                    <button style="margin-right: 1%;" ng-click="toggleDevice()" type="button" class="btn btn-primary">Toggle Power</button>
+                    <p>Device power is: <span ng-class="(relayStatus) ? 'label-success' : 'label-warning'" class="label">{{relayStatusText}}</span></p>
+                    <button style="margin-right: 1%;" ng-click="toggleDevicePower()" type="button" class="btn btn-primary">Toggle Power</button>
                 </div>
 
                 <div id="changeNameDiv" style="padding: 2%; margin: 1%;"  class="col-md-3 thumbnail">
@@ -163,13 +181,56 @@
                 <div class=" panel panel-danger">
                     <div class="panel-heading">Device Management</div>
                     <div class="panel-body">
-                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="deleteDevice">Delete Device</button>
+                        <button style="margin: 10px;" type="button" ng-class="(deviceActive) ? 'btn-danger' : 'btn-success'" class="btn" id="toggleDeviceActivity" data-toggle="modal" data-target="#confirmToggleModal">{{(deviceActive) ? 'Disable Device' : 'Enable Device'}}</button>
                         <button style="margin: 10px;" type="button" class="btn btn-danger" id="unclaimDevice">Unclaim Device</button>
-                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="reflashDevice">Flash Device</button>
+                        <button style="margin: 10px;" type="button" class="btn btn-danger" id="reflashDevice" data-toggle="modal" data-target="#flashDeviceModal">Flash Device</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Modals for Device Management -->
+
+            <!-- Flash Device with new Firmware Modal -->
+            <div class="modal fade" id="flashDeviceModal" tabindex="-1" role="dialog" aria-labelledby="flashDeviceModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="flashDeviceModalLabel">Upload Firmware</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form">
+                                <div class="form-group">
+                                    <button ngf-select="uploadFirmware($file, $invalidFiles)" ngf-max-size="1MB" accept=".bin" class="btn btn-default btn-file" for="firmwareFilePath">Browse...</button>
+                                    <p>{{(firmwareFile == null) ? "No File selected" : firmwareFile.name}}</p>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger">Flash Device</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirm disable device Modal -->
+            <div id="confirmToggleModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDisableModal">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content text-center">
+                        <div class="modal-header"><h3>{{(deviceActive) ? 'Disable' : 'Enable'}} {{selectedDevice.name}}?</h3></div>
+                        <div class="modal-body">{{(deviceActive) ? "This will notify the server to ignore data from this device." : "This will notify the server to allow data from this device."}}</div>
+                        <span ng-show="(toggleResult != null)" ng-class="(toggleResult) ? 'label-success' : 'label-danger'" class="label">{{(toggleResult) ? "Success" : "Fail"}}</span>
+                        <div ng-show="togglingDevice" class="progress progress-striped active">
+                            <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%; margin-bottom: 0;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="toggleDeviceModalClose()">Close</button>
+                            <button type="button" class="btn btn-danger" ng-disabled="(toggleResult != null)" ng-click="toggleDevice()">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -33,23 +33,40 @@
     <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
         <h4>Particle.io Settings</h4>
         <hr />
-        <form>
+
+        <div ng-show="tokenTestResult" id="tokenDiv">
             <div class="form-group">
-                <label for="particleEmail">Particle.io Email</label>
-                <input autocomplete="off" ng-model="particleEmail" type="email" class="form-control" id="particleEmail">
-                <br/>
-                <label for="particlePass">Particle.io Password: </label>
-                <input autocomplete="off" ng-model="particlePass" type="password" class="form-control" id="particlePass">
+                <label >Particle.io API:</label> <br/>
+                <span ng-class="(tokenTestResult) ? 'label-success' : 'label-danger'" class="label">{{tokenText}}</span>
+                <p ng-hide="tokenTestResult"><i>Please remove the token and re-login.</i></p>
             </div>
-            <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="particleSumbit">Login to Particle</button>
-        </form> <br/>
-        <div ng-show="particleLoginSuccess" class="alert alert-success" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            Login Success.
+            <button ng-click="removeToken()" type="button" class="btn btn-primary" id="removeToken">Remove Token</button>
+            <br/>
         </div>
-        <div ng-show="particleLoginFailure" class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            Login Failure. <br/> {{particleError.body.error_description}}
+
+        <div ng-hide="tokenExists" id="loginDiv">
+            <form>
+                <div class="form-group">
+                    <label for="particleEmail">Particle.io Email: </label>
+                    <input autocomplete="off" ng-model="particleEmail" type="email" class="form-control" id="particleEmail" />
+                    <br/>
+                    <label for="particlePass">Particle.io Password: </label>
+                    <input autocomplete="off" ng-model="particlePass" type="password" class="form-control" id="particlePass" />
+                </div>
+
+                <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="particleSumbit">Login to Particle</button>
+            </form>
+
+            <br/>
+            <div ng-show="particleLoginSuccess" class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                Login Success.
+            </div>
+
+            <div ng-show="particleLoginFailure" class="alert alert-danger" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                Login Failure. <br/> {{particleError.body.error_description}}
+            </div>
         </div>
     </div>
 

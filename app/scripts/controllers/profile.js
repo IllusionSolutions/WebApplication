@@ -21,7 +21,13 @@ angular.module('powerCloud')
         $scope.particleLoginFailure = false;
         $scope.particleLoginSuccess = false;
 
+        $scope.tokenTestResult = null;
+        $scope.tokenText = 'Unknown';
+
+        $scope.tokenExists = false;
+
         var particle = new Particle();
+        testAccessToken();
 
         $scope.loginParticle = function() {
 
@@ -31,22 +37,94 @@ angular.module('powerCloud')
 
             particle.login({username: $scope.particleEmail, password: $scope.particlePass})
                 .then(
-                function(data)
-                {
+                function(data) {
                     $scope.progressbar.complete();
                     $scope.particleLoginSuccess = true;
                     sharedProperties.setParticleToken(data.body.access_token);
 
-                    console.log('API call completed on promise resolve: ', data.body.access_token);
+                    //console.log('API call completed on promise resolve: ', data.body.access_token);
+                    saveAccessToken(data.body.access_token);
                 },
 
                 function(err) {
+
                     $scope.progressbar.complete();
                     $scope.particleLoginFailure = true;
                     $scope.particleError = err;
-                    console.log('API call completed on promise fail: ', err);
+
+                    //console.log('API call completed on promise fail: ', err);
                 }
             );
         };
 
+        function saveAccessToken(token) {
+
+            var refLink = 'userdata/particle/';
+
+            firebase.database().ref(refLink).update({
+                access_token: token
+            }).catch(function(onReject) {
+
+                console.log(onReject);
+
+            }).then(function(value) {
+
+                console.log(value);
+            });
+        }
+
+        function testAccessToken() {
+
+            //Check if token exists
+            var token = null;
+            if (sharedProperties.getParticleToken() == null) {
+                var refLink = '/userdata/particle/access_token';
+                var data = firebase.database().ref(refLink);
+
+                data.once('value').then(function(snapshot) {
+                    token = snapshot.val();
+                });
+            } else {
+                token = sharedProperties.getParticleToken();
+            }
+
+            //Test if the token still works
+            if (token != null) {
+                var devicesPr = particle.listDevices({ auth: token });
+
+                devicesPr.then (
+                    function(devices) {
+                        $scope.tokenExists = true;
+                        $scope.tokenTestResult = true;
+                        $scope.tokenText = 'Access Granted';
+                        sharedProperties.setParticleToken(token);
+                        $scope.$apply();
+                        //console.log('Devices: ', devices);
+                    },
+                    function(err) {
+                        $scope.tokenExists = true;
+                        $scope.tokenTestResult = false;
+                        $scope.tokenText = 'Access Denied';
+                        $scope.$apply();
+                        //console.log('List devices call failed: ', err);
+                    }
+                );
+            }
+            else {
+                $scope.tokenExists = false;
+            }
+        }
+
+        $scope.removeToken = function () {
+            var refLink = 'userdata/particle/access_token';
+
+            firebase.database().ref(refLink)
+                .remove()
+                .then(function(value) {
+                    $scope.tokenTestResult = false;
+                    $scope.tokenText = 'No Token Found';
+                    $scope.$apply();
+                    //console.log(value);
+                });
+        };
     });

@@ -9,7 +9,7 @@
  * Controller for the login page.
  */
 angular.module('powerCloud')
-    .controller('LoginCtrl', function($scope, $location) {
+    .controller('LoginCtrl', function($scope, $location, userDataService) {
 
         $scope.submit = function() {
 
@@ -21,14 +21,14 @@ angular.module('powerCloud')
             firebase.auth().signInWithEmailAndPassword(email, pass)
                 .then(function(result)
                 {
+                    userDataService.setUserData(result);
                     $location.path('/dashboard');
                     $scope.$apply();
                 })
                 .catch(function(error)
                 {
                     $scope.errorVal = true;
-                    $scope.errorCode = 100;
-                    $scope.errorMessage = "Incorrect login credentials.";
+                    $scope.errorMessage = error.message;
 
                     console.log(error.message);
                     $scope.$apply();
