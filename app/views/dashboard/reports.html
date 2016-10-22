@@ -1,8 +1,8 @@
 <!-- Serves reports, controlled by dashboard.js -->
 <div>
     <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Overview</a>
-    <h2>{{selectedDevice.appliance}}</h2>
-    <h4>Connected to the {{selectedDevice.name}}</h4>
+    <h2 class="text-primary"><strong>{{selectedDevice.appliance}}</strong></h2>
+    <h4>Connected to the <strong>{{selectedDevice.name}}</strong></h4>
 
     <div class="row thumbnail" >
         <ul class="nav nav-pills nav-justified" role="tablist">
@@ -125,7 +125,15 @@
                     <h4 class="text-primary">Device Status</h4>
                     <hr/>
                     <p>Device power is: <span ng-class="(relayStatus) ? 'label-success' : 'label-warning'" class="label">{{relayStatusText}}</span></p>
-                    <button style="margin-right: 1%;" ng-click="toggleDevicePower()" type="button" class="btn btn-primary">Toggle Power</button>
+
+                    <div class="row col-sm-6 col-md-12">
+                        <button ng-class="(togglePowerStatusChange) ? 'disabled' : ''" style="margin-right: 1%;" ng-click="toggleDevicePower()" type="button" class="btn btn-primary">Toggle Power</button>
+                        <span style="margin-top: 5px;" ng-show="(togglePowerStatusChange)">
+                            <svg class="spinner" width="5%" height="5%" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                                <circle class="path" fill="none" stroke-width="5" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="col-sm-2 col-md-6 panel panel-default" style="padding: 2%;">
@@ -133,14 +141,12 @@
                     <hr/>
                     <p class="text-warning"><i>Actions are logged for auditing purposes.</i></p>
                     <div>
-                        <row>
                             <button type="button" ng-class="(deviceActive) ? 'btn-danger' : 'btn-success'" class="btn" id="toggleDeviceActivity" data-toggle="modal" data-target="#confirmToggleModal">{{(deviceActive) ? 'Disable Device' : 'Enable Device'}}</button>
                             <button type="button" class="btn btn-danger" id="reflashDevice" data-toggle="modal" data-target="#flashDeviceModal">Flash Device</button>
-                        </row>
-                        <row>
+
                             <button type="button" class="btn btn-danger" id="changeCurrentThreshold" data-toggle="modal" data-target="#currentThresholdModal">Threshold</button>
                             <button type="button" class="btn btn-danger" id="changePollPeriod" data-toggle="modal" data-target="#measurementIntervalModal">Interval</button>
-                        </row>
+
                     </div>
                 </div>
             </div>
@@ -230,14 +236,19 @@
                         <div class="modal-header" ng-show="(toggleResult != null)"><h3>Completed.</h3></div>
 
                         <div class="modal-body" style="padding-bottom: 2%;" ng-hide="(toggleResult != null)">{{(deviceActive) ? "This will tell the device to stop sending measurement data." : "This will tell the device to start sending measurement data."}}</div>
-                        <div class="modal-body" style="padding-bottom: 2%;" ng-show="(toggleResult != null)">{{(deviceActive) ? "The device will now stop sending measurement data." : "The device will now start sending measurement data."}}</div>
-                        <div style="padding-bottom: 4%;" ng-show="(toggleResult != null)"><span ng-class="(toggleResult) ? 'label-success' : 'label-danger'" class="label">{{(toggleResult) ? "Success" : "Fail"}}</span>
-                        <div ng-show="togglingDevice" class="progress progress-striped active">
-                            <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%; margin-bottom: 0;"></div></div>
+                        <div class="modal-body" style="padding-bottom: 2%;" ng-show="(toggleResult != null)">{{(deviceActive) ? "The device will now start sending measurement data." : "The device will now stop sending measurement data."}}</div>
+                        <div style="padding-bottom: 4%;" ng-show="(toggleResult != null)"><span ng-class="(toggleResult) ? 'label-success' : 'label-danger'" class="label">{{(toggleResult) ? "Success" : "Fail"}}</span></div>
+
+
+                        <div ng-show="togglingDevice" class="text-center" style="margin-top: 5%;" >
+                            <svg class="spinner" width="10%" height="10%" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                                <circle class="path" fill="none" stroke-width="5" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                            </svg>
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="toggleDeviceModalClose()">Close</button>
-                            <button type="button" class="btn btn-danger" ng-disabled="(toggleResult != null)" ng-click="toggleDevice()">Yes</button>
+                            <button type="button" class="btn btn-danger" ng-class="(toggleResult != null || togglingDevice) ? 'disabled' : '' " ng-click="toggleDevice()">Yes</button>
                         </div>
                     </div>
                 </div>
@@ -254,10 +265,20 @@
                                 <input min="0" ng-model="currentThreshold" placeholder="Max Current" type="number" class="form-control"/>
                                 <div class="input-group-addon">amps</div>
                             </div>
+
+                            <div class="text-center" style="margin-top: 5%;" ng-show="currentThresholdChanging">
+                                <svg class="spinner" width="10%" height="10%" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                                    <circle class="path" fill="none" stroke-width="5" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                                </svg>
+                            </div>
+
+                            <div style="margin-top: 2%;" ng-show="currentThresholdChangeResult != null" ng-class="(currentThresholdChangeResult) ? 'alert-success' : 'alert-danger'" class="alert" role="alert">
+                                {{currentThresholdResultText}}
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger" ng-click="setThreshold()">Change</button>
+                            <button ng-class="(currentThresholdChanging) ? 'disabled' : ''" type="button" class="btn btn-danger" ng-click="setThreshold()">Change</button>
                         </div>
                     </div>
                 </div>
@@ -274,11 +295,21 @@
                                 <select ng-model="intervalSelected" id="intervalSelection" class="form-control">
                                     <option ng-repeat="interval in intervalsAvailable" value="{{interval.value}}">{{interval.name}}</option>
                                 </select>
+
+                                <div class="text-center" style="margin-top: 5%;" ng-show="changingInterval">
+                                    <svg class="spinner" width="10%" height="10%" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="path" fill="none" stroke-width="5" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                                    </svg>
+                                </div>
+
+                                <div style="margin-top: 2%;" ng-show="changeIntervalResult != null" ng-class="(changeIntervalResult) ? 'alert-success' : 'alert-danger'" class="alert" role="alert">
+                                    {{changeIntervalText}}
+                                </div>
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-danger" ng-class="(intervalSelected == -1) ? 'disabled' : ''" ng-click="setInterval()">Change</button>
+                                <button type="button" class="btn btn-default" ng-click="setIntervalModalClose()" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" ng-class="(intervalSelected == -1 || changingInterval) ? 'disabled' : ''" ng-click="setInterval()">Change</button>
                             </div>
                         </form>
                     </div>

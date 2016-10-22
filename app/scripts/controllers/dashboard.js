@@ -14,6 +14,10 @@ angular.module('powerCloud')
         $scope.$state = $state;
 
         $scope.allDevices = null;
+        $scope.fetchingDeviceInfo = false;
+        $scope.fetchingDeviceInfoResult = null;
+        $scope.fetchingDeviceInfoText = '';
+
 
         var particle = new Particle();
 
@@ -42,22 +46,32 @@ angular.module('powerCloud')
         $scope.viewDeviceInfo = function (deviceID) {
             var particleToken = sharedProperties.getParticleToken();
 
+            $scope.fetchingDeviceInfo = true;
             $scope.deviceAttr = null;
 
-            var devicesPr = particle.getDevice({ deviceId: deviceID, auth: particleToken });
-            devicesPr.then (
-                function(data) {
-                    $scope.deviceAttr = data.body;
-                    var lastDate = new Date(data.body.last_heard);
-                    $scope.deviceAttr.date = lastDate.toDateString() + ' at ' + lastDate.toLocaleTimeString();
+            if (particleToken != null) {
 
-                    console.log('Device attrs retrieved successfully:', $scope.deviceAttr);
-                    $scope.$apply();
-                },
-                function(err) {
-                    //console.log('API call failed: ', err);
-                }
-            );
+                var devicesPr = particle.getDevice({ deviceId: deviceID, auth: particleToken });
+                devicesPr.then (
+                    function(data) {
+                        $scope.deviceAttr = data.body;
+                        var lastDate = new Date(data.body.last_heard);
+                        $scope.deviceAttr.date = lastDate.toDateString() + ' at ' + lastDate.toLocaleTimeString();
+
+                        $scope.fetchingDeviceInfo = false;
+                        $scope.fetchingDeviceInfoResult = true;
+                        $scope.$apply();
+                    },
+                    function(err) {
+                        $scope.fetchingDeviceInfo = false;
+                        $scope.fetchingDeviceInfoResult = false;
+                        $scope.fetchingDeviceInfoText = 'Error: ' + err;
+                        $scope.$apply();
+                    });
+            }
+            else {
+                console.log('Auth Token Null');
+            }
         };
 
         function fetchDevices() {
@@ -81,17 +95,21 @@ angular.module('powerCloud')
                 data.once('value').then(function(snapshot) {
 
                     var token = snapshot.val();
-                    var devicesPr = particle.listDevices({ auth: token });
+                    if (token != null) {
+                        var devicesPr = particle.listDevices({ auth: token });
 
-                    devicesPr.then (
-                        function(devices) {
-                            sharedProperties.setParticleToken(token);
-                            //console.log('Devices: ', devices);
-                        },
-                        function(err) {
-                            //console.log('List devices call failed: ', err);
-                        }
-                    );
+                        devicesPr.then (
+                            function(devices) {
+                                sharedProperties.setParticleToken(token);
+                            },
+                            function(err) {
+                                //console.log('List devices call failed: ', err);
+                            }
+                        );
+                    }
+                    else {
+                        console.log("Auth token null");
+                    }
                 });
             }
         }

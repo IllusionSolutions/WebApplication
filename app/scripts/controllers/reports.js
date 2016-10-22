@@ -18,6 +18,9 @@ angular.module('powerCloud')
         var device_ID = $scope.deviceID;
 
         $scope.deviceActive = device.active;
+        $scope.togglePowerStatusChange = true;
+
+
         $scope.togglingDevice = false;
         $scope.toggleResult = null;
 
@@ -34,6 +37,10 @@ angular.module('powerCloud')
         $scope.firmwareFileFlashTxt = '';
 
         $scope.intervalSelected = -1;
+        $scope.changingInterval = false;
+        $scope.changeIntervalResult = null;
+        $scope.changeIntervalText = '';
+
         $scope.intervalsAvailable = [{name:'30 Seconds',value:30},
                                     {name:'1 Minute',value:60},
                                     {name:'10 Minutes',value:600},
@@ -41,6 +48,9 @@ angular.module('powerCloud')
                                     {name:'1 Hour',value:3600}];
 
         $scope.currentThreshold = 0.0;
+        $scope.currentThresholdChanging = false;
+        $scope.currentThresholdChangeResult = null;
+        $scope.currentThresholdResultText = '';
 
         if($scope.date === undefined) {
             $scope.date = {};
@@ -53,14 +63,10 @@ angular.module('powerCloud')
         $scope.relayStatus = false;
 
         $scope.progressbar = ngProgressFactory.createInstance();
-        $scope.changeNameProgress = ngProgressFactory.createInstance();
 
 
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
-
-        $scope.changeNameProgress.setColor('#ffe11c');
-        $scope.changeNameProgress.height = '3px';
 
         $scope.firmwareFile = null;
 
@@ -371,9 +377,9 @@ angular.module('powerCloud')
 
                 data.once('value').then(function(snapshot) {
                     sharedProperties.setParticleToken(snapshot.val());
+                    checkDeviceStatus();
                     $scope.$apply();
                 });
-                checkDeviceStatus();
             }
             else {
                 checkDeviceStatus();
@@ -381,7 +387,6 @@ angular.module('powerCloud')
         }
 
         function checkDeviceStatus() {
-
             var authToken = sharedProperties.getParticleToken();
             if (authToken != null) {
                 var varParticle = particle.getVariable({ deviceId: device_ID, name: 'relayStatus', auth: authToken });
@@ -399,10 +404,10 @@ angular.module('powerCloud')
                             $scope.relayStatusText = 'Offline';
                             $scope.relayStatus = status;
                         }
+                        $scope.togglePowerStatusChange = false;
                         $scope.$apply();
                     },
                     function (err) {
-
                         console.log(err);
                     }
                 );
@@ -413,7 +418,7 @@ angular.module('powerCloud')
         }
 
         $scope.toggleDevicePower = function() {
-
+            $scope.togglePowerStatusChange = true;
             var userEmail = firebase.auth().currentUser.email;
             var authToken = sharedProperties.getParticleToken();
             if (authToken != null) {
@@ -435,7 +440,7 @@ angular.module('powerCloud')
         };
 
         $scope.changeDeviceName = function() {
-            $scope.changeNameProgress.start();
+            $scope.progressbar.start();
 
             var newName = $scope.deviceNewName;
 
@@ -461,7 +466,7 @@ angular.module('powerCloud')
 
                     $scope.changeNameSuccess = true;
                     $scope.changeNameFailure = false;
-                    $scope.changeNameProgress.complete();
+                    $scope.progressbar.complete();
 
                 });
 
@@ -519,35 +524,41 @@ angular.module('powerCloud')
             $scope.togglingDevice = true;
 
             if ($scope.deviceActive) {
-                //Disable Device
+
                 firebase.database().ref('meta_data/' + device_ID + '/').update({
                     active: false
                 }).catch(function(onReject) {
 
+                    $scope.togglingDevice = false;
                     $scope.toggleResult = false;
-                    console.log(onReject);
+                    $scope.$apply();
 
                 }).then(function(value) {
 
                     var userEmail = firebase.auth().currentUser.email;
                     var authToken = sharedProperties.getParticleToken();
+
                     if (authToken != null) {
                         var fnPr = particle.callFunction({ deviceId: device_ID, name: 'measureTog', argument: userEmail, auth: authToken });
                         fnPr.then(
                             function (data) {
+
                                 $scope.toggleResult = true;
                                 $scope.deviceActive = false;
                                 $scope.togglingDevice = false;
                                 $scope.$apply();
 
                             }, function(err) {
-                                console.log(err);
+
+                                $scope.toggleResult = true;
+                                $scope.deviceActive = false;
+                                $scope.togglingDevice = false;
+                                $scope.$apply();
                             });
                     } else {
                         console.log('Please log in to Particle. Auth token null.');
                     }
                 });
-                console.log("Device Disabled.");
             }
             else
             {
@@ -573,12 +584,14 @@ angular.module('powerCloud')
                                 $scope.$apply();
 
                             }, function(err) {
-                                console.log(err);
+                                $scope.toggleResult = true;
+                                $scope.deviceActive = true;
+                                $scope.togglingDevice = false;
+                                $scope.$apply();
                             });
                     } else {
                         console.log('Please log in to Particle. Auth token null.');
                     }
-                    console.log("Device enabled.");
                 });
             }
         };
@@ -612,29 +625,41 @@ angular.module('powerCloud')
 
         $scope.setInterval = function() {
 
-
+            $scope.changeIntervalResult = null;
+            $scope.changingInterval = true;
             var userEmail = firebase.auth().currentUser.email;
             var token = sharedProperties.getParticleToken();
             var argument = userEmail + ',' + $scope.intervalSelected;
-
-            console.log(argument);
 
             if (token != null) {
                 var fnPr = particle.callFunction({ deviceId: device_ID, name: 'setPeriod', argument: argument, auth: token });
                 fnPr.then(
                     function (data) {
-                        console.log(data);
+                        $scope.changeIntervalResult = true;
+                        $scope.changingInterval = false;
+                        $scope.changeIntervalText = 'Success.';
+                        $scope.$apply();
+
                     }, function(err) {
-                        console.log(err);
+
+                        $scope.changeIntervalResult = false;
+                        $scope.changingInterval = false;
+                        $scope.changeIntervalText = 'Error: ' + err;
+                        $scope.$apply();
+
                     });
             } else {
                 console.log('Please log in to Particle. Auth token null.');
             }
+        };
 
+        $scope.setIntervalModalClose = function() {
+            $scope.changeIntervalResult = null;
         };
 
         $scope.setThreshold = function() {
-
+            $scope.currentThresholdChangeResult = null;
+            $scope.currentThresholdChanging = true;
             var userEmail = firebase.auth().currentUser.email;
             var token = sharedProperties.getParticleToken();
             var argument = userEmail + ',' + $scope.currentThreshold;
@@ -643,12 +668,23 @@ angular.module('powerCloud')
                 var fnPr = particle.callFunction({ deviceId: device_ID, name: 'setThreshold', argument: argument, auth: token });
                 fnPr.then(
                     function (data) {
-                        console.log(data);
+                        $scope.currentThresholdChanging = false;
+                        $scope.currentThresholdChangeResult = true;
+                        $scope.currentThresholdResultText = 'Success.';
+                        $scope.$apply();
+
                     }, function(err) {
-                        console.log(err);
+                        $scope.currentThresholdChanging = false;
+                        $scope.currentThresholdChangeResult = false;
+                        $scope.currentThresholdResultText = 'Failure: ' + err;
+                        $scope.$apply();
                     });
             } else {
                 console.log('Please log in to Particle. Auth token null.');
             }
+        };
+
+        $scope.setThresholdModalClose = function() {
+            $scope.currentThresholdChangeResult = null;
         };
     });

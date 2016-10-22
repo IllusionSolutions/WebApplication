@@ -5,7 +5,7 @@
         <a ui-sref="overview" class=" btn btn-primary btn-outline btn-rounded">Overview</a>
     </div>
 
-    <h2>Monitored Areas</h2>
+    <h2 class="text-primary"><strong>Monitored Areas</strong></h2>
     <div class="row">
         <div class="col-sm-4 col-md-2" data-ng-repeat="(key, device) in allDevices">
             <div class="thumbnail" >
@@ -34,7 +34,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="particleDeviceDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -42,11 +42,25 @@
                 </div>
 
                 <div id="deviceInfoContainer" class="modal-body">
-                    <p><strong class="text-primary">Last IP:</strong> {{deviceAttr.last_ip_address}}</p>
-                    <p><strong class="text-primary">Cellular Capable:</strong> {{deviceAttr.cellular}}</p>
-                    <p><strong class="text-primary">Connected:</strong> {{deviceAttr.connected}}</p>
-                    <p><strong class="text-primary">Status:</strong> {{deviceAttr.status}}</p>
-                    <p><strong class="text-primary">Last Ping:</strong> {{deviceAttr.date}}</p>
+                    <div ng-hide="(fetchingDeviceInfo && !changeIntervalResult)">
+                        <p><strong class="text-primary">Last IP:</strong> {{deviceAttr.last_ip_address}}</p>
+                        <p><strong class="text-primary">Cellular Capable:</strong> {{deviceAttr.cellular}}</p>
+                        <p><strong class="text-primary">Connected:</strong> {{deviceAttr.connected}}</p>
+                        <p><strong class="text-primary">Status:</strong> {{deviceAttr.status}}</p>
+                        <p><strong class="text-primary">Last Ping:</strong> {{deviceAttr.date}}</p>
+                    </div>
+
+                    <div class="text-center" ng-show="(fetchingDeviceInfo)">
+                        <span style="margin-top: 5px;">
+                            <svg class="spinner" width="7%" height="7%" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                                <circle class="path" fill="none" stroke-width="5" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div style="margin-top: 2%;" ng-show="(changeIntervalResult == false)" class="alert alert-danger" role="alert">
+                        {{fetchingDeviceInfoText}}
+                    </div>
                 </div>
 
                 <div class="modal-footer">
