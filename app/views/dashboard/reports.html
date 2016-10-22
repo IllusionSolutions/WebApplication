@@ -35,12 +35,19 @@
                     <div style="padding: 2%; margin-left: 1%;" class="thumbnail col-sm-1 col-md-2">
                         <h4><strong>Last updated:</strong><br/><small><strong>{{lastUpdate.toLocaleDateString()}}</strong><br/>{{lastUpdate.toLocaleTimeString()}}</small></h4>
                     </div>
-
                     <div class="pull-right col-sm-2 col-md-3 thumbnail">
                         <h4 class="text-center">Notifications</h4>
                         <hr />
                         <p class="text-center">No new notifications</p>
                     </div>
+                    <div class="pull-right col-sm-2 col-md-2 well well-sm">
+                        <h5>Selected Date:</h5>
+                        <datepicker date-format="dd MMMM yyyy">
+                            <input id="TextS" name="date" class="col-sm-11 col-md-11" ng-model="dateS.from" type="text"/>
+                        </datepicker>
+                        <button class="btn btn-primary" ng-click="fetchData()">Search</button>
+                    </div>
+
                 </div>
             </div>
             <div class="col-sm-15 col-md-5 row">

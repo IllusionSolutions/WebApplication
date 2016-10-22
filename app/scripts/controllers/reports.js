@@ -73,7 +73,8 @@ angular.module('powerCloud')
         }
         $scope.dateP = {};
         $scope.dateP.from = new Date();
-
+        $scope.dateS = {};
+        $scope.dateS.from = new Date();
         $scope.lastUpdate = new Date();
 
         $scope.relayStatusText = 'Unknown';
@@ -431,8 +432,60 @@ angular.module('powerCloud')
             $scope.avgCost = $scope.avgCost.toFixed(2);
         }
 
+        $scope.fetchData = function() {
+
+            fetchData(device_ID);
+        }
+
         function fetchData(id) {
 
+            $scope.tempCurrentData=[];
+            $scope.tempPowerData=[];
+            $scope.tempCostData=[];
+            $scope.tempEmissionData=[];
+            var date2 = new Date($scope.dateS.from);
+            var dateSelected = {};
+            dateSelected.year = date2.getFullYear();
+            dateSelected.month = date2.getMonth();
+            dateSelected.day = date2.getDate()-1;
+            $scope.deviceID = id;
+            var deviceSelected = id;
+            $scope.progressbar.start();
+            var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
+            var data = firebase.database().ref(referenceLink);
+
+            data.once('value').then(function(snapshot)
+            {
+                snapshot.forEach(function(d) {
+                    var temp1 = [];
+                    var temp2 = [];
+                    var temp3 = [];
+                    var temp4 = [];
+
+                    temp1.push(d.val().datetime * 1000);
+                    temp1.push(d.val().current);
+
+                    temp2.push(d.val().datetime * 1000);
+                    temp2.push(d.val().power);
+
+                    temp3.push(d.val().calculations.cost);
+                    temp4.push(d.val().calculations.emission);
+                    $scope.voltage = d.val().voltage;
+
+                    $scope.tempCurrentData.push(temp1);
+                    $scope.tempPowerData.push(temp2);
+                    $scope.tempCostData.push(temp3);
+                    $scope.tempEmissionData.push(temp4);
+                });
+
+                calculations($scope.tempCurrentData,$scope.tempPowerData,$scope.tempCostData,$scope.tempEmissionData);
+                //$scope.currentChartConfig.loading = false;
+                //$scope.powerChartConfig.loading = false;
+                $scope.progressbar.complete();
+                //$scope.kwhChartConfig.loading = false;
+                $scope.$apply();
+
+            });
         }
 
         function getParticleToken() {
