@@ -6,10 +6,10 @@
 
     <div class="row thumbnail" >
         <ul class="nav nav-pills nav-justified" role="tablist">
-            <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview" ng-click="setOverview()">Overview</a></li>
+            <li role="presentation" class="active"><a role="tab" aria-controls="overview" data-toggle="tab" data-target="#overview" ng-click="setOverview()">Summary</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="kwhView" data-target="#kwhView" ng-click="setKw()">Kilowatt Hours</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="currentView" data-target="#currentView" ng-click="setCurrent()">Current Usage</a></li>
-            <li id="realTime" role="presentation"><a role="tab" data-toggle="tab" aria-controls="realtimeView" data-target="#realtimeView" >Realtime Data</a></li>
+            <li id="realTime" role="presentation"><a role="tab" data-toggle="tab" aria-controls="realtimeView" data-target="#realtimeView" ng-click="setReal()">Realtime Data</a></li>
             <li role="presentation"><a role="tab" data-toggle="tab" aria-controls="settingsView" data-target="#settingsView">Settings</a></li>
         </ul>
     </div>
@@ -95,11 +95,11 @@
 
         <div id="kwhView" role="tabpanel" class="tab-pane">
             <div class="row">
-                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="powerChart" config="powerChartConfig"></highchart>
+                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-7" id="powerChart" config="powerChartConfig"></highchart>
                 <div class="col-sm-2 col-md-2 well well-sm pull-right" style="margin-right: 4%;">
                     <h5>Selected Date:</h5>
                     <datepicker date-format="dd MMMM yyyy">
-                        From:<input id="TextP" name="date" class="col-sm-11 col-md-11" ng-model="dateP.from" type="text"/>
+                        <input id="TextP" name="date" class="col-sm-11 col-md-11" ng-model="dateP.from" type="text"/>
                     </datepicker>
                 </div>
             </div>
@@ -107,31 +107,22 @@
 
         <div id="currentView" role="tabpanel" class="tab-pane">
             <div class="row">
-                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-6" id="currentChart" config="currentChartConfig"></highchart>
+                <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-7" id="currentChart" config="currentChartConfig"></highchart>
                 <div class="col-sm-2 col-md-2 well well-sm pull-right" style="margin-right: 4%;">
                     <h5>Selected Date:</h5>
                     <datepicker date-format="dd MMMM yyyy">
-                        From:<input id="Text1" name="date" class="col-sm-11 col-md-11" ng-model="date.from" type="text"/>
-                    </datepicker>
-                    <datepicker date-format="dd MMMM yyyy">
-                        To:<input id="Text2" name="date" class="col-sm-11 col-md-11" ng-model="date.to" type="text"/>
+                        <input id="Text1" name="date" class="col-sm-11 col-md-11" ng-model="date.from" type="text"/>
                     </datepicker>
                 </div>
             </div>
         </div>
 
-        <div id="realtimeView" role="tabpanel" class="tab-pane" dom-on-create="setReal()">
+        <div id="realtimeView" role="tabpanel" class="tab-pane">
             <div class="row">
                 <h5>Realtime Statistics</h5>
                 <div class="row">
-                    <div class="col-sm-5 col-md-5 well well-sm pull-left">
-                        <h6>Current</h6>
-                        <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-4" id="realTimeCurrent" config="realTimeCurrentConfig"></highchart>
-                    </div>
-                    <div class="col-sm-5 col-md-5 well well-sm pull-left" style="margin-left: 4%;">
-                        <h6>Power</h6>
-                        <highchart style="margin-right: 1%;" class="panel panel-default col-sm-4 col-md-4" id="realTimePower" config="realTimePowerConfig"></highchart>
-                    </div>
+                    <highchart class="panel panel-default col-sm-4 col-md-4 pull-left" id="realTimeCurrent" config="realTimeCurrentConfig" style="margin-left: 1%;"></highchart>
+                    <highchart class="panel panel-default col-sm-4 col-md-4" id="realTimePower" config="realTimePowerConfig" style="margin-left: 10%;"></highchart>
                 </div>
             </div>
         </div>
