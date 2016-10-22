@@ -101,7 +101,7 @@ gulp.task('connect', ['styles'], function() {
     });
 });
 
-gulp.task('serve', ['wiredep', 'connect', 'fonts'/*, 'watch'*/], function() {
+gulp.task('serve', ['wiredep', 'connect', 'fonts', 'watch'], function() {
   /*if (argv.open) {
     require('opn')('http://localhost:9000');
   }*/

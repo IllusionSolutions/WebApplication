@@ -58,13 +58,14 @@ angular.module('powerCloud')
             currentG = false;
             realT = true;
             kwG = false;
+            setTimeout($scope.currentChartConfig.options.chart.events.redraw(), 5000);
             //$scope.currentChartConfig.options.chart.events.redraw();
             //console.log("current: " + currentG + "real: " + realT);
             //alert($document.find("").hasClass('active'));
-            while(!realT)
+            /*while(!realT)
             {
 
-            }
+            }*/
             //alert("lpg2");
             //setTimeout($scope.realTimeCurrentConfig.options.chart.events.redraw(), 5000);
             //setTimeout($scope.realTimePowerConfig.options.chart.events.redraw(), 5000);
@@ -254,8 +255,8 @@ angular.module('powerCloud')
                                     if (kwG == true) {
                                         setTimeout($scope.powerChartConfig.options.chart.events.redraw(), 10000);
                                     }
-                                    return;
-
+                                    else
+                                        return;
                                 });
                             }
                         }
@@ -546,7 +547,7 @@ angular.module('powerCloud')
         }
 
         function fetchData(id) {
-             var dateSelected = {};
+             /*var dateSelected = {};
              dateSelected.year = "2016";
              dateSelected.month = "7";
              dateSelected.day = "26";
@@ -587,7 +588,7 @@ angular.module('powerCloud')
                  $scope.kwhChartConfig.loading = false;
                  $scope.$apply();
 
-             });
+             });*/
         }
 
         function getParticleToken() {
