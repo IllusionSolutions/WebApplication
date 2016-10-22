@@ -529,7 +529,7 @@ angular.module('powerCloud')
         }
 
         function getRealTime() {
-            var authToken = 'ff73c3f9cadc50cc0b6079d9994cc7550e3f6fca';
+            var authToken = sharedProperties.getParticleToken();
             var jsonObj;
             var tempCurrent = [];
             var tempPower = [];
@@ -540,6 +540,8 @@ angular.module('powerCloud')
                 if(authToken != null) {
                     var varParticle = particle.getVariable({deviceId: device_ID, name: 'realTime', auth: authToken});
                 }
+                else
+                    console.log("Autherisation token null line 506")
                 varParticle.then(function(data){
                     jsonObj = "";
                     jsonObj = JSON.parse(data.body.result);
