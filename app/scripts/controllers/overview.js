@@ -9,7 +9,7 @@
  * Controller of the overview page.
  */
 angular.module('powerCloud')
-    .controller('OverviewCtrl', function($scope, $state, ngProgressFactory, CurrentPI, PowerPI, PowerBar, CurrentBar) {
+    .controller('OverviewCtrl', function($scope, $state, $document, ngProgressFactory, CurrentPI, PowerPI, PowerBar, CurrentBar) {
 
         $scope.overviewCurrentPIConfig = CurrentPI;
         $scope.overviewPowerPIConfig = PowerPI;
@@ -813,13 +813,22 @@ angular.module('powerCloud')
 
             $scope.overviewPowerBarConfig.xAxis.categories = $scope.devicesPower;
 
-            if($scope.singleDate == true) {
-                $scope.overviewPowerBarConfig.subtitle.text = 'On ' + $scope.dateStringBegin.getDate() + '/' + month1 + '/' + $scope.dateStringBegin.getFullYear();
+            if($scope.singleDate == true)
+            {
+                $scope.overviewPowerBarConfig.subtitle.text = 'On ' +
+                    $scope.dateStringBegin.getDate() + '/' + month1 + '/' +
+                        $scope.dateStringBegin.getFullYear();
             }
             else if($scope.multiDate == true) {
-                $scope.overviewPowerBarConfig.subtitle.text = 'From the ' + $scope.dateStringBegin.getDate() + '/' + month1 + '/' + $scope.dateStringBegin.getFullYear() + ' to the ' + $scope.dateStringEnd.getDate() + '/' + month2 + '/' + $scope.dateStringEnd.getFullYear();
+                $scope.overviewPowerBarConfig.subtitle.text = 'From the ' +
+                    $scope.dateStringBegin.getDate() + '/' + month1 + '/' +
+                        $scope.dateStringBegin.getFullYear() + ' to the ' +
+                            $scope.dateStringEnd.getDate() + '/' +
+                                month2 + '/' +
+                                    $scope.dateStringEnd.getFullYear();
             }
             $scope.overviewPowerBarConfig.series = $scope.allPowerDataBar;
+
 
             $scope.overviewCurrentBarConfig.xAxis.categories = $scope.devicesCurrent;
             if($scope.singleDate == true)
@@ -831,13 +840,12 @@ angular.module('powerCloud')
                 $scope.overviewCurrentBarConfig.subtitle.text = 'From the ' + $scope.dateStringBegin.getDate() + '/' + month1 + '/' + $scope.dateStringBegin.getFullYear() + ' to the ' + $scope.dateStringEnd.getDate() + '/' + month2 + '/' + $scope.dateStringEnd.getFullYear();
             }
             $scope.overviewCurrentBarConfig.series = $scope.allCurrentDataBar;
-            $scope.overviewPowerBarConfig.options.chart.renderTo = $scope.test;
+            $scope.overviewCurrentBarConfig.subtitle.floating = false;
+            console.log();
 
-            setTimeout(function () { $scope.overviewPowerBarConfig.options.chart.events.load(); }, 0);
-
-            //$scope.overviewPowerLineConfig.series = $scope.allPowerDataBar;
             $scope.dateSelected = true;
-        }
+            $scope.$apply();
+        };
 
         $scope.select = function()
         {
@@ -897,7 +905,8 @@ angular.module('powerCloud')
                 options: {
                     chart:
                     {
-                        type: 'pie'
+                        type: 'pie',
+                        marginTop: 100
                     }
                 },
                 title: {
@@ -932,14 +941,7 @@ angular.module('powerCloud')
         {
             options: {
                 chart: {
-                    type: 'bar',
-                    events: {
-                        load: function ()
-                        {
-                                var chart = this;
-                                setTimeout(function () { overviewPowerBarConfig.options.chart.events.reflow(); }, 0);
-                        }
-                    }
+                    type: 'bar'
                 }
             },
             legend: {
@@ -968,7 +970,7 @@ angular.module('powerCloud')
                 title: {
                     text: 'Power (kWh)',
                     align: 'high'
-                },
+                }
             },
             plotOptions: {
                 bar: {
@@ -1022,7 +1024,7 @@ angular.module('powerCloud')
                 title: {
                     text: 'Current (A)',
                     align: 'high'
-                },
+                }
             },
             plotOptions: {
                 bar: {

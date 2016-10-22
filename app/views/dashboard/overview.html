@@ -101,11 +101,9 @@
         </div>
 
         <div id="currentView" role="tabpanel" class="tab-pane">
-            <div  ng-show="dateSelected == true" id="test" >
-                <div class="row">
-                    <div class="col-sm-15 col-md-16">
-                        <highchart style="margin-right: 1%;" class="panel panel-default" class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
-                    </div>
+            <div ng-show="dateSelected == true">
+                <div class="row" id="test">
+                    <highchart class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
                 </div>
             </div>
         </div>
@@ -127,7 +125,7 @@
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
                             <img class="pull-left" src="images/co2.png"/>
-                            <div>{{total_emissions}}</div>
+                            <div>{{co2}}</div>
                         </div>
                     </div>
                 </div>
