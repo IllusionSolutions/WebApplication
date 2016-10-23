@@ -9,59 +9,89 @@
         <form>
             <div class="form-group">
                 <label for="changeEmailAddress">Change Email address: </label>
-                <input ng-model="changeEmail" type="email" class="form-control" id="changeEmailAddress">
+                <input placeholder="{{firebaseUser.email}}" ng-model="changeEmail" type="email" class="form-control" id="changeEmailAddress">
                 <br/>
-                <button type="submit" class="btn btn-primary">Change Email</button>
+                <button type="button" class="btn btn-primary" ng-click="updateType(0)" data-toggle="modal" data-target="#reauthenticateModal">Change Email</button>
             </div>
         </form>
 
         <form>
             <div class="form-group">
-                <label for="oldPassword">Old Password: </label>
-                <input ng-model="oldPassChange" type="password" class="form-control" id="oldPassword">
-                <br/>
                 <label for="newPassword">New Password: </label>
                 <input ng-model="newPassChange" type="password" class="form-control" id="newPassword">
                 <br/>
                 <label for="newPasswordRepeat">Repeat New Password: </label>
                 <input ng-model="newPassRepeatChange" type="password" class="form-control" id="newPasswordRepeat">
             </div>
-            <button type="submit" class="btn btn-primary">Change Password</button>
+            <button type="button" class="btn btn-primary" ng-click="updateType(1)" data-toggle="modal" data-target="#reauthenticateModal">Change Password</button>
         </form>
+
     </div>
 
     <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
         <h4>Particle.io Settings</h4>
         <hr />
-        <form>
+
+        <div ng-show="tokenTestResult" id="tokenDiv">
             <div class="form-group">
-                <label for="particleEmail">Particle.io Email</label>
-                <input autocomplete="off" ng-model="particleEmail" type="email" class="form-control" id="particleEmail">
-                <br/>
-                <label for="particlePass">Particle.io Password: </label>
-                <input autocomplete="off" ng-model="particlePass" type="password" class="form-control" id="particlePass">
+                <label >Particle.io API:</label> <br/>
+                <span ng-class="(tokenTestResult) ? 'label-success' : 'label-danger'" class="label">{{tokenText}}</span>
+                <p ng-hide="tokenTestResult"><i>Please remove the token and re-login.</i></p>
             </div>
-            <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="particleSumbit">Login to Particle</button>
-        </form> <br/>
-        <div ng-show="particleLoginSuccess" class="alert alert-success" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            Login Success.
+            <button ng-click="removeToken()" type="button" class="btn btn-primary" id="removeToken">Remove Token</button>
+            <br/>
         </div>
-        <div ng-show="particleLoginFailure" class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            Login Failure. <br/> {{particleError.body.error_description}}
+
+        <div ng-hide="tokenExists" id="loginDiv">
+            <form>
+                <div class="form-group">
+                    <label for="particleEmail">Particle.io Email: </label>
+                    <input autocomplete="off" ng-model="particleEmail" type="email" class="form-control" id="particleEmail" />
+                    <br/>
+                    <label for="particlePass">Particle.io Password: </label>
+                    <input autocomplete="off" ng-model="particlePass" type="password" class="form-control" id="particlePass" />
+                </div>
+
+                <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="particleSumbit">Login to Particle</button>
+            </form>
+
+            <br/>
+            <div ng-show="particleLoginSuccess" class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                Login Success.
+            </div>
+
+            <div ng-show="particleLoginFailure" class="alert alert-danger" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                Login Failure. <br/> {{particleError.body.error_description}}
+            </div>
         </div>
     </div>
 
-    <div class="row col-md-4 thumbnail" style="padding: 2%; margin: 1%;">
-        <h4>Firebase Settings</h4>
-        <hr />
-        <form>
-            <div class="form-group">
-                <label for="firebaseURL">Realtime Database URL</label>
-                <input autocomplete="off" ng-model="firebaseURL" type="text" class="form-control" id="firebaseURL">
+    <div id="reauthenticateModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="reauthenticateModal">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Login again</h3>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="email">Email: </label>
+                            <input ng-model="user.email" type="email" class="form-control" id="email">
+                            <br/>
+                            <label for="pass">Password: </label>
+                            <input ng-model="user.password" type="password" class="form-control" id="pass">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" ng-click="re_authenticate()">Login</button>
+                </div>
             </div>
-            <button ng-click="loginParticle()" type="submit" class="btn btn-primary" id="firebaseURLSubmit">Set URL</button>
-        </form>
+        </div>
     </div>
+
 </div>
