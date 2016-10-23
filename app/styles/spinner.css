@@ -1,5 +1,3 @@
-/* Loading Spinner */
-
 .spinner {
     animation: rotator 1.4s linear infinite;
 }
@@ -13,10 +11,12 @@
     stroke-dasharray: 187;
     stroke-dashoffset: 0;
     transform-origin: center;
-    animation: dash 1.4s ease-in-out infinite, colors ease-in-out infinite;
+    animation:
+    dash 1.4s ease-in-out infinite,
+    spinnerColors ease-in-out infinite;
 }
 
-@keyframes colors {
+@keyframes spinnerColors {
     0% { stroke: #4285F4; }
     25% { stroke: #DE3E35; }
     50% { stroke: #F7C223; }
@@ -26,12 +26,10 @@
 
 @keyframes dash {
     0% { stroke-dashoffset: 187; }
-
     50% {
         stroke-dashoffset: 187/4;
         transform:rotate(135deg);
     }
-
     100% {
         stroke-dashoffset: 187;
         transform:rotate(450deg);

@@ -21,7 +21,7 @@ angular.module('powerCloud')
             realT = false;
             kwG = false;
             console.log("current: " + currentG + "real: " + realT);
-        }
+        };
 
         $scope.setKw = function()
         {
@@ -30,9 +30,7 @@ angular.module('powerCloud')
             kwG = true;
             setTimeout($scope.powerChartConfig.options.chart.events.redraw(), 5000);
             console.log("current: " + currentG + "real: " + realT);
-        }
-
-
+        };
 
         $scope.setCurrent = function()
         {
@@ -41,7 +39,7 @@ angular.module('powerCloud')
             kwG = false;
             console.log("current: " + currentG + "real: " + realT);
             setTimeout($scope.currentChartConfig.options.chart.events.redraw(), 5000);
-        }
+        };
 
         $scope.setReal = function()
         {
@@ -50,12 +48,7 @@ angular.module('powerCloud')
             kwG = false;
             getRealTime();
             setTimeout($scope.realTimePowerConfig.options.chart.events.redraw(), 5000);
-        }
-
-
-
-
-        //$scope.currentChartConfig = CurrentChart;
+        };
 
         var particle = new Particle();
         var device = $scope.selectedDevice;
@@ -359,7 +352,7 @@ angular.module('powerCloud')
                 text: 'Power'
             },
             series: [{
-                name: 'kW',
+                name: 'kWh',
                 data: $scope.tempPowerRealTime
             }],
 
@@ -456,12 +449,7 @@ angular.module('powerCloud')
             $scope.avgCost = $scope.avgCost.toFixed(2);
         }
 
-        $scope.fetchData = function() {
-
-            fetchData(device_ID);
-        }
-
-        function fetchData(id) {
+        function fetchData() {
 
             $scope.tempCurrentData=[];
             $scope.tempPowerData=[];
@@ -472,8 +460,8 @@ angular.module('powerCloud')
             dateSelected.year = date2.getFullYear();
             dateSelected.month = date2.getMonth();
             dateSelected.day = date2.getDate()-1;
-            $scope.deviceID = id;
-            var deviceSelected = id;
+            $scope.deviceID = device_ID;
+            var deviceSelected = device_ID;
             $scope.progressbar.start();
             var referenceLink = "/device_data/"+ deviceSelected +"/"+ dateSelected.year + "/" + dateSelected.month + "/" + dateSelected.day;
             var data = firebase.database().ref(referenceLink);
@@ -503,10 +491,7 @@ angular.module('powerCloud')
                 });
 
                 calculations($scope.tempCurrentData,$scope.tempPowerData,$scope.tempCostData,$scope.tempEmissionData);
-                //$scope.currentChartConfig.loading = false;
-                //$scope.powerChartConfig.loading = false;
                 $scope.progressbar.complete();
-                //$scope.kwhChartConfig.loading = false;
                 $scope.$apply();
 
             });
@@ -589,6 +574,11 @@ angular.module('powerCloud')
                 console.log('Please login to Particle. Auth token null.');
             }
         }
+
+        $scope.fetchData = function() {
+
+            fetchData(device_ID);
+        };
 
         $scope.toggleDevicePower = function() {
             $scope.togglePowerStatusChange = true;
@@ -774,7 +764,7 @@ angular.module('powerCloud')
         };
 
         $scope.updateNotificationEmail = function() {
-            $scope.changeNameProgress.start();
+            $scope.progressbar.start();
 
             var email = $scope.notificationEmail;
             if (email != null) {
@@ -785,11 +775,11 @@ angular.module('powerCloud')
                 }).catch(function(onReject) {
                     $scope.emailChangeResultText = onReject.message;
                     $scope.emailChangeResult = false;
-                    $scope.changeNameProgress.complete();
+                    $scope.progressbar.complete();
                 }).then(function(value) {
                     $scope.emailChangeResultText = 'Notification Email updated.';
                     $scope.emailChangeResult = true;
-                    $scope.changeNameProgress.complete();
+                    $scope.progressbar.complete();
                 });
 
             }

@@ -10,11 +10,6 @@ var plugins = require('gulp-load-plugins')();
 // The Following Gulp Tasks help generate Static Files for web servers:
 gulp.task('clean', require('del').bind(null, ['.temp','dist']));
 
-gulp.task('extra', function() {
-    return gulp .src('styles/*.css')
-                .pipe(gulp.dest('dist/styles/'));
-});
-
 gulp.task('fonts', function() {
     return gulp.src(require('main-bower-files')().concat('app/fonts/**/*')
         .concat('bower_components/bootstrap/fonts/*'))
@@ -55,6 +50,76 @@ gulp.task('styles', function () {
                 .pipe(gulp.dest('.tmp/styles')); // Output compiled LESS to temp styles folder
 });
 
-gulp.task('build', ['extra','html','images', 'fonts'], function() {});
+gulp.task('build', ['html','images', 'fonts'], function() {});
 
 //======================================================================================================================
+//          The Following Tasks should only be used during development.
+//======================================================================================================================
+
+gulp.task('test', function(done) {
+    karma.start({
+        configFile: __dirname + '/test/karma.conf.js',
+        singleRun: true
+    }, done);
+});
+
+gulp.task('wiredep', function() {
+    var wiredep = require('wiredep').stream;
+    var exclude = [
+        'es5-shim',
+        'json3',
+        'angular-scenario'
+    ];
+
+    gulp.src('app/styles/*.less')
+        .pipe(wiredep())
+        .pipe(gulp.dest('app/styles'));
+
+    gulp.src('app/*.html')
+        .pipe(wiredep())
+        .pipe(gulp.dest('app'));
+});
+
+gulp.task('connect', ['styles'], function() {
+
+    var serveStatic = require('serve-static');
+    var serveIndex = require('serve-index');
+    var cors = require('cors');
+    var connect = require('connect');
+
+    var app = connect();
+    app
+        .use(require('connect-livereload')({port: 35729}))
+        .use(serveStatic('.tmp'))
+        .use(serveStatic('app'))
+        .use('/bower_components', serveStatic('bower_components'))
+        .use(serveIndex('app'));
+
+    app.listen(9000).on('listening', function () {
+        console.log('Started connect web server on http://localhost:9000');
+    });
+});
+
+gulp.task('watch', ['connect'], function() {
+    plugins.livereload.listen();
+
+    gulp.watch([
+        'app/**/*.html',
+        'app/scripts/**/*.js',
+        'app/images/**/*'
+    ]).on('change', plugins.livereload.changed);
+
+    gulp.watch('bower.json', ['wiredep']);
+});
+
+gulp.task('serve', ['wiredep', 'connect', 'fonts', 'watch'], function() {
+    if (argv.open) {
+        require('opn')('http://localhost:9000');
+    }
+});
+
+gulp.task('docs', [], function() {
+    return gulp.src('app/scripts/**/**')
+        .pipe(plugins.ngdocs.process())
+        .pipe(gulp.dest('./docs'));
+});

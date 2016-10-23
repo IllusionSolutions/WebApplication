@@ -29,61 +29,10 @@
                 <img src="" alt="">
                 <div class="caption">
                     <h3 class="text-primary">Add Device</h3>
-                    <h5>Click new</h5>
+                    <h5></h5>
                     <p>
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">New</button>
                     </p>
-                </div>
-
-                <!-- Modal -->
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="addDeviceModal">Add New Device</h4>
-                            </div>
-                            <div class="modal-body" style="width: 100%;">
-                                <form novalidate class="simple-form" name="addForm">
-                                    <p>Name:
-                                        <input class="form-control" name="name" ng-model="device.name" required=""/>
-                                        <div ng-show="addForm.$submitted">
-                                            <div style="color:red;" ng-show="addForm.name.$error.required">Name is required.</div>
-                                        </div>
-                                    </p>
-                                    <p>Appliance:
-                                        <input class="form-control" name="appliancce" ng-model="device.appliance" required>
-                                        <div ng-show="addForm.$submitted">
-                                            <div style="color:red;" ng-show="addForm.appliancce.$error.required">Appliance is required.</div>
-                                        </div>
-                                    </p>
-                                    <p>ID:
-                                        <input class="form-control" name="id" ng-model="device.id" required>
-                                        <div ng-show="addForm.$submitted">
-                                            <div style="color:red;" ng-show="addForm.id.$error.required">ID is required.</div>
-                                        </div>
-                                    </p>
-                                    <p>Threshold:
-                                        <input class="form-control" name="threshold" ng-model="device.threshold" required>
-                                        <div ng-show="addForm.$submitted">
-                                            <div style="color:red;" ng-show="addForm.threshold.$error.required">Threshold is required.</div>
-                                        </div>
-                                    </p>
-                                    <p>Interval:
-                                        <input class="form-control" name="interval" ng-model="device.interval" required>
-                                        <div ng-show="addForm.$submitted">
-                                            <div style="color:red;" ng-show="addForm.interval.$error.required">Interval is required.</div>
-                                        </div>
-                                    </p>
-
-                                    <input type="submit" ng-click="addDevice(device)" value="Submit" />
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -133,4 +82,49 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addDeviceModal">Add New Device</h4>
+                </div>
+                <div class="modal-body" style="width: 100%;">
+                    <form novalidate class="simple-form" name="addForm">
+                        <p>Name: </p>
+                            <input class="form-control" name="name" ng-model="device.name" required="" title="Device Name"/>
+                        <div ng-show="addForm.$submitted">
+                            <div style="color:red;" ng-show="addForm.name.$error.required">Name is required.</div>
+                        </div>
+                        <p>Appliance: </p>
+                            <input class="form-control" name="appliancce" ng-model="device.appliance" title="Measure this" required>
+                        <div ng-show="addForm.$submitted">
+                            <div style="color:red;" ng-show="addForm.appliancce.$error.required">Appliance is required.</div>
+                        </div>
+                        <p>ID: </p>
+                            <input class="form-control" name="id" ng-model="device.id" title="Device ID" required>
+                        <div ng-show="addForm.$submitted">
+                            <div style="color:red;" ng-show="addForm.id.$error.required">ID is required.</div>
+                        </div>
+                        <p>Threshold: </p>
+                            <input class="form-control" name="threshold" ng-model="device.threshold" title="Device Threshold" required>
+                        <div ng-show="addForm.$submitted">
+                            <div style="color:red;" ng-show="addForm.threshold.$error.required">Threshold is required.</div>
+                        </div>
+                        <p>Interval: </p>
+                            <input class="form-control" name="interval" ng-model="device.interval" title="Device Interval" required>
+                        <div ng-show="addForm.$submitted">
+                            <div style="color:red;" ng-show="addForm.interval.$error.required">Interval is required.</div>
+                        </div>
+
+                        <input type="submit" ng-click="addDevice(device)" value="Submit" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
