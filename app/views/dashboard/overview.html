@@ -12,7 +12,7 @@
         </ul>
     </div>
 
-    <div class="row thumbnail col-sm-15 col-md-16 panel panel-default">
+    <div id="selector" class="row thumbnail col-sm-15 col-md-16 panel panel-default">
         <div>
             <label>Single Day:<input type="radio" name="dataView" ng-model="choice" ng-value="single" ng-click="select()"></label><br/>
             <label>Multiple Days:<input type="radio" name="dataView" ng-model="choice" ng-value="multi" ng-click="select()"></label>
@@ -94,7 +94,7 @@
             <div  ng-show="dateSelected == true">
                 <div class="row">
                     <div class="col-sm-15 col-md-16">
-                        <highchart style="margin-right: 1%;" class="panel panel-default" class="panel panel-default" id="barChart1" config="overviewPowerBarConfig"></highchart>
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart1" config="overviewPowerBarConfig"></highchart>
                     </div>
                 </div>
             </div>
@@ -102,8 +102,10 @@
 
         <div id="currentView" role="tabpanel" class="tab-pane">
             <div ng-show="dateSelected == true">
-                <div class="row" id="test">
-                    <highchart class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
+                <div class="row">
+                    <div class="col-sm-15 col-md-16" id="contain">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
+                    </div>
                 </div>
             </div>
         </div>

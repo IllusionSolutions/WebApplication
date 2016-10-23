@@ -828,7 +828,8 @@ angular.module('powerCloud')
                                     $scope.dateStringEnd.getFullYear();
             }
             $scope.overviewPowerBarConfig.series = $scope.allPowerDataBar;
-
+            var div = angular.element(document.querySelector('#selector'));
+            $scope.overviewPowerBarConfig.options.chart.width = div[0].clientWidth-20;
 
             $scope.overviewCurrentBarConfig.xAxis.categories = $scope.devicesCurrent;
             if($scope.singleDate == true)
@@ -841,10 +842,10 @@ angular.module('powerCloud')
             }
             $scope.overviewCurrentBarConfig.series = $scope.allCurrentDataBar;
             $scope.overviewCurrentBarConfig.subtitle.floating = false;
-            console.log();
 
+            div = angular.element(document.querySelector('#selector'));
+            $scope.overviewCurrentBarConfig.options.chart.width = div[0].clientWidth-20;
             $scope.dateSelected = true;
-            $scope.$apply();
         };
 
         $scope.select = function()
@@ -857,8 +858,6 @@ angular.module('powerCloud')
             else
                 $scope.multiDate = true;
         }
-
-
     });
 
     angular.module('powerCloud')
@@ -869,7 +868,6 @@ angular.module('powerCloud')
                     options: {
                         chart:
                         {
-                            renderTo: 'container',
                             type: 'pie'
                         }
                     },
@@ -892,7 +890,6 @@ angular.module('powerCloud')
                             }
                         }
                     },
-                    series: [{}],
                     loading : true
                 };
             return overviewCurrentPIConfig;
@@ -905,8 +902,7 @@ angular.module('powerCloud')
                 options: {
                     chart:
                     {
-                        type: 'pie',
-                        marginTop: 100
+                        type: 'pie'
                     }
                 },
                 title: {
@@ -941,7 +937,8 @@ angular.module('powerCloud')
         {
             options: {
                 chart: {
-                    type: 'bar'
+                    type: 'bar',
+                    reflow: true
                 }
             },
             legend: {
@@ -995,7 +992,8 @@ angular.module('powerCloud')
         {
             options: {
                 chart: {
-                    type: 'bar'
+                    type: 'bar',
+                    reflow: true
                 }
             },
             legend: {
