@@ -113,7 +113,9 @@
                             <div style="color:red;" ng-show="addForm.threshold.$error.required">Threshold is required.</div>
                         </div>
                         <p>Interval: </p>
-                            <input class="form-control" name="interval" ng-model="device.interval" title="Device Interval" required>
+                        <select ng-model="intervalSelected" name="interval" class="form-control">
+                            <option ng-repeat="interval in intervalsAvailable" value="{{interval.value}}">{{interval.name}}</option>
+                        </select>
                         <div ng-show="addForm.$submitted">
                             <div style="color:red;" ng-show="addForm.interval.$error.required">Interval is required.</div>
                         </div>
