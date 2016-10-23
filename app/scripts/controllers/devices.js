@@ -33,7 +33,8 @@ angular.module('powerCloud')
 
             angular.forEach($scope.meta, function(value, key)
             {
-                if(value == undefined) {
+                if(value == undefined)
+                {
                     und = true;
                 }
             },log);
