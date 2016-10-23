@@ -13,6 +13,7 @@ angular.module('powerCloud')
     {
         $scope.$state = $state;
         $scope.meta = {"active":1};
+        $scope.intervalSelected;
 
         $scope.intervalsAvailable = [{name:'30 Seconds',value:30},
             {name:'1 Minute',value:60},
@@ -29,11 +30,13 @@ angular.module('powerCloud')
                 "name":device.name,
                 "id":device.id,
                 "threshold":device.threshold,
-                "interval":$scope.intervalsAvailable
+                "interval":$scope.intervalSelected
             };
 
             var und = false;
 
+
+            console.log($scope.meta);
             var log = [];
 
             angular.forEach($scope.meta, function(value, key)
@@ -46,7 +49,7 @@ angular.module('powerCloud')
 
             if(und == false)
             {
-                if(sharedProperties.getParticleToken() != null)
+               /* if(sharedProperties.getParticleToken() != null)
                 {
                     particle.claimDevice({
                         deviceId: device.id,
@@ -56,7 +59,7 @@ angular.module('powerCloud')
                     }, function (err) {
                         console.log('device claim err:', err);
                     });
-                }
+                }*/
                 // Get a key for a new Post.
                 var newPostKey = $scope.meta.id;
 
