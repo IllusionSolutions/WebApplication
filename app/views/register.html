@@ -2,7 +2,7 @@
 <div class="register-page">
     <div class="row">
         <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4">
-            <img src="images/flat-avatar.png" width="60%" height="60%" />
+            <img src="images/powerCloudLogo.png" width="60%" height="60%" />
             <h5>Sign up new user</h5>
             <form role="form" ng-submit="submit(user)">
 
@@ -16,7 +16,7 @@
                     </div>
 
                 <button type="submit" class="btn btn-white btn-outline btn-lg btn-rounded">Sign Up</button></br>
-                <a ng-href="http://localhost:9000/#/login" ng-style="myStyle={'color':'white'}">Already registered?</a>
+                <a ng-click="goToLogin()" ng-style="myStyle={'color':'white'}">Already registered?</a>
                 </div>
             </form>
         </div>

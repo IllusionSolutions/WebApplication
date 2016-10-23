@@ -1,10 +1,9 @@
-//Controller device management.
 'use strict';
 
 /**
  * @ngdoc function
  * @name powerCloud.controller:MainCtrl
- * @description
+ * @description Controller device management.
  * # MainCtrl
  * Controller of powerCloud
  */

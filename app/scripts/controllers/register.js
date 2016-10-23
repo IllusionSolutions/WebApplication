@@ -1,10 +1,9 @@
-//Controls registration process, Firebase interaction goes here.
 'use strict';
 
 /**
  * @ngdoc function
  * @name powerCloud.controller:MainCtrl
- * @description
+ * @description Controls registration process, Firebase interaction goes here.
  * # MainCtrl
  * Controller of powerCloud
  */
@@ -13,12 +12,13 @@ angular.module('powerCloud')
     .controller('RegisterCtrl', function($scope, $location) {
 
         $scope.user = {};
-        $scope.dirLogin = function() {
+
+        $scope.goToLogin = function() {
             $location.path('/login');
+            $scope.$apply();
         };
         $scope.submit = function(u) {
-            //alert($scope.user.email);
-            //alert($scope.user.pass);
+
             var e = $scope.user.email;
             var p = $scope.user.pass;
             firebase.auth().createUserWithEmailAndPassword(e, p).then(function (result) {

@@ -15,7 +15,7 @@
                     </div>
 
                     <button  type="submit" class="btn btn-white btn-outline btn-lg btn-rounded">Login</button></br>
-                    <a ng-href="http://localhost:9000/#/register" ng-style="myStyle={'color':'white'}">Not registered?</a>
+                    <a ng-click="goToRegister()" ng-style="myStyle={'color':'white'}">Not registered?</a>
                     <div ng-show="errorVal" style="margin: 4%;" class="alert alert-danger" role="alert" >
                         <strong>{{errorCode}}</strong><br />{{errorMessage}}
                     </div>

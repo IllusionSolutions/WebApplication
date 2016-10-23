@@ -6,8 +6,9 @@
         <title>PowerCloud</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
+
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <!-- build:css(.) styles/vendor.css -->
+        <!-- build:css styles/vendor.css -->
         <!-- bower:css -->
         <link rel="stylesheet" href="../bower_components/ngprogress/ngProgress.css" />
         <link rel="stylesheet" href="../bower_components/angularjs-datepicker/dist/angular-datepicker.min.css" />
@@ -15,10 +16,10 @@
         <!-- endbuild -->
 
         <!-- build:css(.tmp) styles/main.css -->
-        <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
 
+        <link rel="stylesheet" href="styles/spinner.css"/>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
 
@@ -48,6 +49,7 @@
         <![endif]-->
         <!-- endbuild -->
 
+        <!-- Vendor Scripts -->
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
         <script src="../bower_components/jquery/dist/jquery.js"></script>
@@ -69,6 +71,7 @@
         <!-- endbower -->
         <!-- endbuild -->
 
+        <!-- PowerCloud Scripts -->
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/login.js"></script>

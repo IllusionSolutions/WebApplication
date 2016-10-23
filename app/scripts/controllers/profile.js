@@ -1,10 +1,9 @@
-//This controller controls the events of the profile page.
 'use strict';
 
 /**
  * @ngdoc function
  * @name powerCloud.controller:profileCtrl
- * @description
+ * @description This controller controls the events of the profile page.
  * # profileCtrl
  * Controller of powerCloud
  */

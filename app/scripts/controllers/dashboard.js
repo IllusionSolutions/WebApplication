@@ -1,10 +1,9 @@
-//The main controller, it'll control fetching data, binding scope variables and defining the scope of the application.
 'use strict';
 
 /**
  * @ngdoc function
  * @name powerCloud.controller:MainCtrl
- * @description
+ * @description The main controller, it'll control fetching data, binding scope variables and defining the scope of the application.
  * # MainCtrl
  * Controller of powerCloud
  */

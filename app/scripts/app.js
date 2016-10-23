@@ -1,21 +1,18 @@
-//Controls enter app, also provides server ports, entry point page
 'use strict';
 
 /**
  * @ngdoc overview
  * @name PowerCloud
- * @description
- * #
+ * @description Controls enter app, also provides server ports, entry point page
  *
  * Main module of the application.
  */
 
-// Initialize Firebase
 var config = {
-    apiKey: "AIzaSyD7ec7C79ogJZSJTiRvJLZJEEvywfYGg1Y",
-    authDomain: "powercloud-bf968.firebaseapp.com",
-    databaseURL: "https://powercloud-bf968.firebaseio.com",
-    storageBucket: "powercloud-bf968.appspot.com"
+  apiKey: "AIzaSyD7ec7C79ogJZSJTiRvJLZJEEvywfYGg1Y",
+  authDomain: "powercloud-bf968.firebaseapp.com",
+  databaseURL: "https://powercloud-bf968.firebaseio.com",
+  storageBucket: "powercloud-bf968.appspot.com"
 };
 firebase.initializeApp(config);
 
@@ -30,81 +27,81 @@ angular
     ])
     .config(function($stateProvider, $urlRouterProvider) {
 
-        $urlRouterProvider.when('/dashboard', '/dashboard/overview');
-        $urlRouterProvider.otherwise('/login');
+      $urlRouterProvider.when('/dashboard', '/dashboard/overview');
+      $urlRouterProvider.otherwise('/login');
 
-        $stateProvider
+      $stateProvider
             .state('base', {
-                abstract: true,
-                url: '',
-                templateUrl: 'views/base.html'
+              abstract: true,
+              url: '',
+              templateUrl: 'views/base.html'
             })
             .state('login', {
-                url: '/login',
-                parent: 'base',
-                templateUrl: 'views/login.html',
-                controller: 'LoginCtrl'
+              url: '/login',
+              parent: 'base',
+              templateUrl: 'views/login.html',
+              controller: 'LoginCtrl'
             })
             .state('register', {
-                url: '/register',
-                parent: 'base',
-                templateUrl: 'views/register.html',
-                controller: 'RegisterCtrl'
+              url: '/register',
+              parent: 'base',
+              templateUrl: 'views/register.html',
+              controller: 'RegisterCtrl'
             })
             .state('dashboard', {
-                url: '/dashboard',
-                parent: 'base',
-                templateUrl: 'views/dashboard.html',
-                controller: 'DashboardCtrl'
+              url: '/dashboard',
+              parent: 'base',
+              templateUrl: 'views/dashboard.html',
+              controller: 'DashboardCtrl'
             })
             .state('overview', {
-                url: '/overview',
-                parent: 'dashboard',
-                templateUrl: 'views/dashboard/overview.html',
-                controller: 'OverviewCtrl'
+              url: '/overview',
+              parent: 'dashboard',
+              templateUrl: 'views/dashboard/overview.html',
+              controller: 'OverviewCtrl'
             })
             .state('devices', {
-                url: '/devices',
-                parent: 'dashboard',
-                templateUrl: 'views/dashboard/devices.html',
-                controller: 'DevicesCtrl'
+              url: '/devices',
+              parent: 'dashboard',
+              templateUrl: 'views/dashboard/devices.html',
+              controller: 'DevicesCtrl'
             })
             .state('reports', {
-                url: '/reports',
-                parent: 'dashboard',
-                templateUrl: 'views/dashboard/reports.html',
-                controller: 'ReportsCtrl'
+              url: '/reports',
+              parent: 'dashboard',
+              templateUrl: 'views/dashboard/reports.html',
+              controller: 'ReportsCtrl'
             })
             .state('profile', {
-                url: '/profile',
-                parent: 'dashboard',
-                templateUrl: 'views/dashboard/profile.html',
-                controller: 'ProfileCtrl'
+              url: '/profile',
+              parent: 'dashboard',
+              templateUrl: 'views/dashboard/profile.html',
+              controller: 'ProfileCtrl'
             });
 
     })
-    .service('sharedProperties', function () {
-        var particleAPIToken = null;
+    .service('sharedProperties', function() {
+      var particleAPIToken = null;
 
-        return {
-            getParticleToken: function () {
-                return particleAPIToken;
-            },
-            setParticleToken: function(value) {
-                particleAPIToken = value;
-            }
-        };
+      return {
+        getParticleToken: function() {
+          return particleAPIToken;
+        },
+        setParticleToken: function(value) {
+          particleAPIToken = value;
+        }
+      };
     })
     .service('userDataService', function() {
-        var userData = null;
+      var userData = null;
 
-        return {
-            getUserData: function () {
-                return userData;
-            },
-            setUserData: function(value) {
-                userData = value;
-            }
-        };
+      return {
+        getUserData: function() {
+          return userData;
+        },
+        setUserData: function(value) {
+          userData = value;
+        }
+      };
     });
 

@@ -1,10 +1,9 @@
-//Controls login process, Firebase interaction goes here, sets Environment variables.
 'use strict';
 
 /**
  * @ngdoc function
  * @name powerCloud.controller:OverviewCtrl
- * @description
+ * @description Controls login process, Firebase interaction goes here, sets Environment variables.
  * # OverviewCtrl
  * Controller of the overview page.
  */

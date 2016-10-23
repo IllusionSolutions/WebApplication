@@ -1,10 +1,9 @@
-//Controls login process, Firebase interaction goes here, sets Environment variables.
 'use strict';
 
 /**
  * @ngdoc function
  * @name powerCloud.controller:LoginCtrl
- * @description
+ * @description Controls login process, Firebase interaction goes here, sets Environment variables.
  * # LoginCtrl
  * Controller for the login page.
  */
@@ -33,6 +32,11 @@ angular.module('powerCloud')
                     console.log(error.message);
                     $scope.$apply();
                 });
-        }
+        };
+
+        $scope.goToRegister = function () {
+            $location.path('/register');
+            $scope.$apply();
+        };
 
     });

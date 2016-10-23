@@ -1,10 +1,9 @@
-//Controller to display & interact with device data.
 'use strict';
 
 /**
  * @ngdoc function
  * @name powerCloud.controller:MainCtrl
- * @description
+ * @description Controller to display & interact with device data.
  * # MainCtrl
  * Controller of powerCloud
  */
