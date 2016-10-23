@@ -9,10 +9,12 @@
  * Controller of the overview page.
  */
 angular.module('powerCloud')
-    .controller('OverviewCtrl', function($scope, $state, ngProgressFactory, CurrentPI, PowerPI) {
+    .controller('OverviewCtrl', function($scope, $state, $document, ngProgressFactory, CurrentPI, PowerPI, PowerBar, CurrentBar) {
 
         $scope.overviewCurrentPIConfig = CurrentPI;
         $scope.overviewPowerPIConfig = PowerPI;
+        $scope.overviewPowerBarConfig = PowerBar;
+        $scope.overviewCurrentBarConfig = CurrentBar;
         $scope.$state = $state;
 
         $scope.dateStringBegin = new Date();
@@ -22,11 +24,16 @@ angular.module('powerCloud')
         $scope.progressbar.setColor('#ffe11c');
         $scope.progressbar.height = '3px';
 
+        $scope.devicesPower = [];
+        $scope.devicesCurrent = [];
+
         $scope.allCurrentData = [];
         $scope.allCurrentDataPI = [];
+        $scope.allCurrentDataBar = [];
 
         $scope.allPowerData = [];
         $scope.allPowerDataPI = [];
+        $scope.allPowerDataBar = [];
 
         $scope.allCalculationsData = [];
 
@@ -69,6 +76,12 @@ angular.module('powerCloud')
         $scope.total_power = "";
         $scope.total_emissions = "";
 
+        $scope.coal = 0.0;
+        $scope.household = 0.0;
+        $scope.co2 = 0.0;
+
+        $scope.test;
+
         function fetchAllData()
         {
             var referenceLink = "/";
@@ -97,7 +110,6 @@ angular.module('powerCloud')
                 {
                     var check = 0;
                     var id = d.key;
-                    console.log("ID - " + id);
                     var count = 0;
                     while(($scope.multiDate == true && begin <= end) || ($scope.singleDate == true && check < 1))
                     {
@@ -113,9 +125,6 @@ angular.module('powerCloud')
                             var curr = [];
                             var pow = [];
                             var calculations = [];
-
-
-
 
                             curr.push(id);
                             curr.push(stuff.val().datetime * 1000);
@@ -162,9 +171,17 @@ angular.module('powerCloud')
                 populateCostData();
                 populateEmissionData();
                 populateOverviewTable();
+                populatePowerBarData();
+                populateCurrentBarData();
+                calculations();
+
+                console.log(JSON.stringify($scope.allPowerDataBar,null,2));
+                console.log(JSON.stringify($scope.allCurrentDataBar,null,2));
 
                 $scope.overviewCurrentPIConfig.loading = false;
                 $scope.overviewPowerPIConfig.loading = false;
+                $scope.overviewPowerBarConfig.loading = false;
+                $scope.overviewCurrentBarConfig.loading = false;
                 $scope.progressbar.complete();
                 $scope.$apply();
             });
@@ -180,7 +197,6 @@ angular.module('powerCloud')
             angular.forEach($scope.allCurrentData, function(value, key)
             {
                 id = value[0];
-                console.log("Value id " + value[0]);
                 if(!contains(devices,id))
                 {
                     devices.push(id);
@@ -199,7 +215,6 @@ angular.module('powerCloud')
             {
                 if(count == 0)
                 {
-                    console.log(getName(currentID));
                     temp.push(getName(currentID));
                 }
 
@@ -241,7 +256,6 @@ angular.module('powerCloud')
             angular.forEach($scope.allPowerData, function(value, key)
             {
                 id = value[0];
-                console.log("Value id " + value[0]);
                 if(!contains(devices,id))
                 {
                     devices.push(id);
@@ -261,7 +275,6 @@ angular.module('powerCloud')
             {
                 if(count == 0)
                 {
-                    console.log(getName(currentID));
                     temp.push(getName(currentID));
                 }
 
@@ -276,7 +289,6 @@ angular.module('powerCloud')
                     temp = [];
 
                     currentID = value[0];
-                    console.log(getName(currentID));
                     temp.push(getName(currentID));
                     specificTotal = 0.0;
                 }
@@ -304,7 +316,6 @@ angular.module('powerCloud')
             angular.forEach($scope.allCalculationsData, function(value, key)
             {
                 id = value[0];
-                console.log("Value id " + value[0]);
                 if(!contains(devices,id))
                 {
                     devices.push(id);
@@ -324,7 +335,6 @@ angular.module('powerCloud')
             {
                 if(count == 0)
                 {
-                    console.log(getName(currentID));
                     temp.push(getName(currentID));
                 }
 
@@ -339,7 +349,6 @@ angular.module('powerCloud')
                     temp = [];
 
                     currentID = value[0];
-                    console.log(getName(currentID));
                     temp.push(getName(currentID));
                     specificTotal = 0.0;
                 }
@@ -367,7 +376,6 @@ angular.module('powerCloud')
             angular.forEach($scope.allCalculationsData, function(value, key)
             {
                 id = value[0];
-                console.log("Value id " + value[0]);
                 if(!contains(devices,id))
                 {
                     devices.push(id);
@@ -387,7 +395,6 @@ angular.module('powerCloud')
             {
                 if(count == 0)
                 {
-                    console.log(getName(currentID));
                     temp.push(getName(currentID));
                 }
 
@@ -452,13 +459,8 @@ angular.module('powerCloud')
             $scope.highest_power = name + " - " + biggest.toFixed(2);
             biggest = 0;
 
-            console.log(" $scope.allCostDataPI.length " +  $scope.allCostDataPI.length);
-            console.log("totalCost " + $scope.totalCost);
             angular.forEach($scope.allCostDataPI, function(value, key)
             {
-                console.log("***********************************");
-                console.log("name " + value[0] + "\nValue " + value[1]);
-                console.log("***********************************");
                 if(value[1] > biggest)
                 {
                     name = value[0];
@@ -510,9 +512,6 @@ angular.module('powerCloud')
 
             angular.forEach($scope.allCostDataPI, function(value, key)
             {
-                console.log("***********************************");
-                console.log("name " + value[0] + "\nValue " + value[1]);
-                console.log("***********************************");
                 if(value[1] < smallest)
                 {
                     name = value[0];
@@ -540,6 +539,212 @@ angular.module('powerCloud')
             $scope.total_current = "" + $scope.totalCurrent.toFixed(2);
             $scope.total_power = "" + $scope.totalPower.toFixed(2);
             $scope.total_emissions = "" + $scope.totalEmission.toFixed(2);
+        }
+
+        function populatePowerBarData()
+        {
+            var id;
+            var log = [];
+            var devices = [];
+            var count = 0;
+
+
+            angular.forEach($scope.allPowerData, function(value, key)
+            {
+                id = value[0];
+                if(!contains($scope.devicesPower,getName(id)))
+                {
+                    $scope.devicesPower.push(getName(id));
+                }
+            }, log);
+
+            console.log($scope.devicesPower);
+
+            var tempDeviceMax = "{\"name\": \"Max\",\"data\":[]}";
+            var tempDeviceAvg = "{\"name\": \"Average\",\"data\":[]}";
+            var tempDeviceMin = "{\"name\": \"Min\",\"data\":[]}";
+
+            tempDeviceMax = JSON.parse(tempDeviceMax);
+            tempDeviceAvg = JSON.parse(tempDeviceAvg);
+            tempDeviceMin = JSON.parse(tempDeviceMin);
+
+            var tempName = "";
+            var tempData = [];
+            var length = $scope.allPowerData.length;
+
+            var current = $scope.devicesPower[0];
+
+            var specificTotal = 0;
+            var percent = 0.0;
+            var max = [];
+            var min = [];
+            var avg = [];
+            var min = 999999;
+            var max = 0;
+            var ave = 0;
+
+            var maxed = false;
+            var minned = false;
+            var avgCount = 0;
+
+            angular.forEach($scope.allPowerData, function(value, key)
+            {
+                if(getName(value[0]) != current)
+                {
+                    ave = specificTotal/avgCount;
+                    ave = ave.toFixed(2);
+                    ave = parseFloat(ave);
+
+                    tempDeviceAvg.data.push(ave);
+                    tempDeviceMax.data.push(max);
+                    tempDeviceMin.data.push(min);
+
+                    $scope.allPowerDataBar.push(tempDeviceAvg);
+                    $scope.allPowerDataBar.push(tempDeviceMax);
+                    $scope.allPowerDataBar.push(tempDeviceMin);
+
+                    avgCount = 0;
+                    current = getName(value[0]);
+                    specificTotal = 0;
+                    min = 999999;
+                    max = 0;
+                }
+
+                if(value[2] > max)
+                {
+                    max = parseFloat(value[2]);
+                }
+
+                if(value[2] < min)
+                {
+                    min = parseFloat(value[2]);
+                }
+
+                specificTotal += parseFloat(value[2]);
+                count++;
+                avgCount++;
+
+                if(count == length)
+                {
+                    console.log(avgCount);
+                    ave = specificTotal/avgCount;
+                    ave = ave.toFixed(2);
+                    ave = parseFloat(ave);
+
+                    tempDeviceAvg.data.push(ave);
+                    tempDeviceMax.data.push(max);
+                    tempDeviceMin.data.push(min);
+
+                    $scope.allPowerDataBar.push(tempDeviceAvg);
+                    $scope.allPowerDataBar.push(tempDeviceMax);
+                    $scope.allPowerDataBar.push(tempDeviceMin);
+                }
+            }, log);
+        }
+
+        function populateCurrentBarData()
+        {
+            var id;
+            var log = [];
+            var devices = [];
+            var count = 0;
+
+
+            angular.forEach($scope.allCurrentData, function(value, key)
+            {
+                id = value[0];
+                if(!contains($scope.devicesCurrent,getName(id)))
+                {
+                    $scope.devicesCurrent.push(getName(id));
+                }
+            }, log);
+
+
+            var tempDeviceMax = "{\"name\": \"Max\",\"data\":[]}";
+            var tempDeviceAvg = "{\"name\": \"Average\",\"data\":[]}";
+            var tempDeviceMin = "{\"name\": \"Min\",\"data\":[]}";
+
+            tempDeviceMax = JSON.parse(tempDeviceMax);
+            tempDeviceAvg = JSON.parse(tempDeviceAvg);
+            tempDeviceMin = JSON.parse(tempDeviceMin);
+
+            var tempName = "";
+            var tempData = [];
+            var length = $scope.allCurrentData.length;
+
+            var current = $scope.devicesCurrent[0];
+
+            var specificTotal = 0;
+            var percent = 0.0;
+            var max = [];
+            var min = [];
+            var avg = [];
+            var min = 999999;
+            var max = 0;
+            var ave = 0;
+
+            var maxed = false;
+            var minned = false;
+            var avgCount = 0;
+
+            angular.forEach($scope.allCurrentData, function(value, key)
+            {
+                if(getName(value[0]) != current)
+                {
+                    ave = specificTotal/avgCount;
+                    ave = ave.toFixed(2);
+                    ave = parseFloat(ave);
+
+                    tempDeviceAvg.data.push(ave);
+                    tempDeviceMax.data.push(max);
+                    tempDeviceMin.data.push(min);
+
+                    $scope.allCurrentDataBar.push(tempDeviceAvg);
+                    $scope.allCurrentDataBar.push(tempDeviceMax);
+                    $scope.allCurrentDataBar.push(tempDeviceMin);
+
+                    current = getName(value[0]);
+                    specificTotal = 0;
+                    min = 999999;
+                    max = 0;
+                }
+
+                if(value[2] > max)
+                {
+                    max = parseFloat(value[2]);
+                }
+
+                if(value[2] < min)
+                {
+                    min = parseFloat(value[2]);
+                }
+
+                specificTotal += parseFloat(value[2]);
+                count++;
+                avgCount++;
+
+                if(count == length)
+                {
+                    ave = specificTotal/avgCount;
+                    ave = ave.toFixed(2);
+                    ave = parseFloat(ave);
+
+                    tempDeviceAvg.data.push(ave);
+                    tempDeviceMax.data.push(max);
+                    tempDeviceMin.data.push(min);
+
+                    $scope.allCurrentDataBar.push(tempDeviceAvg);
+                    $scope.allCurrentDataBar.push(tempDeviceMax);
+                    $scope.allCurrentDataBar.push(tempDeviceMin);
+                }
+            }, log);
+        }
+
+        function calculations()
+        {
+            $scope.coal = $scope.total_power/8.141;
+            $scope.household = $scope.total_power/21.67;
+            $scope.co2 = $scope.total_emissions;
         }
 
         function contains(device, id)
@@ -572,9 +777,14 @@ angular.module('powerCloud')
 
             $scope.allCurrentDataPI = [];
             $scope.allCurrentData = [];
+            $scope.allCurrentDataBar = [];
 
             $scope.allPowerDataPI = [];
+            $scope.allPowerDataBar = [];
             $scope.allPowerData = [];
+
+            $scope.devicesPower = [];
+            $scope.devicesCurrent = [];
 
             $scope.allCalculationsData = [];
 
@@ -598,21 +808,57 @@ angular.module('powerCloud')
                 "data": $scope.allPowerDataPI
             }];
 
+            var month1 = $scope.dateStringBegin.getMonth()+1;
+            var month2 = $scope.dateStringEnd.getMonth()+1;
+
+            $scope.overviewPowerBarConfig.xAxis.categories = $scope.devicesPower;
+
+            if($scope.singleDate == true)
+            {
+                $scope.overviewPowerBarConfig.subtitle.text = 'On ' +
+                    $scope.dateStringBegin.getDate() + '/' + month1 + '/' +
+                        $scope.dateStringBegin.getFullYear();
+            }
+            else if($scope.multiDate == true) {
+                $scope.overviewPowerBarConfig.subtitle.text = 'From the ' +
+                    $scope.dateStringBegin.getDate() + '/' + month1 + '/' +
+                        $scope.dateStringBegin.getFullYear() + ' to the ' +
+                            $scope.dateStringEnd.getDate() + '/' +
+                                month2 + '/' +
+                                    $scope.dateStringEnd.getFullYear();
+            }
+            $scope.overviewPowerBarConfig.series = $scope.allPowerDataBar;
+
+
+            $scope.overviewCurrentBarConfig.xAxis.categories = $scope.devicesCurrent;
+            if($scope.singleDate == true)
+            {
+                $scope.overviewCurrentBarConfig.subtitle.text = 'On ' + $scope.dateStringBegin.getDate() + '/' + month1 + '/' + $scope.dateStringBegin.getFullYear();
+            }
+            else if($scope.multiDate == true)
+            {
+                $scope.overviewCurrentBarConfig.subtitle.text = 'From the ' + $scope.dateStringBegin.getDate() + '/' + month1 + '/' + $scope.dateStringBegin.getFullYear() + ' to the ' + $scope.dateStringEnd.getDate() + '/' + month2 + '/' + $scope.dateStringEnd.getFullYear();
+            }
+            $scope.overviewCurrentBarConfig.series = $scope.allCurrentDataBar;
+            $scope.overviewCurrentBarConfig.subtitle.floating = false;
+            console.log();
+
             $scope.dateSelected = true;
-        }
+            $scope.$apply();
+        };
 
         $scope.select = function()
         {
             $scope.singleDate = false;
             $scope.multiDate = false;
-            console.log("----------> " + $scope.choice);
 
             if($scope.choice == "single")
                 $scope.singleDate = true;
             else
                 $scope.multiDate = true;
-
         }
+
+
     });
 
     angular.module('powerCloud')
@@ -620,38 +866,35 @@ angular.module('powerCloud')
         {
                 var overviewCurrentPIConfig =
                 {
-                options: {
-                    chart:
-                    {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie'
-                    }
-                },
-                title: {
-                    text: 'Current Usage Percentage'
-                },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                            style: {
-                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    options: {
+                        chart:
+                        {
+                            renderTo: 'container',
+                            type: 'pie'
+                        }
+                    },
+                    title: {
+                        text: 'Current Usage Percentage'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
                             }
                         }
-                    }
-                },
-                series: [{}],
-
-                loading : true
-            };
+                    },
+                    series: [{}],
+                    loading : true
+                };
             return overviewCurrentPIConfig;
         });
 
@@ -662,10 +905,8 @@ angular.module('powerCloud')
                 options: {
                     chart:
                     {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie'
+                        type: 'pie',
+                        marginTop: 100
                     }
                 },
                 title: {
@@ -691,4 +932,117 @@ angular.module('powerCloud')
                 loading : true
             };
             return overviewPowerPIConfig;
+    });
+
+    angular.module('powerCloud')
+    .factory('PowerBar', function ()
+    {
+        var overviewPowerBarConfig =
+        {
+            options: {
+                chart: {
+                    type: 'bar'
+                }
+            },
+            legend: {
+                enabled: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 0,
+                itemStyle: {
+                    fontFamily: 'Arial',
+                    fontSize: '10px'
+                },
+                align: 'right',
+                layout: 'vertical',
+                floating: false,
+                verticalAlign: 'top',
+                y: 35
+            },
+            title: {
+                text: 'Overview of Power Usage'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {},
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Power (kWh)',
+                    align: 'high'
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{}],
+            loading:true
+        };
+        return overviewPowerBarConfig;
+    });
+
+angular.module('powerCloud')
+    .factory('CurrentBar', function ()
+    {
+        var overviewCurrentBarConfig =
+        {
+            options: {
+                chart: {
+                    type: 'bar'
+                }
+            },
+            legend: {
+                enabled: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 0,
+                itemStyle: {
+                    fontFamily: 'Arial',
+                    fontSize: '10px'
+                },
+                align: 'right',
+                layout: 'vertical',
+                floating: false,
+                verticalAlign: 'top',
+                y: 35
+            },
+            title: {
+                text: 'Overview of Current Usage'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {},
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Current (A)',
+                    align: 'high'
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        align: 'right',
+                        color: '#FFFFFF',
+                        x: -10
+                    },
+                    pointPadding: 0.1,
+                    groupPadding: 0
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{}],
+            loading:true
+        };
+        return overviewCurrentBarConfig;
     });
