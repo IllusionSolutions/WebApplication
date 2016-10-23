@@ -59,26 +59,36 @@ angular.module('powerCloud')
         $scope.totalCurrent = 0;
         $scope.totalPower = 0;
 
-        $scope.highest_power = "";
-        $scope.lowest_power = "";
+        $scope.highest_power = 0.0;
+        $scope.lowest_power = 0.0;
 
-        $scope.highest_current = "";
-        $scope.lowest_current = "";
+        $scope.highest_current = 0.0;
+        $scope.lowest_current = 0.0;
 
-        $scope.highest_emissions = "";
-        $scope.lowest_emissions = "";
+        $scope.highest_emissions = 0.0;
+        $scope.lowest_emissions = 0.0;
 
-        $scope.highest_cost = "";
-        $scope.lowest_cost = "";
+        $scope.highest_cost = 0.0;
+        $scope.lowest_cost = 0.0;
 
-        $scope.total_cost = "";
-        $scope.total_current = "";
-        $scope.total_power = "";
-        $scope.total_emissions = "";
+        $scope.total_cost = 0.0;
+        $scope.total_current = 0.0;
+        $scope.total_power = 0.0;
+        $scope.total_emissions = 0.0;
 
         $scope.coal = 0.0;
         $scope.household = 0.0;
         $scope.co2 = 0.0;
+
+        $scope.max_curr_name = "";
+        $scope.max_power_name = "";
+        $scope.max_cost_name = "";
+        $scope.max_emissions_name = "";
+
+        $scope.min_curr_name = "";
+        $scope.min_power_name = "";
+        $scope.min_cost_name = "";
+        $scope.min_emissions_name = "";
 
         $scope.test;
 
@@ -221,7 +231,7 @@ angular.module('powerCloud')
                 if(value[0] != currentID)
                 {
                     ave = specificTotal/$scope.totalCurrent;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
 
@@ -238,7 +248,7 @@ angular.module('powerCloud')
                 if(count == length)
                 {
                     ave = specificTotal/$scope.totalCurrent;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
                     $scope.allCurrentDataPI.push(temp);
@@ -281,7 +291,7 @@ angular.module('powerCloud')
                 if(value[0] != currentID)
                 {
                     ave = specificTotal/$scope.totalPower;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
 
@@ -298,7 +308,7 @@ angular.module('powerCloud')
                 if(count == length)
                 {
                     ave = specificTotal/$scope.totalPower;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
                     $scope.allPowerDataPI.push(temp);
@@ -341,7 +351,7 @@ angular.module('powerCloud')
                 if(value[0] != currentID)
                 {
                     ave = specificTotal/$scope.totalCost;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
 
@@ -358,7 +368,7 @@ angular.module('powerCloud')
                 if(count == length)
                 {
                     ave = specificTotal/$scope.totalCost;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
                     $scope.allCostDataPI.push(temp);
@@ -401,7 +411,7 @@ angular.module('powerCloud')
                 if(value[0] != currentID)
                 {
                     ave = specificTotal/$scope.totalEmission;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
 
@@ -418,7 +428,7 @@ angular.module('powerCloud')
                 if(count == length)
                 {
                     ave = specificTotal/$scope.totalEmission;
-                    ave = ave.toFixed(4);
+                    ave = ave.toPrecision(4);
                     percent = ave*100;
                     temp.push(percent);
                     $scope.allEmissionDataPI.push(temp);
@@ -443,7 +453,8 @@ angular.module('powerCloud')
             }, log);
 
             biggest = ((biggest/100)*$scope.totalCurrent);
-            $scope.highest_current = name + " - " + biggest.toFixed(2);
+            $scope.highest_current = biggest.toFixed(2);
+            $scope.max_curr_name = name;
             biggest = 0;
 
             angular.forEach($scope.allPowerDataPI, function(value, key)
@@ -456,7 +467,8 @@ angular.module('powerCloud')
             }, log);
 
             biggest = ((biggest/100)*$scope.totalPower);
-            $scope.highest_power = name + " - " + biggest.toFixed(2);
+            $scope.highest_power = biggest.toFixed(2);
+            $scope.max_power_name = name;
             biggest = 0;
 
             angular.forEach($scope.allCostDataPI, function(value, key)
@@ -469,7 +481,8 @@ angular.module('powerCloud')
             }, log);
 
             biggest = ((biggest/100)*$scope.totalCost);
-            $scope.highest_cost = name + " - R" + biggest.toFixed(2);
+            $scope.highest_cost = biggest.toFixed(2);
+            $scope.max_cost_name = name;
             biggest = 0;
 
             angular.forEach($scope.allEmissionDataPI, function(value, key)
@@ -482,7 +495,8 @@ angular.module('powerCloud')
             }, log);
 
             biggest = ((biggest/100)*$scope.totalEmission);
-            $scope.highest_emissions = name + " - " + biggest.toFixed(2);
+            $scope.highest_emissions = biggest.toFixed(2);
+            $scope.max_emissions_name = name;
 
             angular.forEach($scope.allCurrentDataPI, function(value, key)
             {
@@ -494,7 +508,8 @@ angular.module('powerCloud')
             }, log);
 
             smallest = ((smallest/100)*$scope.totalCurrent);
-            $scope.lowest_current = name + " - " + smallest.toFixed(2);
+            $scope.lowest_current = smallest.toFixed(2);
+            $scope.min_curr_name = name;
             smallest = 999999;
 
             angular.forEach($scope.allPowerDataPI, function(value, key)
@@ -507,7 +522,8 @@ angular.module('powerCloud')
             }, log);
 
             smallest = ((smallest/100)*$scope.totalPower);
-            $scope.lowest_power = name + " - " + smallest.toFixed(2);
+            $scope.lowest_power = smallest.toFixed(2);
+            $scope.min_power_name = name;
             smallest = 999999;
 
             angular.forEach($scope.allCostDataPI, function(value, key)
@@ -520,7 +536,8 @@ angular.module('powerCloud')
             }, log);
 
             smallest = ((smallest/100)*$scope.totalCost);
-            $scope.lowest_cost = name + " - R" + smallest.toFixed(2);
+            $scope.lowest_cost = smallest.toFixed(2);
+            $scope.min_cost_name = name;
             smallest = 999999;
 
             angular.forEach($scope.allEmissionDataPI, function(value, key)
@@ -533,7 +550,8 @@ angular.module('powerCloud')
             }, log);
 
             smallest = ((smallest/100)*$scope.totalEmission);
-            $scope.lowest_emissions = name + " - " + smallest.toFixed(2);
+            $scope.lowest_emissions = smallest.toFixed(2);
+            $scope.min_emissions_name = name;
 
             $scope.total_cost = "R" + $scope.totalCost.toFixed(2);
             $scope.total_current = "" + $scope.totalCurrent.toFixed(2);
@@ -592,7 +610,7 @@ angular.module('powerCloud')
                 if(getName(value[0]) != current)
                 {
                     ave = specificTotal/avgCount;
-                    ave = ave.toFixed(2);
+                    ave = ave.toPrecision(2);
                     ave = parseFloat(ave);
 
                     tempDeviceAvg.data.push(ave);
@@ -628,7 +646,7 @@ angular.module('powerCloud')
                 {
                     console.log(avgCount);
                     ave = specificTotal/avgCount;
-                    ave = ave.toFixed(2);
+                    ave = ave.toPrecision(2);
                     ave = parseFloat(ave);
 
                     tempDeviceAvg.data.push(ave);
@@ -692,7 +710,7 @@ angular.module('powerCloud')
                 if(getName(value[0]) != current)
                 {
                     ave = specificTotal/avgCount;
-                    ave = ave.toFixed(2);
+                    ave = ave.toPrecision(2);
                     ave = parseFloat(ave);
 
                     tempDeviceAvg.data.push(ave);
@@ -726,7 +744,7 @@ angular.module('powerCloud')
                 if(count == length)
                 {
                     ave = specificTotal/avgCount;
-                    ave = ave.toFixed(2);
+                    ave = ave.toPrecision(2);
                     ave = parseFloat(ave);
 
                     tempDeviceAvg.data.push(ave);
@@ -742,8 +760,10 @@ angular.module('powerCloud')
 
         function calculations()
         {
-            $scope.coal = $scope.total_power/8.141;
-            $scope.household = $scope.total_power/21.67;
+            var coal = $scope.total_power/8.141;
+            $scope.coal = coal.toFixed(2);
+            var household = $scope.total_power/21.67;
+            $scope.household = household.toFixed(2);
             $scope.co2 = $scope.total_emissions;
         }
 
@@ -828,7 +848,8 @@ angular.module('powerCloud')
                                     $scope.dateStringEnd.getFullYear();
             }
             $scope.overviewPowerBarConfig.series = $scope.allPowerDataBar;
-
+            var div = angular.element(document.querySelector('#selector'));
+            $scope.overviewPowerBarConfig.options.chart.width = div[0].clientWidth-20;
 
             $scope.overviewCurrentBarConfig.xAxis.categories = $scope.devicesCurrent;
             if($scope.singleDate == true)
@@ -841,10 +862,10 @@ angular.module('powerCloud')
             }
             $scope.overviewCurrentBarConfig.series = $scope.allCurrentDataBar;
             $scope.overviewCurrentBarConfig.subtitle.floating = false;
-            console.log();
 
+            div = angular.element(document.querySelector('#selector'));
+            $scope.overviewCurrentBarConfig.options.chart.width = div[0].clientWidth-20;
             $scope.dateSelected = true;
-            $scope.$apply();
         };
 
         $scope.select = function()
@@ -857,8 +878,6 @@ angular.module('powerCloud')
             else
                 $scope.multiDate = true;
         }
-
-
     });
 
     angular.module('powerCloud')
@@ -869,7 +888,6 @@ angular.module('powerCloud')
                     options: {
                         chart:
                         {
-                            renderTo: 'container',
                             type: 'pie'
                         }
                     },
@@ -892,7 +910,6 @@ angular.module('powerCloud')
                             }
                         }
                     },
-                    series: [{}],
                     loading : true
                 };
             return overviewCurrentPIConfig;
@@ -905,8 +922,7 @@ angular.module('powerCloud')
                 options: {
                     chart:
                     {
-                        type: 'pie',
-                        marginTop: 100
+                        type: 'pie'
                     }
                 },
                 title: {
@@ -941,7 +957,8 @@ angular.module('powerCloud')
         {
             options: {
                 chart: {
-                    type: 'bar'
+                    type: 'bar',
+                    reflow: true
                 }
             },
             legend: {
@@ -995,7 +1012,8 @@ angular.module('powerCloud')
         {
             options: {
                 chart: {
-                    type: 'bar'
+                    type: 'bar',
+                    reflow: true
                 }
             },
             legend: {

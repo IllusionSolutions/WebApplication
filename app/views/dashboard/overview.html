@@ -12,7 +12,7 @@
         </ul>
     </div>
 
-    <div class="row thumbnail col-sm-15 col-md-16 panel panel-default">
+    <div id="selector" class="row thumbnail col-sm-15 col-md-16 panel panel-default">
         <div>
             <label>Single Day:<input type="radio" name="dataView" ng-model="choice" ng-value="single" ng-click="select()"></label><br/>
             <label>Multiple Days:<input type="radio" name="dataView" ng-model="choice" ng-value="multi" ng-click="select()"></label>
@@ -52,31 +52,47 @@
                             <thead>
                                 <tr>
                                     <th></th>
+                                    <th>Appliance</th>
                                     <th>Current (A)</th>
+                                    <th>Appliance</th>
                                     <th>Power (KWh)</th>
+                                    <th>Appliance</th>
                                     <th>Cost (R)</th>
+                                    <th>Appliance</th>
                                     <th>CO2 Emissions (Kg)</th>
                                 </tr>
                             </thead>
                             <tr>
                                 <td>Max</td>
+                                <td><b>{{max_curr_name}}</b></td>
                                 <td>{{highest_current}}</td>
+                                <td><b>{{max_power_name}}</b></td>
                                 <td>{{highest_power}}</td>
+                                <td><b>{{max_cost_name}}</b></td>
                                 <td>{{highest_cost}}</td>
+                                <td><b>{{max_emissions_name}}</b></td>
                                 <td>{{highest_emissions}}</td>
                             </tr>
                             <tr>
                                 <td>Min</td>
+                                <td><b>{{min_curr_name}}</b></td>
                                 <td>{{lowest_current}}</td>
+                                <td><b>{{min_power_name}}</b></td>
                                 <td>{{lowest_power}}</td>
+                                <td><b>{{min_cost_name}}</b></td>
                                 <td>{{lowest_cost}}</td>
+                                <td><b>{{min_emissions_name}}</b></td>
                                 <td>{{lowest_emissions}}</td>
                             </tr>
                             <tr>
                                 <td>Total</td>
+                                <td></td>
                                 <td>{{total_current}}</td>
+                                <td></td>
                                 <td>{{total_power}}</td>
+                                <td></td>
                                 <td>{{total_cost}}</td>
+                                <td></td>
                                 <td>{{total_emissions}}</td>
                             </tr>
                         </table>
@@ -94,7 +110,7 @@
             <div  ng-show="dateSelected == true">
                 <div class="row">
                     <div class="col-sm-15 col-md-16">
-                        <highchart style="margin-right: 1%;" class="panel panel-default" class="panel panel-default" id="barChart1" config="overviewPowerBarConfig"></highchart>
+                        <highchart style="margin-right: 1%;" class="panel panel-default" id="barChart1" config="overviewPowerBarConfig"></highchart>
                     </div>
                 </div>
             </div>
@@ -102,8 +118,10 @@
 
         <div id="currentView" role="tabpanel" class="tab-pane">
             <div ng-show="dateSelected == true">
-                <div class="row" id="test">
-                    <highchart class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
+                <div class="row">
+                    <div class="col-sm-15 col-md-16" id="contain">
+                        <highchart style="margin-right: 1%;" class="panel panel-default" class="panel panel-default" id="barChart2" config="overviewCurrentBarConfig"></highchart>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,19 +131,19 @@
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
                             <img class="pull-left" src="images/mine-cart.png"/>
-                            <div>{{coal}}</div>
+                            <div>The amount of coal burned to produce {{total_power}} kWh is {{coal}}kg</div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
                             <img class="pull-left" src="images/light-bulb.png"/>
-                            <div>{{household}}</div>
+                            <div>The total power used, {{total_power}} kWh, could power the average household for {{household}} days</div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
                             <img class="pull-left" src="images/co2.png"/>
-                            <div>{{co2}}</div>
+                            <div>The total power used, {{total_power}} kWh, produced {{co2}} kg of Carbon Dioxide (CO2)</div>
                         </div>
                     </div>
                 </div>
