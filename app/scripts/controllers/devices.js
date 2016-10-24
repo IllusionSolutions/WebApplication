@@ -30,7 +30,8 @@ angular.module('powerCloud')
                 "name":device.name,
                 "id":device.id,
                 "threshold":device.threshold,
-                "interval":$scope.intervalSelected
+                "interval":$scope.intervalSelected,
+                "notificationEmail":device.notification
             };
 
             var und = false;
