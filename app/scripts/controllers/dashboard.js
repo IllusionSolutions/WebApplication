@@ -9,8 +9,16 @@
  */
 
 angular.module('powerCloud')
-    .controller('DashboardCtrl', function($scope, $state, sharedProperties) {
+    .controller('DashboardCtrl', function($scope, $location, $state, sharedProperties) {
         $scope.$state = $state;
+
+
+        var user = firebase.auth().currentUser;
+
+        if (!user) {
+            $location.path('/login');
+            $scope.$apply();
+        }
 
         $scope.allDevices = null;
         $scope.fetchingDeviceInfo = false;

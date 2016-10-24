@@ -12,6 +12,21 @@ angular.module('powerCloud')
     {
         $scope.$state = $state;
 
+        var user = firebase.auth().currentUser;
+
+        if (!user) {
+            $location.path('/login');
+            $scope.$apply();
+        }
+
+
+        var device = $scope.selectedDevice;
+        var device_ID = $scope.deviceID;
+        if (!device) {
+            $location.path('/dashboard/devices');
+            $scope.$apply();
+        }
+
         var currentG = false;
         var realT = false;
         var kwG = false;
@@ -51,8 +66,6 @@ angular.module('powerCloud')
         };
 
         var particle = new Particle();
-        var device = $scope.selectedDevice;
-        var device_ID = $scope.deviceID;
 
         $scope.deviceActive = device.active;
         $scope.togglePowerStatusChange = true;

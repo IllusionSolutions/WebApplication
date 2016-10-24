@@ -9,9 +9,17 @@
  */
 
 angular.module('powerCloud')
-    .controller('DevicesCtrl', function($scope,  $state)
+    .controller('DevicesCtrl', function($scope, $location,  $state)
     {
         $scope.$state = $state;
+
+        var user = firebase.auth().currentUser;
+
+        if (!user) {
+            $location.path('/login');
+            $scope.$apply();
+        }
+
         $scope.meta = {"active":1};
         $scope.intervalSelected;
 
