@@ -43,7 +43,6 @@ angular.module('powerCloud')
 
             var und = false;
 
-
             console.log($scope.meta);
             var log = [];
 
