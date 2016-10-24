@@ -118,7 +118,7 @@
                         <p>Notification Email: </p>
                         <input class="form-control" type="email" name="notification" ng-model="device.notification" title="Notification Email" required>
                         <div ng-show="addForm.$submitted">
-                            <div style="color:red;" ng-show="addForm.threshold.$error.required">Threshold is required.</div>
+                            <div style="color:red;" ng-show="addForm.threshold.$error.required">Notification is required.</div>
                         </div>
 
                         <input type="submit" ng-click="addDevice(device)" value="Submit" />
