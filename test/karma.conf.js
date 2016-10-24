@@ -11,18 +11,20 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        'bower_components/angular/angular.min.js',
-        'bower_components/angular-mocks/angular-mocks.js',
-        'bower_components/firebase/firebase.js',
-        'bower_components/ui-router/release/angular-ui-router.js',
-        'bower_components/angular-animate/angular-animate.min.js',
+        'node_modules/angular/angular.min.js',
+        'node_modules/angular-mocks/angular-mocks.js',
+        'node_modules/jasmine/bin/jasmine.js',
+        'bower_components/angularjs-datepicker/dist/angular-datepicker.min.js',
+        'node_modules/angular-animate/angular-animate.min.js',
         'bower_components/highcharts-ng/dist/highcharts-ng.min.js',
         'bower_components/ngprogress/build/ngprogress.min.js',
-        'bower_components/angularjs-datepicker/dist/angular-datepicker.min.js',
+        'bower_components/ui-router/release/angular-ui-router.js',
+        'bower_components/firebase/firebase.js',
 
         'app/scripts/app.js',
-        'app/scripts/controllers/*.js',
-        'test/*.js'
+        'app/scripts/controllers/dashboard.js',
+
+        'test/dashboard_controller_test.js'
     ],
 
     // list of files to exclude
@@ -32,7 +34,6 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-
     },
 
     // test results reporter to use
@@ -64,5 +65,7 @@ module.exports = function(config) {
     // Concurrency level
     // how many browser should be started simultaneous
     concurrency: 1
+
+
   })
 }
