@@ -130,20 +130,23 @@
             <div  ng-show="dateSelected == true" >
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
-                            <img class="pull-left" src="images/mine-cart.png"/>
-                            <div>The amount of coal burned to produce {{total_power}} kWh is {{coal}}kg</div>
+                            <img style="margin: 2%;" class="pull-left" src="images/mine-cart.png"/>
+                            <h1>Coal Usage</h1>
+                            <div style="margin: 2%;"><h4>The amount of coal burned to produce <b>{{total_power}} kWh</b> is <b>{{coal}} kg.</b></h4></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
-                            <img class="pull-left" src="images/light-bulb.png"/>
-                            <div>The total power used, {{total_power}} kWh, could power the average household for {{household}} days</div>
+                            <img style="margin: 2%;" class="pull-left" src="images/light-bulb.png"/>
+                            <h1>Household Usage</h1>
+                            <div style="margin: 2%;"><h4>The total power used, <b>{{total_power}} kWh</b>, could power the average household for <b>{{household}} days.</b></h4></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="thumbnail col-sm-10 col-md-10">
-                            <img class="pull-left" src="images/co2.png"/>
-                            <div>The total power used, {{total_power}} kWh, produced {{co2}} kg of Carbon Dioxide (CO2)</div>
+                            <img style="margin: 2%;" class="pull-left" src="images/co2.png"/>
+                            <h1>CO2 Produced</h1>
+                            <div style="margin: 2%;"><h4>The total power used, <b>{{total_power}} kWh</b>, produced <b>{{co2}} kg</b> of Carbon Dioxide (CO2).</h4></div>
                         </div>
                     </div>
                 </div>
