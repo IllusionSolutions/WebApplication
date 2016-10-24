@@ -25,12 +25,9 @@ install:
 script:
     - gulp build
 
-#after_success:
-#-
+addons:
+ssh_known_hosts: power-cloud.tech
 
-#addons:
-#ssh_known_hosts: simplysentient.com
-
-#after_success:
+after_success:
 # - bash <(curl -s https://codecov.io/bash) -t e0e8c63b-befd-4c3f-8308-99e5352007a0
-# - scp -o StrictHostKeyChecking=no target/applicationServer-*.jar $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+- scp -o StrictHostKeyChecking=no dist/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH

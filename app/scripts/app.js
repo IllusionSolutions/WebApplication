@@ -42,12 +42,6 @@ angular
               templateUrl: 'views/login.html',
               controller: 'LoginCtrl'
             })
-            .state('register', {
-              url: '/register',
-              parent: 'base',
-              templateUrl: 'views/register.html',
-              controller: 'RegisterCtrl'
-            })
             .state('dashboard', {
               url: '/dashboard',
               parent: 'base',

@@ -8,13 +8,20 @@
  * Controller of the overview page.
  */
 angular.module('powerCloud')
-    .controller('OverviewCtrl', function($scope, $state, $document, ngProgressFactory, CurrentPI, PowerPI, PowerBar, CurrentBar) {
+    .controller('OverviewCtrl', function($scope, $state, $location, $document, ngProgressFactory, CurrentPI, PowerPI, PowerBar, CurrentBar) {
 
         $scope.overviewCurrentPIConfig = CurrentPI;
         $scope.overviewPowerPIConfig = PowerPI;
         $scope.overviewPowerBarConfig = PowerBar;
         $scope.overviewCurrentBarConfig = CurrentBar;
         $scope.$state = $state;
+
+        var user = firebase.auth().currentUser;
+
+        if (!user) {
+            $location.path('/login');
+            $scope.$apply();
+        }
 
         $scope.dateStringBegin = new Date();
         $scope.dateStringEnd = new Date();

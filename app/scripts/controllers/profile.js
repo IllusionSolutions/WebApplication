@@ -8,8 +8,15 @@
  * Controller of powerCloud
  */
 angular.module('powerCloud')
-    .controller('ProfileCtrl', function($scope, $state, $document, ngProgressFactory, sharedProperties) {
+    .controller('ProfileCtrl', function($scope, $state, $location, $document, ngProgressFactory, sharedProperties) {
         $scope.$state = $state;
+
+        var user = firebase.auth().currentUser;
+
+        if (!user) {
+            $location.path('/login');
+            $scope.$apply();
+        }
 
         $scope.progressbar = ngProgressFactory.createInstance();
         $scope.progressbar.setColor('#ffe11c');

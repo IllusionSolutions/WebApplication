@@ -34,9 +34,4 @@ angular.module('powerCloud')
                 });
         };
 
-        $scope.goToRegister = function () {
-            $location.path('/register');
-            $scope.$apply();
-        };
-
     });
