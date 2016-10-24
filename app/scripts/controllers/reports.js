@@ -531,6 +531,7 @@ angular.module('powerCloud')
             var tempCurrent = [];
             var tempPower = [];
             $scope.tempCurrentRealTime = [];
+            $scope.tempPowerRealTime = [];
             setInterval(function() {
                 tempCurrent = [];
                 tempPower = [];
