@@ -848,12 +848,14 @@ angular.module('powerCloud')
                         $scope.currentThresholdChanging = false;
                         $scope.currentThresholdChangeResult = true;
                         $scope.currentThresholdResultText = 'Success.';
+                        checkDeviceStatus();
                         $scope.$apply();
 
                     }, function(err) {
                         $scope.currentThresholdChanging = false;
                         $scope.currentThresholdChangeResult = false;
                         $scope.currentThresholdResultText = 'Failure: ' + err;
+                        checkDeviceStatus();
                         $scope.$apply();
                     });
             } else {
